@@ -1,0 +1,87 @@
+[gd_scene load_steps=13 format=3 uid="uid://blvm20yuoq28f"]
+
+[ext_resource type="Script" uid="uid://dvnh8mhfgo7x3" path="res://razor_bloom_explosion.gd" id="1_xs05p"]
+[ext_resource type="Texture2D" uid="uid://cv78yec22ut55" path="res://ParticleFX/Spritesheets/Eletric Expansion.png" id="2_xs05p"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vxe6d"]
+atlas = ExtResource("2_xs05p")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_klmjy"]
+atlas = ExtResource("2_xs05p")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1g87d"]
+atlas = ExtResource("2_xs05p")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tartd"]
+atlas = ExtResource("2_xs05p")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_5vpct"]
+atlas = ExtResource("2_xs05p")
+region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_atcu2"]
+atlas = ExtResource("2_xs05p")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yr78b"]
+atlas = ExtResource("2_xs05p")
+region = Rect2(96, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cde20"]
+atlas = ExtResource("2_xs05p")
+region = Rect2(192, 96, 96, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2bev6"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vxe6d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_klmjy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1g87d")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tartd")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_5vpct")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_atcu2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yr78b")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cde20")
+}],
+"loop": false,
+"name": &"explode",
+"speed": 14.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xs05p"]
+
+[node name="razorBloomExplosion" type="Area2D"]
+collision_layer = 2
+script = ExtResource("1_xs05p")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(0.68, 0.72)
+sprite_frames = SubResource("SpriteFrames_2bev6")
+animation = &"explode"
+frame = 7
+frame_progress = 1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(3.44, 3.5418)
+shape = SubResource("RectangleShape2D_xs05p")
+
+[node name="Timer" type="Timer" parent="."]

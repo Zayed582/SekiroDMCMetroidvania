@@ -1,0 +1,87 @@
+[gd_scene load_steps=13 format=3 uid="uid://bhpugl37qff4j"]
+
+[ext_resource type="Script" uid="uid://cnyfjxiql70t5" path="res://parryburst.gd" id="1_ii3r7"]
+[ext_resource type="Texture2D" uid="uid://cv78yec22ut55" path="res://ParticleFX/Spritesheets/Eletric Expansion.png" id="2_manlw"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gqa77"]
+radius = 79.0063
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_w4a57"]
+atlas = ExtResource("2_manlw")
+region = Rect2(0, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m80l1"]
+atlas = ExtResource("2_manlw")
+region = Rect2(96, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nwk70"]
+atlas = ExtResource("2_manlw")
+region = Rect2(192, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hotra"]
+atlas = ExtResource("2_manlw")
+region = Rect2(288, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_fsaj1"]
+atlas = ExtResource("2_manlw")
+region = Rect2(384, 0, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6nt0x"]
+atlas = ExtResource("2_manlw")
+region = Rect2(0, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rx4o8"]
+atlas = ExtResource("2_manlw")
+region = Rect2(96, 96, 96, 96)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nvs1m"]
+atlas = ExtResource("2_manlw")
+region = Rect2(192, 96, 96, 96)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_cr3j5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_w4a57")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m80l1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nwk70")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hotra")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_fsaj1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_6nt0x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rx4o8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nvs1m")
+}],
+"loop": false,
+"name": &"default",
+"speed": 24.0
+}]
+
+[node name="parryburst" type="Area2D"]
+script = ExtResource("1_ii3r7")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_gqa77")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(1.56, 1.56)
+sprite_frames = SubResource("SpriteFrames_cr3j5")
+frame = 7
+frame_progress = 1.0
+
+[node name="Timer" type="Timer" parent="."]
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

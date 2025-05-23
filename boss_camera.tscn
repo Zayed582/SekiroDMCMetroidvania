@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://cberkip65sg50"]
+
+[ext_resource type="Script" uid="uid://g5panp3a5st6" path="res://boss_camera.gd" id="1_3drrs"]
+
+[node name="Camera2D" type="Camera2D"]
+script = ExtResource("1_3drrs")
+metadata/_custom_type_script = "uid://dnfmbbow5aoso"
