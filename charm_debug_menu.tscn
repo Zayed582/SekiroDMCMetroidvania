@@ -1,0 +1,222 @@
+[gd_scene load_steps=3 format=3 uid="uid://dxcbg0nnq2rt4"]
+
+[ext_resource type="Script" uid="uid://b4echhevhs4u0" path="res://charm_debug_menu.gd" id="1_r3p1v"]
+
+[sub_resource type="FontFile" id="FontFile_r3p1v"]
+subpixel_positioning = 0
+msdf_pixel_range = 14
+msdf_size = 128
+cache/0/16/0/ascent = 0.0
+cache/0/16/0/descent = 0.0
+cache/0/16/0/underline_position = 0.0
+cache/0/16/0/underline_thickness = 0.0
+cache/0/16/0/scale = 1.0
+cache/0/2/0/ascent = 0.0
+cache/0/2/0/descent = 0.0
+cache/0/2/0/underline_position = 0.0
+cache/0/2/0/underline_thickness = 0.0
+cache/0/2/0/scale = 1.0
+cache/0/3/0/ascent = 0.0
+cache/0/3/0/descent = 0.0
+cache/0/3/0/underline_position = 0.0
+cache/0/3/0/underline_thickness = 0.0
+cache/0/3/0/scale = 1.0
+cache/0/4/0/ascent = 0.0
+cache/0/4/0/descent = 0.0
+cache/0/4/0/underline_position = 0.0
+cache/0/4/0/underline_thickness = 0.0
+cache/0/4/0/scale = 1.0
+cache/0/5/0/ascent = 0.0
+cache/0/5/0/descent = 0.0
+cache/0/5/0/underline_position = 0.0
+cache/0/5/0/underline_thickness = 0.0
+cache/0/5/0/scale = 1.0
+cache/0/6/0/ascent = 0.0
+cache/0/6/0/descent = 0.0
+cache/0/6/0/underline_position = 0.0
+cache/0/6/0/underline_thickness = 0.0
+cache/0/6/0/scale = 1.0
+cache/0/7/0/ascent = 0.0
+cache/0/7/0/descent = 0.0
+cache/0/7/0/underline_position = 0.0
+cache/0/7/0/underline_thickness = 0.0
+cache/0/7/0/scale = 1.0
+cache/0/8/0/ascent = 0.0
+cache/0/8/0/descent = 0.0
+cache/0/8/0/underline_position = 0.0
+cache/0/8/0/underline_thickness = 0.0
+cache/0/8/0/scale = 1.0
+cache/0/9/0/ascent = 0.0
+cache/0/9/0/descent = 0.0
+cache/0/9/0/underline_position = 0.0
+cache/0/9/0/underline_thickness = 0.0
+cache/0/9/0/scale = 1.0
+cache/0/10/0/ascent = 0.0
+cache/0/10/0/descent = 0.0
+cache/0/10/0/underline_position = 0.0
+cache/0/10/0/underline_thickness = 0.0
+cache/0/10/0/scale = 1.0
+cache/0/11/0/ascent = 0.0
+cache/0/11/0/descent = 0.0
+cache/0/11/0/underline_position = 0.0
+cache/0/11/0/underline_thickness = 0.0
+cache/0/11/0/scale = 1.0
+cache/0/12/0/ascent = 0.0
+cache/0/12/0/descent = 0.0
+cache/0/12/0/underline_position = 0.0
+cache/0/12/0/underline_thickness = 0.0
+cache/0/12/0/scale = 1.0
+cache/0/13/0/ascent = 0.0
+cache/0/13/0/descent = 0.0
+cache/0/13/0/underline_position = 0.0
+cache/0/13/0/underline_thickness = 0.0
+cache/0/13/0/scale = 1.0
+cache/0/14/0/ascent = 0.0
+cache/0/14/0/descent = 0.0
+cache/0/14/0/underline_position = 0.0
+cache/0/14/0/underline_thickness = 0.0
+cache/0/14/0/scale = 1.0
+cache/0/15/0/ascent = 0.0
+cache/0/15/0/descent = 0.0
+cache/0/15/0/underline_position = 0.0
+cache/0/15/0/underline_thickness = 0.0
+cache/0/15/0/scale = 1.0
+cache/0/17/0/ascent = 0.0
+cache/0/17/0/descent = 0.0
+cache/0/17/0/underline_position = 0.0
+cache/0/17/0/underline_thickness = 0.0
+cache/0/17/0/scale = 1.0
+cache/0/18/0/ascent = 0.0
+cache/0/18/0/descent = 0.0
+cache/0/18/0/underline_position = 0.0
+cache/0/18/0/underline_thickness = 0.0
+cache/0/18/0/scale = 1.0
+cache/0/19/0/ascent = 0.0
+cache/0/19/0/descent = 0.0
+cache/0/19/0/underline_position = 0.0
+cache/0/19/0/underline_thickness = 0.0
+cache/0/19/0/scale = 1.0
+cache/0/20/0/ascent = 0.0
+cache/0/20/0/descent = 0.0
+cache/0/20/0/underline_position = 0.0
+cache/0/20/0/underline_thickness = 0.0
+cache/0/20/0/scale = 1.0
+cache/0/21/0/ascent = 0.0
+cache/0/21/0/descent = 0.0
+cache/0/21/0/underline_position = 0.0
+cache/0/21/0/underline_thickness = 0.0
+cache/0/21/0/scale = 1.0
+cache/0/22/0/ascent = 0.0
+cache/0/22/0/descent = 0.0
+cache/0/22/0/underline_position = 0.0
+cache/0/22/0/underline_thickness = 0.0
+cache/0/22/0/scale = 1.0
+cache/0/23/0/ascent = 0.0
+cache/0/23/0/descent = 0.0
+cache/0/23/0/underline_position = 0.0
+cache/0/23/0/underline_thickness = 0.0
+cache/0/23/0/scale = 1.0
+cache/0/24/0/ascent = 0.0
+cache/0/24/0/descent = 0.0
+cache/0/24/0/underline_position = 0.0
+cache/0/24/0/underline_thickness = 0.0
+cache/0/24/0/scale = 1.0
+cache/0/25/0/ascent = 0.0
+cache/0/25/0/descent = 0.0
+cache/0/25/0/underline_position = 0.0
+cache/0/25/0/underline_thickness = 0.0
+cache/0/25/0/scale = 1.0
+
+[node name="CharmDebugMenu" type="CanvasLayer"]
+script = ExtResource("1_r3p1v")
+
+[node name="Panel" type="Panel" parent="."]
+offset_right = 40.0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+offset_left = 370.0
+offset_top = 1.0
+offset_right = 532.0
+offset_bottom = 148.0
+scale = Vector2(1.35556, 1.20394)
+
+[node name="ButtonVengefulSpirit" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+theme_override_fonts/font = SubResource("FontFile_r3p1v")
+theme_override_font_sizes/font_size = 25
+text = "VengefulSpirit
+"
+
+[node name="ButtonBloodVoltage" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "BloodVoltage
+"
+
+[node name="ButtonAdrenalEdge" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "AdrenalEdge"
+
+[node name="ButtonMomentumDrive" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "MomentumDrive"
+
+[node name="ButtonComboCatalyst" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "ComboCatalyst
+"
+
+[node name="ButtonRazorBloom" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "RazorBloom
+"
+
+[node name="ButtonDoubleEdgedSoul" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "DoubleEdgedSoul"
+
+[node name="ButtonShockRepeater" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "ShockRepeater"
+
+[node name="ButtonGhostfangDrive" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "GhostFangDrive"
+
+[node name="ButtonOverdriveParryDistortion" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "ODParryDistortion
+"
+
+[node name="ButtonOverdriveCloneEcho" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "ODCloneEcho
+"
+
+[node name="ButtonOverdriveMoonveilMirage" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "ODMoonveilMirage
+"
+
+[node name="ButtonOverdrivePhantomBlink" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "ODPhantomBlink
+"
+
+[node name="ButtonOverdriveInfernalAscension" type="Button" parent="VBoxContainer"]
+layout_mode = 2
+text = "ODInfernalAscension
+"
+
+[connection signal="pressed" from="VBoxContainer/ButtonVengefulSpirit" to="." method="_on_button_vengeful_spirit_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonBloodVoltage" to="." method="_on_button_blood_voltage_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonMomentumDrive" to="." method="_on_button_momentum_drive_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonComboCatalyst" to="." method="_on_button_momentum_drive_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonRazorBloom" to="." method="_on_button_momentum_drive_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonDoubleEdgedSoul" to="." method="_on_button_momentum_drive_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonShockRepeater" to="." method="_on_button_momentum_drive_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonGhostfangDrive" to="." method="_on_button_momentum_drive_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonOverdriveParryDistortion" to="." method="_on_button_momentum_drive_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonOverdriveCloneEcho" to="." method="_on_button_momentum_drive_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonOverdriveMoonveilMirage" to="." method="_on_button_momentum_drive_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonOverdrivePhantomBlink" to="." method="_on_button_momentum_drive_pressed"]
+[connection signal="pressed" from="VBoxContainer/ButtonOverdriveInfernalAscension" to="." method="_on_button_momentum_drive_pressed"]
