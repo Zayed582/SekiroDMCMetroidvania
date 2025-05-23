@@ -1,4 +1,4 @@
-[gd_scene load_steps=88 format=3 uid="uid://bormwyfbv7uxy"]
+[gd_scene load_steps=89 format=3 uid="uid://bormwyfbv7uxy"]
 
 [ext_resource type="Script" uid="uid://bi48ls8mv53eo" path="res://ashen_sentinel.gd" id="1_xiatw"]
 [ext_resource type="Texture2D" uid="uid://xkx8qjrllqaw" path="res://Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Knight Templar/Knight Templar/Knight Templar-Attack01.png" id="2_mtj23"]
@@ -568,6 +568,9 @@ size = Vector2(159.999, 32)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mtj23"]
 size = Vector2(272, 20)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8wdfu"]
+size = Vector2(14, 20)
+
 [node name="AshenSentinel" type="CharacterBody2D" groups=["enemies"]]
 collision_mask = 2
 script = ExtResource("1_xiatw")
@@ -623,3 +626,12 @@ shape = SubResource("RectangleShape2D_mtj23")
 
 [node name="RayCast2D" type="RayCast2D" parent="."]
 collision_mask = 3
+
+[node name="CollideHitBox" type="Area2D" parent="."]
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollideHitBox"]
+shape = SubResource("RectangleShape2D_8wdfu")
+
+[connection signal="body_entered" from="CollideHitBox" to="." method="_on_collide_hit_box_body_entered"]

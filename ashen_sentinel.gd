@@ -565,3 +565,9 @@ func perform_jump_attack():
 func _on_stop_dash_area_body_entered(body):
 	#if is_d
 	pass # Replace with function body.
+
+
+func _on_collide_hit_box_body_entered(body):
+	if body.name == "Player" and body.has_method("take_damage"):
+		body.take_damage(true)
+	pass # Replace with function body.
