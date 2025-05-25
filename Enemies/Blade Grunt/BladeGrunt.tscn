@@ -1,12 +1,12 @@
 [gd_scene load_steps=47 format=3 uid="uid://cvl5b8cohcbaa"]
 
-[ext_resource type="Script" uid="uid://bnx7ge14way62" path="res://blade_grunt.gd" id="1_50226"]
-[ext_resource type="Texture2D" uid="uid://dm6vf07tkdijr" path="res://Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Armored Axeman/Armored Axeman/Armored Axeman-Idle.png" id="1_vrson"]
-[ext_resource type="Texture2D" uid="uid://bdh80v7ckw2pv" path="res://Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Armored Axeman/Armored Axeman/Armored Axeman-Walk.png" id="2_50226"]
-[ext_resource type="Texture2D" uid="uid://b7gfmwe26oup8" path="res://Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Armored Axeman/Armored Axeman/Armored Axeman-Attack01.png" id="2_vpyb2"]
-[ext_resource type="Texture2D" uid="uid://dvtba77ybrwnh" path="res://Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Armored Axeman/Armored Axeman/Armored Axeman-Hurt.png" id="4_qqgec"]
-[ext_resource type="Texture2D" uid="uid://rdlux2o1pmjp" path="res://Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Armored Axeman/Armored Axeman/Armored Axeman-Attack03.png" id="5_auyiq"]
-[ext_resource type="Script" uid="uid://cm3yesdavn8r8" path="res://parry_tag_area.gd" id="6_c37q0"]
+[ext_resource type="Script" uid="uid://bnx7ge14way62" path="res://Enemies/Blade Grunt/blade_grunt.gd" id="1_50226"]
+[ext_resource type="Texture2D" uid="uid://dm6vf07tkdijr" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Armored Axeman/Armored Axeman/Armored Axeman-Idle.png" id="1_vrson"]
+[ext_resource type="Texture2D" uid="uid://bdh80v7ckw2pv" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Armored Axeman/Armored Axeman/Armored Axeman-Walk.png" id="2_50226"]
+[ext_resource type="Texture2D" uid="uid://b7gfmwe26oup8" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Armored Axeman/Armored Axeman/Armored Axeman-Attack01.png" id="2_vpyb2"]
+[ext_resource type="Texture2D" uid="uid://dvtba77ybrwnh" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Armored Axeman/Armored Axeman/Armored Axeman-Hurt.png" id="4_qqgec"]
+[ext_resource type="Texture2D" uid="uid://rdlux2o1pmjp" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Armored Axeman/Armored Axeman/Armored Axeman-Attack03.png" id="5_auyiq"]
+[ext_resource type="Script" uid="uid://cm3yesdavn8r8" path="res://NotResolvedYet/parry_tag_area.gd" id="6_c37q0"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_vpyb2"]
 size = Vector2(89, 101)

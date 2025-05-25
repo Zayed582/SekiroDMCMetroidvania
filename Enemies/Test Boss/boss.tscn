@@ -1,12 +1,12 @@
 [gd_scene load_steps=42 format=3 uid="uid://dheqtn1kojh0k"]
 
 [ext_resource type="Script" uid="uid://b8ssqngqyvpif" path="res://Enemies/Test Boss/boss.gd" id="1_we8h1"]
-[ext_resource type="Texture2D" uid="uid://c8vqmjjkv677e" path="res://Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/Orc-Attack01.png" id="2_kvofc"]
-[ext_resource type="Texture2D" uid="uid://hafcb8vur1ww" path="res://Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/Orc-Attack02.png" id="3_ef0k6"]
-[ext_resource type="Texture2D" uid="uid://cj0ai7fqeq0r4" path="res://Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/Orc-Death.png" id="4_ry61v"]
-[ext_resource type="Texture2D" uid="uid://drhq5pfigc013" path="res://Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/Orc-Idle.png" id="5_kles1"]
-[ext_resource type="Texture2D" uid="uid://dpep50hlw8um" path="res://Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/Orc-Hurt.png" id="6_etj48"]
-[ext_resource type="Script" uid="uid://dburc6f74ny5x" path="res://area_2d.gd" id="7_kvofc"]
+[ext_resource type="Texture2D" uid="uid://c8vqmjjkv677e" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/Orc-Attack01.png" id="2_kvofc"]
+[ext_resource type="Texture2D" uid="uid://hafcb8vur1ww" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/Orc-Attack02.png" id="3_ef0k6"]
+[ext_resource type="Texture2D" uid="uid://cj0ai7fqeq0r4" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/Orc-Death.png" id="4_ry61v"]
+[ext_resource type="Texture2D" uid="uid://drhq5pfigc013" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/Orc-Idle.png" id="5_kles1"]
+[ext_resource type="Texture2D" uid="uid://dpep50hlw8um" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Free Soldier&Orc/Characters(100x100)/Orc/Orc/Orc-Hurt.png" id="6_etj48"]
+[ext_resource type="Script" uid="uid://dburc6f74ny5x" path="res://NotResolvedYet/area_2d.gd" id="7_kvofc"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h3lj5"]
 atlas = ExtResource("2_kvofc")

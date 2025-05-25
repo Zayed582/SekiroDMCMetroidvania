@@ -1,0 +1,147 @@
+[gd_scene load_steps=21 format=3 uid="uid://djw7n6ev3ueiy"]
+
+[ext_resource type="Script" uid="uid://dnh5qga6w0agw" path="res://Effects/CharmEffects/RazorBloom/razor_bloom_petals.gd" id="1_s5wv5"]
+[ext_resource type="Texture2D" uid="uid://cd1c7173kyp8t" path="res://ParticleFX/Spritesheets/Blue Vortex-Sheet.png" id="2_s5wv5"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_s5wv5"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(600, 300, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_85g5m"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(450, 300, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0vbt6"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(300, 300, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_06spl"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(150, 300, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_bh0ju"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(0, 300, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ekoim"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(600, 150, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2vapp"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(450, 150, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3772x"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(300, 150, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xto4p"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(150, 150, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nl4ss"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(0, 150, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x12ex"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(600, 0, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wisfc"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(450, 0, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1ut0i"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(300, 0, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d6xpk"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(150, 0, 150, 150)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pa4jq"]
+atlas = ExtResource("2_s5wv5")
+region = Rect2(0, 0, 150, 150)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_vrulk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_s5wv5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_85g5m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0vbt6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_06spl")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_bh0ju")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ekoim")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2vapp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3772x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xto4p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nl4ss")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x12ex")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wisfc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1ut0i")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d6xpk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pa4jq")
+}],
+"loop": false,
+"name": &"Fly",
+"speed": 14.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_0vbt6"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_s5wv5"]
+radius = 48.0
+
+[node name="RazorBloomPetals" type="Area2D" groups=["enemies"]]
+collision_layer = 2
+script = ExtResource("1_s5wv5")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_vrulk")
+animation = &"Fly"
+frame = 14
+frame_progress = 1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+scale = Vector2(-3.5374, 2.96982)
+shape = SubResource("RectangleShape2D_0vbt6")
+
+[node name="Timer" type="Timer" parent="."]
+
+[node name="AttackArea" type="Area2D" parent="." groups=["enemies"]]
+position = Vector2(23, -1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+position = Vector2(-24, 2)
+shape = SubResource("CircleShape2D_s5wv5")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

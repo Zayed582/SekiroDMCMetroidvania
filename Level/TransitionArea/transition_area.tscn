@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://bjai0g778ige"]
+
+[ext_resource type="Script" uid="uid://q0igpnqn0yhv" path="res://Level/TransitionArea/transition_area.gd" id="1_xpqc6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_xpqc6"]
+
+[node name="TransitionArea" type="Area2D"]
+script = ExtResource("1_xpqc6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_xpqc6")
+debug_color = Color(0.917628, 0.740376, 0.160589, 0.42)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

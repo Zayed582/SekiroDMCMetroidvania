@@ -1,0 +1,208 @@
+[gd_scene load_steps=29 format=3 uid="uid://d11vf5sa8lcc2"]
+
+[ext_resource type="Script" uid="uid://qxo3qygb7lbh" path="res://Bosses/LaserBeam/laserbeam_boss.gd" id="1_f7mom"]
+[ext_resource type="Texture2D" uid="uid://cvt4470kctnlw" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Wizard/Wizard/Wizard-Attack01.png" id="2_772lp"]
+[ext_resource type="Texture2D" uid="uid://cuaf6au77a51i" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Characters(100x100)/Wizard/Wizard/Wizard-Idle.png" id="2_dcxyc"]
+[ext_resource type="Script" uid="uid://cm3yesdavn8r8" path="res://NotResolvedYet/parry_tag_area.gd" id="4_772lp"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wqnpk"]
+atlas = ExtResource("2_772lp")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1et81"]
+atlas = ExtResource("2_772lp")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8o7c5"]
+atlas = ExtResource("2_772lp")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_uujtm"]
+atlas = ExtResource("2_772lp")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jdka5"]
+atlas = ExtResource("2_772lp")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_4ksis"]
+atlas = ExtResource("2_772lp")
+region = Rect2(500, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dcxyc"]
+atlas = ExtResource("2_772lp")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x0nd1"]
+atlas = ExtResource("2_772lp")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ox1cs"]
+atlas = ExtResource("2_772lp")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rxlhe"]
+atlas = ExtResource("2_772lp")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vfi0q"]
+atlas = ExtResource("2_772lp")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_u020u"]
+atlas = ExtResource("2_772lp")
+region = Rect2(500, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_772lp"]
+atlas = ExtResource("2_dcxyc")
+region = Rect2(0, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_j5o1t"]
+atlas = ExtResource("2_dcxyc")
+region = Rect2(100, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_yrp3g"]
+atlas = ExtResource("2_dcxyc")
+region = Rect2(200, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wggsq"]
+atlas = ExtResource("2_dcxyc")
+region = Rect2(300, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_beern"]
+atlas = ExtResource("2_dcxyc")
+region = Rect2(400, 0, 100, 100)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_surnn"]
+atlas = ExtResource("2_dcxyc")
+region = Rect2(500, 0, 100, 100)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_wqnpk"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wqnpk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_1et81")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8o7c5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_uujtm")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jdka5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_4ksis")
+}],
+"loop": false,
+"name": &"Cast",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_dcxyc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x0nd1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ox1cs")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rxlhe")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vfi0q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_u020u")
+}],
+"loop": true,
+"name": &"Dash",
+"speed": 12.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_772lp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_j5o1t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_yrp3g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wggsq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_beern")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_surnn")
+}],
+"loop": true,
+"name": &"Idle",
+"speed": 12.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1et81"]
+size = Vector2(33, 50)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dcxyc"]
+size = Vector2(36, 51)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_772lp"]
+size = Vector2(36, 51)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_772lp"]
+bg_color = Color(0.938881, 0.879774, 0.965493, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j5o1t"]
+bg_color = Color(0.875827, 0, 0.305009, 1)
+
+[node name="Laserbeam Boss" type="CharacterBody2D"]
+collision_mask = 2
+script = ExtResource("1_f7mom")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(-2, -1.99998)
+scale = Vector2(2.45, 2.64)
+sprite_frames = SubResource("SpriteFrames_wqnpk")
+animation = &"Dash"
+frame_progress = 0.617933
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-3.5, -7)
+shape = SubResource("RectangleShape2D_1et81")
+
+[node name="ParryTagArea" type="Area2D" parent="." groups=["parryable"]]
+scale = Vector2(6.64, 3.44)
+script = ExtResource("4_772lp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParryTagArea"]
+position = Vector2(0, -3.44827)
+shape = SubResource("RectangleShape2D_dcxyc")
+
+[node name="AttackArea" type="Area2D" parent="." groups=["enemies"]]
+position = Vector2(23, -1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+position = Vector2(-25, -6)
+shape = SubResource("RectangleShape2D_772lp")
+
+[node name="PostureBar" type="ProgressBar" parent="."]
+offset_left = -32.0
+offset_top = -38.0
+offset_right = 29.0
+offset_bottom = -34.0
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(1, 0, 0.0745098, 1)
+theme_override_styles/background = SubResource("StyleBoxFlat_772lp")
+theme_override_styles/fill = SubResource("StyleBoxFlat_j5o1t")
+show_percentage = false
+
+[connection signal="body_entered" from="AttackArea" to="." method="_on_attack_area_body_entered"]

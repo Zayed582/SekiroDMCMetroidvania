@@ -3,7 +3,7 @@ extends CharacterBody2D
 @export var speed := 120
 @export var gravity := 800
 @export var max_health := 4
-@export var attack_range := 90
+@export var attack_range := 150
 @export var max_posture := 1500
 @export var deathblow_window := 1.0
 var knockback_velocity := Vector2.ZERO
