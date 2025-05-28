@@ -83,7 +83,7 @@ func _physics_process(delta):
 				#return
 
 			# 🧠 If player is attacking, react (general case)
-			if player and player.has_method("is_attacking") and player.is_attacking():
+			if player and player.has_method("is_attacking") and player.is_attacking() and distance < 100:
 				if randf() < 0.6 and attack_cooldown <= 0.0 and evade_cooldown <= 0.0:
 					state = State.EVADING
 					evade_cooldown = EVADE_COOLDOWN_TIME
