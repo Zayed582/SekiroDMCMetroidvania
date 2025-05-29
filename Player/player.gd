@@ -4,8 +4,8 @@ var rank_display_buffer_timer = 0.0
 var buffered_rank = ""
 var last_shown_rank = ""
 var was_on_floor = false
-var max_health = 8
-var current_health = 8
+var max_health = 10000
+var current_health = 100000
 var is_alive = true
 var freeze_frames = 0
 var pending_parry_areas: Array = []
@@ -69,6 +69,7 @@ var overdrive_moonveil := false
 var parry_boost_timer := 0.0
 var double_edge_s_active := false
 var overdrive_clone_echo := false
+var is_frozen_in_air = false
 
 @onready var healthbar = get_node("/root/World/UI/ProgressBar")
 var active_charm_shock_repeater := false
@@ -96,6 +97,9 @@ var overdrive_infernal := false
 var ghostfang_invincible_timer := 0.0
 var ghostfang_damage_boost := false
 var selected_overdrive_type: String = "moonveil"
+var has_air_attacked = false
+var is_performing_deathblow := false
+var is_deathblow_dashing := false
 
 var deathblow_target = null
 @export var max_flow := 100
@@ -127,7 +131,7 @@ const WALL_JUMP_COOLDOWN_TIME = 0.2
 
 var active_charm_blood_voltage = false
 
-@export var wall_slide_speed := 60.0
+@export var wall_slide_speed := 250.0
 var speed_boost = 1.0
 var attack_speed_boost = 1.0
 var active_charm_adrenal_edge = false  # toggle if equipped
@@ -169,6 +173,7 @@ var rank_meter = 0.0
 var rank_thresholds = [0, 2, 4, 6, 8, 10]
 
 func _ready():
+	add_to_group("player")
 	$ParryDetector.area_entered.connect(_on_ParryDetector_area_entered)
 	animated_sprite.play("Idle")
 	await get_tree().process_frame
@@ -254,8 +259,21 @@ func activate_overdrive():
 
 
 func _physics_process(delta):
-	if startup_lock:
-		return  # ❌ Block everything until physics settles
+	if is_performing_deathblow:
+		if not is_deathblow_dashing:
+			# Allow gravity only after dash ends
+			if not is_on_floor():
+				velocity.y += gravity * delta
+			else:
+				velocity.y = 0
+			move_and_slide()
+		return
+
+
+
+
+
+
 
 	# Clamp cooldowns
 	parry_cooldown = max(parry_cooldown - delta, 0)
@@ -264,7 +282,19 @@ func _physics_process(delta):
 
 	# Prevent early input issues by applying gravity before any inputs if not grounded
 	if !is_on_floor() and wall_jump_cooldown == 0:
-		velocity.y += gravity * delta
+		if is_on_wall and not is_climbing:
+			# Apply reduced gravity for wall slide
+			var wall_slide_gravity := gravity * 0.5  # Tweak friction strength here
+			velocity.y += wall_slide_gravity * delta
+			velocity.y = clamp(velocity.y, -100, wall_slide_speed)  # Prevent fast fall
+		else:
+			velocity.y += gravity * delta
+
+			# ✂️ Cut jump short if jump released while going up
+			if velocity.y < 0 and not Input.is_action_pressed("jump"):
+				velocity.y += gravity * delta * 2
+
+
 
 	# Handle deathblow input
 	if deathblow_target and Input.is_action_just_pressed("attack"):
@@ -295,6 +325,8 @@ func _physics_process(delta):
 		facing_right = velocity.x > 0
 		update_facing()
 		wall_jump_cooldown = WALL_JUMP_COOLDOWN_TIME
+		$AnimatedSprite2D.play("WallJump")
+
 
 	# Regular jump
 	if not is_climbing and Input.is_action_just_pressed("jump") and not is_hurt and not is_knockedback_sliding and not recovering_from_knockback:
@@ -379,11 +411,17 @@ func _physics_process(delta):
 				attack_cooldown = 0.0
 
 		# ❌ Don't override animation if charging
-		if not attacking and not is_parrying and not is_dodging and not is_hurt and not recovering_from_knockback and not is_knockedback_sliding and not is_charging:
-			$AnimatedSprite2D.speed_scale = attack_speed_boost
+		if not attacking and not is_parrying and not is_dodging and not is_hurt and not recovering_from_knockback and not is_knockedback_sliding and not is_charging and not is_performing_deathblow:
 
-			if is_climbing:
+
+			# 🔁 WALL ANIMATIONS
+			if wall_jump_cooldown > 0 and not is_on_floor():
+				$AnimatedSprite2D.play("WallJump")
+			elif is_climbing:
 				$AnimatedSprite2D.play("Climb")
+			elif is_on_wall and velocity.y > 0:
+				$AnimatedSprite2D.play("WallSlide")
+			# 🔁 AIR + GROUND
 			elif not is_on_floor():
 				$AnimatedSprite2D.play("jump" if velocity.y < 0 else "Fall")
 			else:
@@ -391,8 +429,6 @@ func _physics_process(delta):
 					$AnimatedSprite2D.play("Sprint" if is_running else "Run")
 				else:
 					$AnimatedSprite2D.play("Idle")
-
-
 	# Freeze-frame logic
 	if freeze_frames > 0:
 		Engine.time_scale = 0.0001
@@ -406,8 +442,10 @@ func _physics_process(delta):
 	if not was_on_floor and is_on_floor():
 		_on_landed()
 		air_jumps_left = max_air_jumps
+		has_air_attacked = false  # ✅ allow air attack again
 
 	was_on_floor = is_on_floor()
+
 
 
 
@@ -970,6 +1008,8 @@ func get_current_parry_rank() -> String:
 
 
 func _on_attack_timer_timeout():
+	$AttackArea.rotation = 0
+	$AttackArea.position = attack_offset  # your saved original position
 	$AttackArea.monitoring = false
 
 	if combo_queued and combo_step < 2:
@@ -1051,6 +1091,84 @@ func start_dodge(direction):
 		get_tree().current_scene.add_child(mirage)
 
 
+func on_pogo_hit_by_enemy(enemy):
+	if not enemy.has_meta("pogo_counter"):
+		enemy.set_meta("pogo_counter", 1)
+	else:
+		var counter = int(enemy.get_meta("pogo_counter")) + 1
+		enemy.set_meta("pogo_counter", counter)
+
+		if counter >= 3:
+			print("🔁 Enemy parry trigger on pogo #4!")
+			enemy.set_meta("pogo_counter", 0)
+
+			# ✅ Let the enemy launch the player
+			if enemy.has_method("start_pogo_counter_attack"):
+				enemy.start_pogo_counter_attack()
+
+			# ✅ DO NOT zero the velocity here — player is already flying
+
+			is_locked_from_parry = true
+			attacking = false
+			$AnimatedSprite2D.play("Hurt")
+
+			await get_tree().create_timer(0.4).timeout  # Delay before enemy dashes
+
+			if enemy.has_method("start_pogo_counter_dash"):
+				enemy.start_pogo_counter_dash()
+
+			# ⚡ Unlock the player JUST before dash hits
+			await get_tree().create_timer(0.3).timeout
+			parried_lockout = true
+			is_locked_from_parry = false
+			print("⚡ Locked! Must parry now!!")
+			$Camera2D.shake(2.5)
+
+
+
+func launch_for_pogo_punish(enemy):
+	if is_invincible:
+		return
+
+	print("🚀 Pogo punish launched!")
+	is_invincible = true
+	is_hurt = true
+
+	# 💥 Force diagonal launch: upward + away from enemy
+	var direction = (global_position - enemy.global_position).normalized()
+	direction.y = -0.2  # Strong upward force
+	direction = direction.normalized()
+	velocity = direction * 3600  # Adjust total strength here
+
+	$AnimatedSprite2D.play("Hurt")
+	$Camera2D.shake(3.5)
+
+	# ⏳ Wait in air before locking
+	await get_tree().create_timer(1.0).timeout
+
+	# ✅ Now lock movement AFTER flying starts
+	parried_lockout = true
+	is_locked_from_parry = true
+	is_hurt = false
+
+	# Give player time to react with a parry
+	await get_tree().create_timer(0.8).timeout
+
+	if parried_lockout:
+		print("💢 Didn't parry in time!")
+		take_damage(true)
+
+	parried_lockout = false
+	is_locked_from_parry = false
+	is_invincible = false
+
+	if is_on_floor():
+		$AnimatedSprite2D.play("Idle")
+	else:
+		$AnimatedSprite2D.play("Fall")
+
+
+
 
 
 
@@ -1075,40 +1193,89 @@ func _on_attack_area_body_entered(body):
 			body.take_damage()
 
 func perform_normal_attack():
-	print("🔪 Tap attack triggered!")
+	if is_on_wall and not is_on_floor():
+		print("🚫 Can't attack while sliding or climbing wall")
+		return
 
+	var is_air_attack = not is_on_floor() and not is_on_wall
 	can_attack = false
 	attacking = true
-	$AttackTimer.start()
-	$AttackArea.monitoring = true
-	$AnimatedSprite2D.flip_h = not facing_right
 	attack_cooldown = ATTACK_COOLDOWN_TIME
+	$AttackArea.monitoring = true
+	$AttackTimer.start()
+	$AnimatedSprite2D.flip_h = not facing_right
 
-	var is_air_attack = not is_on_floor()
+	if is_air_attack and not has_air_attacked:
+		var aim_direction = (get_global_mouse_position() - global_position).normalized()
+
+		# Rotate and position AttackArea based on aim
+		$AttackArea.rotation = aim_direction.angle()
+		$AttackArea.position = aim_direction * 40
+
+		$AnimatedSprite2D.play("AirAttack1")
+
+		var angle = abs(aim_direction.angle_to(Vector2.UP))
+		var diagonal_factor = clamp(abs(cos(angle)), 0.4, 1.0)
+		var boost_strength = lerp(500, 1000, diagonal_factor)
+		velocity = aim_direction * boost_strength
+
+		combo_step = 0
+		combo_queued = false
+		has_air_attacked = true
+
+		$AttackArea.get_node("CollisionShape2D").scale = Vector2(1.5, 1.5)
+		$AttackArea.get_node("CollisionShape2D").scale = Vector2(1, 1)
+
+		await get_tree().physics_frame
+		await get_tree().physics_frame
+
+		var hit_something := false
+		for body in $AttackArea.get_overlapping_bodies():
+			print("🔍 Checking:", body.name)
+			if body.is_in_group("enemies"):
+				print("✅ Enemy hit:", body.name)
+				if body.has_method("take_damage"):
+					body.take_damage()
+					hit_something = true
+
+					var down_dot = aim_direction.dot(Vector2.DOWN)
+					var is_pogo = down_dot > 0.7
+					print("🔽 Aim dot: ", down_dot)
+
+					if is_pogo:
+						velocity.y = -1000
+						has_air_attacked = false
+						print("⬇️ POGO JUMP triggered!")
+						if has_method("on_pogo_hit_by_enemy"):
+							on_pogo_hit_by_enemy(body)
+					else:
+						velocity += -aim_direction * 2000
+						print("↩️ DIAGONAL RECOIL triggered!")
+
+		if not hit_something:
+			print("❌ Hit nothing")
+
+		return
+
+	# 🥋 GROUND COMBO ATTACK
+	$AttackArea.rotation = 0
+	$AttackArea.position = Vector2(40, 0) if facing_right else Vector2(-40, 0)
 
 	match combo_step:
 		0:
-			$AnimatedSprite2D.play("AirAttack1" if is_air_attack else "Attack")
+			$AnimatedSprite2D.play("Attack")
 		1:
-			$AnimatedSprite2D.play("AirAttack2" if is_air_attack else "Attack2")
+			$AnimatedSprite2D.play("Attack2")
 		2:
-			if is_air_attack:
-				combo_step = 0
-				combo_queued = false
-				attacking = false
-				can_attack = true
-				$AttackArea.monitoring = false
-				return  # Skip third air combo
-			else:
-				$AnimatedSprite2D.play("Attack3")
+			$AnimatedSprite2D.play("Attack3")
+
+	combo_timer = COMBO_MAX_TIME
 
 
 
 
-	combo_timer = COMBO_MAX_TIME  # Reset timer for next combo window
-
-
-	# 🌸 Razor Bloom Effects — Only activate at STYLISH or SMOKIN STYLE
+	# ✅ All the rest below only applies to **ground attacks**
+	# 🌸 Razor Bloom Effects
 	if active_charm_razor_bloom:
 		var current_rank = get_current_parry_rank()
 		if current_rank in ["STYLISH", "SMOKIN STYLE"]:
@@ -1121,7 +1288,7 @@ func perform_normal_attack():
 		else:
 			razor_bloom_combo_count = 0
 
-	# 🦶 Momentum Drive - apply dodge lockout unless charm overrides it
+	# 🦶 Momentum Drive - dodge lockout tweak
 	if active_charm_momentum_drive and parry_combo > 6:
 		dodge_lockout_timer = 0.0
 	elif active_charm_momentum_drive and parry_combo >= 3:
@@ -1129,7 +1296,7 @@ func perform_normal_attack():
 	else:
 		dodge_lockout_timer = 0.3
 
-	# 💥 Double-Edged Soul + Ghostfang Drive
+	# 💥 Charm-based bonus damage
 	for body in attack_area.get_overlapping_bodies():
 		if body.is_in_group("enemies") and body.has_method("take_damage"):
 			var final_damage = 1.0
@@ -1149,14 +1316,14 @@ func perform_normal_attack():
 
 			body.take_damage(int(final_damage))
 
-	# 🔥 Infernal Ascension shockwave — always apply during Infernal mode
+	# 🔥 Infernal Ascension shockwave — apply during Infernal mode
 	if overdrive_active and selected_overdrive_type == "infernal":
 		await get_tree().create_timer(0.1).timeout
 		var shock = shock_blast_scene.instantiate()
 		shock.global_position = global_position
 		get_tree().current_scene.add_child(shock)
 
-	# 🌀 Overdrive: Clone Echo effect
+	# 🌀 Overdrive: Clone Echo
 	if overdrive_active and overdrive_clone_echo:
 		var clone_sprite = AnimatedSprite2D.new()
 		clone_sprite.sprite_frames = $AnimatedSprite2D.sprite_frames
@@ -1188,13 +1355,13 @@ func perform_normal_attack():
 			col_shape.visible = true
 
 		for body in echo_hitbox.get_overlapping_bodies():
-			if body.is_in_group("enemies"):
-				if body.has_method("take_damage"):
-					body.take_damage(10)
+			if body.is_in_group("enemies") and body.has_method("take_damage"):
+				body.take_damage(10)
 
 		await get_tree().create_timer(1.15).timeout
 		echo_hitbox.queue_free()
 		clone_sprite.queue_free()
+
 
 
 
@@ -1584,44 +1751,79 @@ func set_deathblow_target(enemy):
 	print("🎯 Ready for Deathblow!")
 
 	
+
+
+
 func perform_deathblow():
+	is_performing_deathblow = true
+
 	if not is_instance_valid(deathblow_target) or not deathblow_target.is_inside_tree():
 		print("❌ Invalid or missing deathblow target")
+		is_performing_deathblow = false
 		return
 
 	print("🧨 Starting deathblow on:", deathblow_target.name)
 
-	# Move close to enemy
-	global_position = deathblow_target.global_position + Vector2(-30 if facing_right else 30, -10)
+	# Face the enemy
+	facing_right = deathblow_target.global_position.x > global_position.x
+	$AnimatedSprite2D.flip_h = not facing_right
+
+	# Preserve Y position depending on air/ground
+	var enemy_y = deathblow_target.global_position.y
+	var target_y = global_position.y
+
+	if not is_on_floor() and global_position.y < enemy_y - 40:
+		target_y = enemy_y - 40  # Clamp just above
+	elif is_on_floor():
+		target_y = enemy_y
+
+	var front_offset = Vector2(-40, 0) if facing_right else Vector2(40, 0)
+	var behind_offset = Vector2(500, 0) if facing_right else Vector2(-500, 0)
+
+	# Snap to front of enemy
+	global_position = Vector2(deathblow_target.global_position.x + front_offset.x, target_y)
 	velocity = Vector2.ZERO
 
-	# Stop logic
-	set_physics_process(false)
-	$AnimatedSprite2D.play("DeathBlow")
+	# Play appropriate animation
+	if not is_on_floor():
+		$AnimatedSprite2D.play("AirDeathBlow")
+	else:
+		$AnimatedSprite2D.play("DeathBlow")
+	print("✅ Now playing: ", $AnimatedSprite2D.animation)
 
-	# ✅ Just use slow motion instead of freeze_frame
-	await slow_motion(0.6, 0.1)
+	# Camera shake and quick slow motion
 	$Camera2D.shake(6.0)
+	await slow_motion(0.02, 0.02)
 
-	if "deathblow_pending" in deathblow_target:
-		deathblow_target.deathblow_pending = false
+	# Slice dash-through
+	is_deathblow_dashing = true
+	var duration := 0.15
+	var elapsed := 0.0
+	var start_pos = global_position
+	var end_pos = Vector2(deathblow_target.global_position.x + behind_offset.x, target_y)
 
+	while elapsed < duration:
+		var t = elapsed / duration
+		global_position = start_pos.lerp(end_pos, t)
+		await get_tree().process_frame
+		elapsed += get_process_delta_time()
+	global_position = end_pos
+	is_deathblow_dashing = false
+
+	# Wait for animation to finish
 	var finished := false
 	$AnimatedSprite2D.animation_finished.connect(func(): finished = true, CONNECT_ONE_SHOT)
 
-	var t := 0.0
-	while not finished and t < 1.2:
+	var t2 := 0.0
+	while not finished and t2 < 1.0:
 		await get_tree().process_frame
-		t += get_process_delta_time()
+		t2 += get_process_delta_time()
 
-	set_physics_process(true)
+	# Trigger enemy death
+	if "deathblow_pending" in deathblow_target:
+		deathblow_target.deathblow_pending = false
 
 	var target = deathblow_target
-
-	if not is_instance_valid(target):
-		deathblow_target = null
-		return
-
 	while target:
 		if target.has_method("deathblow"):
 			target.deathblow()
@@ -1633,6 +1835,12 @@ func perform_deathblow():
 
 	deathblow_target = null
 	print("💥 Executed deathblow!")
+	is_performing_deathblow = false
+
+
+
+
+
 
 
 func _on_parry_detector_area_exited(area):
