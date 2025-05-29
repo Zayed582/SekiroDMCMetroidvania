@@ -1,0 +1,43 @@
+[gd_scene load_steps=7 format=3 uid="uid://clhto2mt48uwo"]
+
+[ext_resource type="Texture2D" uid="uid://b8gkojsqohfys" path="res://Test Tiles and placeholders/Tiny RPG Character Asset Pack v1.03 -Full 20 Characters/Arrow(Projectile)/Arrow01(32x32).png" id="1_hvou3"]
+[ext_resource type="Script" uid="uid://cqijn15n7vwxq" path="res://Enemies/ArrowShooter/Projectile/arrow_projectile.gd" id="1_u66q4"]
+[ext_resource type="Script" uid="uid://cm3yesdavn8r8" path="res://NotResolvedYet/parry_tag_area.gd" id="3_8hqxq"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_qweb0"]
+size = Vector2(20, 10)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_u66q4"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8hqxq"]
+size = Vector2(26.6332, 20)
+
+[node name="ArrowProjectile" type="Area2D" groups=["parryable"]]
+scale = Vector2(10, 10)
+script = ExtResource("1_u66q4")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_hvou3")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_qweb0")
+
+[node name="AttackArea" type="Area2D" parent="."]
+scale = Vector2(0.296, 0.296)
+collision_mask = 7
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+position = Vector2(7.62939e-06, -0.337837)
+scale = Vector2(1.91892, 1.91892)
+shape = SubResource("RectangleShape2D_u66q4")
+
+[node name="ParryTagArea" type="Area2D" parent="." groups=["parryable"]]
+scale = Vector2(0.236, 0.215177)
+script = ExtResource("3_8hqxq")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="ParryTagArea"]
+position = Vector2(-0.595238, 0)
+scale = Vector2(4.73809, 4.73809)
+shape = SubResource("RectangleShape2D_8hqxq")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
