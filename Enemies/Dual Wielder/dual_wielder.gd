@@ -3,10 +3,13 @@ extends CharacterBody2D
 @export var speed := 120
 @export var gravity := 800
 @export var max_health := 4
-@export var attack_range := 150
+@export var attack_range := 200
 @export var max_posture := 1500
 @export var deathblow_window := 1.0
 var knockback_velocity := Vector2.ZERO
+var pogo_counter := 0
+const MAX_POGO_BEFORE_COUNTER := 3
+var is_pogo_dashing := false
 
 @onready var anim = $AnimatedSprite2D
 @onready var attack_area = $AttackArea
@@ -16,7 +19,7 @@ var knockback_velocity := Vector2.ZERO
 var is_dead = false
 @export var debug_id: String = "UNKNOWN"
 
-var current_health = 15
+var current_health = 999
 var current_posture := 0
 var posture_decay_timer := 0.0
 const POSTURE_DECAY_DELAY := 1.5
@@ -37,11 +40,8 @@ var attack_queue := ["Attack1", "Attack2", "Attack3"]
 var current_attack_index := 0
 
 func _ready():
-	
-
 	posture_bar.max_value = max_posture
 	posture_bar.value = current_posture
-
 	detection_area.body_entered.connect(_on_player_detected)
 	detection_area.body_exited.connect(_on_player_left)
 
@@ -49,14 +49,15 @@ func _ready():
 	(attack_area as Area2D).monitoring = false
 	(parry_area as Area2D).monitoring = false
 	add_to_group("enemies")
-	
-	
-
-
-		
-
 
 func _physics_process(delta):
+	if is_dead:
+		return
+		
+	# prevent normal movement while dashing
+	if is_pogo_dashing:
+		move_and_slide()
+		return
 	var allow_ai = not is_locked and not is_attacking and not in_deathblow_state
 
 	if allow_ai:
@@ -66,7 +67,6 @@ func _physics_process(delta):
 			current_posture = max(current_posture - POSTURE_DECAY_SPEED * delta, 0)
 			posture_bar.value = current_posture
 
-		# ✅ Look for mirage if any exists
 		var mirage = null
 		for node in get_tree().get_nodes_in_group("mirage"):
 			if node and node.is_inside_tree():
@@ -93,20 +93,83 @@ func _physics_process(delta):
 			velocity.x = 0
 			anim.play("Idle")
 
-	# ✅ Gravity always applies
 	velocity.y += gravity * delta
-
-	# ✅ Apply knockback
 	velocity += knockback_velocity
 	knockback_velocity = Vector2.ZERO
 
-	# ⛔ Prevent AI sliding mid-attack or locked
 	if is_attacking or is_locked or in_deathblow_state:
 		velocity.x = 0
 
 	move_and_slide()
 
 
+func on_pogo_hit_by_player():
+	if is_dead or in_deathblow_state:
+		return
+
+	pogo_counter += 1
+	if pogo_counter >= MAX_POGO_BEFORE_COUNTER:
+		print("🛡️ Dual Wielder is countering pogo!")
+		pogo_counter = 0
+		if player and player.has_method("launch_for_pogo_punish"):
+			player.launch_for_pogo_punish()
+			await get_tree().create_timer(0.4).timeout
+			start_pogo_counter_dash()
+
+
+func start_pogo_counter_dash():
+	if is_dead or in_deathblow_state:
+		return
+
+	print("⚔️ Dual Wielder: Counter Pogo Dash!")
+	is_attacking = true
+	is_pogo_dashing = true
+
+	await get_tree().create_timer(0.4).timeout  # small wait before dash
+
+	if is_instance_valid(player) and player.is_inside_tree():
+		var dir = (player.global_position - global_position).normalized()
+		velocity = dir * 3000
+		anim.play("AttackDash")
+
+		await get_tree().create_timer(0.5).timeout  # dash duration
+
+		if global_position.distance_to(player.global_position) < 80:
+			if player.has_method("take_damage"):
+				player.take_damage(true)
+
+	velocity = Vector2.ZERO
+	is_attacking = false
+	is_pogo_dashing = false
+
+
+
+
+
+
+
+
+
+
+
+
+func start_pogo_counter_attack():
+	if is_dead or in_deathblow_state:
+		return
+
+	print("🛡️ Dual Wielder is parrying the pogo!")
+	is_locked = true
+	anim.play("ParryCounter")
+
+	await get_tree().create_timer(0.3).timeout
+
+	# 💥 Launch the player in the air as punishment
+	if player and player.has_method("launch_for_pogo_punish"):
+		player.launch_for_pogo_punish(self)
+
+	# ⏳ Optional: delay before resuming AI
+	await get_tree().create_timer(0.6).timeout
+	is_locked = false
 
 
 
