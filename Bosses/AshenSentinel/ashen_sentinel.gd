@@ -336,13 +336,39 @@ func on_parried():
 	parry_area.monitoring = false
 	if "is_parryable" in parry_area:
 		parry_area.is_parryable = false
-
+	
+	apply_arc_motion()
 	apply_posture_damage(100)
 
 	await recover_from_parry()
 
 
 
+func apply_arc_motion():
+#	APPLY ARC MOTION
+	if !is_jumping_attack: return
+	
+	# Face direction
+	var direction = 1 if (player.global_position.x - global_position.x) > 0 else -1
+	
+	#anim.flip_h = direction < 0
+
+	# 🎬 Play backstep animation
+	anim.play("Backstep")
+	
+
+	# 📦 Arc motion: jump back with diagonal force
+	var velocity_back = Vector2(-direction * 1020, -100)
+	var timer = 0.0
+	var duration = 0.5
+
+	while timer < duration:
+		velocity = velocity_back
+		velocity.y += gravity * get_process_delta_time()
+		move_and_slide()
+		timer += get_process_delta_time()
+		await get_tree().process_frame
+	pass
 
 
 func recover_from_parry():
