@@ -221,7 +221,8 @@ func start_attack():
 	if attack_name == "JumpAttack":
 		if randf() < 0.5:
 			# 50% chance to fakeout with just a backstep
-			await perform_evade()
+			#await perform_evade()
+			pass
 		else:
 			await perform_jump_attack()
 
