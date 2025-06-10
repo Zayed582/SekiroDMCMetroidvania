@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="SekiroDMC"
-run/main_scene="uid://brqeqqysgk5jb"
+run/main_scene="uid://b0aj65tspwkne"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://assets/icons/icon.svg"
 
