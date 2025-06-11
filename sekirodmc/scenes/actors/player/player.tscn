@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://deqcnnb5n0asl"]
+[gd_scene load_steps=28 format=3 uid="uid://deqcnnb5n0asl"]
 
 [ext_resource type="Script" uid="uid://dqyy5n3uatrtc" path="res://scenes/actors/player/player.gd" id="1_l17oj"]
 [ext_resource type="Texture2D" uid="uid://d4ltavemvqyrk" path="res://assets/images/player/Shinobi Character MASK NEW.png" id="2_oj104"]
@@ -111,17 +111,73 @@ tracks/0/keys = {
 "values": [Vector2i(0, 18), Vector2i(1, 18), Vector2i(2, 18), Vector2i(3, 18), Vector2i(4, 18), Vector2i(5, 18)]
 }
 
+[sub_resource type="Animation" id="Animation_qdyt2"]
+resource_name = "jump"
+step = 0.1
+
+[sub_resource type="Animation" id="Animation_g2g7f"]
+resource_name = "idle_attack"
+length = 0.4
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_mpktj"]
 _data = {
 &"RESET": SubResource("Animation_oj104"),
 &"idle": SubResource("Animation_l17oj"),
+&"idle_attack": SubResource("Animation_g2g7f"),
+&"jump": SubResource("Animation_qdyt2"),
 &"run": SubResource("Animation_mpktj"),
 &"sprint": SubResource("Animation_yg5k4")
 }
 
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_l17oj"]
+animation = &"idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_oj104"]
+animation = &"run"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mpktj"]
+animation = &"sprint"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_5bhx7"]
+animation = &"idle_attack"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_yg5k4"]
+animation = &"sprint"
+
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_oj104"]
 
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_i174x"]
+
+[sub_resource type="AnimationNodeOneShot" id="AnimationNodeOneShot_qdyt2"]
+
 [sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_l17oj"]
+
+[sub_resource type="AnimationNodeTransition" id="AnimationNodeTransition_g2g7f"]
+input_0/name = "idle"
+input_0/auto_advance = false
+input_0/break_loop_at_end = false
+input_0/reset = true
+input_1/name = "run"
+input_1/auto_advance = false
+input_1/break_loop_at_end = false
+input_1/reset = true
+input_2/name = "sprint"
+input_2/auto_advance = false
+input_2/break_loop_at_end = false
+input_2/reset = true
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_qdyt2"]
 animation = &"idle"
@@ -133,19 +189,35 @@ animation = &"run"
 animation = &"sprint"
 
 [sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_5bhx7"]
-graph_offset = Vector2(-416.962, 4.54928)
+graph_offset = Vector2(-964.923, 52.2896)
+nodes/Animation/node = SubResource("AnimationNodeAnimation_yg5k4")
+nodes/Animation/position = Vector2(200, 450)
+"nodes/Animation 2/node" = SubResource("AnimationNodeAnimation_l17oj")
+"nodes/Animation 2/position" = Vector2(-1190, 190)
+"nodes/Animation 3/node" = SubResource("AnimationNodeAnimation_oj104")
+"nodes/Animation 3/position" = Vector2(-890, 470)
+"nodes/Animation 4/node" = SubResource("AnimationNodeAnimation_mpktj")
+"nodes/Animation 4/position" = Vector2(-696.553, 582.249)
+"nodes/Animation 5/node" = SubResource("AnimationNodeAnimation_5bhx7")
+"nodes/Animation 5/position" = Vector2(-1260, 440)
 "nodes/Idle Blend/node" = SubResource("AnimationNodeBlend2_oj104")
 "nodes/Idle Blend/position" = Vector2(210, 80)
+nodes/OneShot/node = SubResource("AnimationNodeOneShot_qdyt2")
+nodes/OneShot/position = Vector2(410, 330)
+"nodes/OneShot 2/node" = SubResource("AnimationNodeOneShot_i174x")
+"nodes/OneShot 2/position" = Vector2(-900, 120)
 "nodes/Run Blend/node" = SubResource("AnimationNodeBlend2_l17oj")
 "nodes/Run Blend/position" = Vector2(0, 400)
+nodes/Transition/node = SubResource("AnimationNodeTransition_g2g7f")
+nodes/Transition/position = Vector2(-620, 140)
 "nodes/anim idle/node" = SubResource("AnimationNodeAnimation_qdyt2")
 "nodes/anim idle/position" = Vector2(-260, 90)
 "nodes/anim run/node" = SubResource("AnimationNodeAnimation_g2g7f")
 "nodes/anim run/position" = Vector2(-260, 270)
 "nodes/anim sprint/node" = SubResource("AnimationNodeAnimation_fp13k")
 "nodes/anim sprint/position" = Vector2(-260, 460)
-nodes/output/position = Vector2(470, 190)
-node_connections = [&"Idle Blend", 0, &"anim idle", &"Idle Blend", 1, &"Run Blend", &"Run Blend", 0, &"anim run", &"Run Blend", 1, &"anim sprint", &"output", 0, &"Idle Blend"]
+nodes/output/position = Vector2(620, 220)
+node_connections = [&"Idle Blend", 0, &"anim idle", &"Idle Blend", 1, &"Run Blend", &"OneShot", 0, &"Idle Blend", &"OneShot", 1, &"Animation", &"OneShot 2", 0, &"Animation 2", &"OneShot 2", 1, &"Animation 5", &"Run Blend", 0, &"anim run", &"Run Blend", 1, &"anim sprint", &"Transition", 0, &"OneShot 2", &"Transition", 1, &"Animation 3", &"Transition", 2, &"Animation 4", &"output", 0, &"Transition"]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_i174x"]
 advance_mode = 2
@@ -154,6 +226,12 @@ advance_mode = 2
 states/Movement/node = SubResource("AnimationNodeBlendTree_5bhx7")
 states/Movement/position = Vector2(419, 184.5)
 transitions = ["Start", "Movement", SubResource("AnimationNodeStateMachineTransition_i174x")]
+
+[sub_resource type="LabelSettings" id="LabelSettings_l17oj"]
+font_size = 24
+font_color = Color(0, 0, 0, 1)
+outline_size = 2
+outline_color = Color(0, 0, 0, 1)
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_l17oj")
@@ -180,4 +258,30 @@ callback_mode_discrete = 1
 tree_root = SubResource("AnimationNodeStateMachine_oj104")
 anim_player = NodePath("../AnimationPlayer")
 "parameters/Movement/Idle Blend/blend_amount" = 0.0
+parameters/Movement/OneShot/active = false
+parameters/Movement/OneShot/internal_active = false
+parameters/Movement/OneShot/request = 0
+"parameters/Movement/OneShot 2/active" = false
+"parameters/Movement/OneShot 2/internal_active" = false
+"parameters/Movement/OneShot 2/request" = 0
 "parameters/Movement/Run Blend/blend_amount" = 0.0
+parameters/Movement/Transition/current_state = "run"
+parameters/Movement/Transition/transition_request = ""
+parameters/Movement/Transition/current_index = 1
+
+[node name="DebugLabel" type="Label" parent="."]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -28.0
+offset_top = -123.5
+offset_right = 28.0
+offset_bottom = -100.5
+grow_horizontal = 2
+grow_vertical = 2
+text = "IDLE"
+label_settings = SubResource("LabelSettings_l17oj")
+horizontal_alignment = 1
+vertical_alignment = 1
