@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://deqcnnb5n0asl"]
+[gd_scene load_steps=17 format=3 uid="uid://deqcnnb5n0asl"]
 
 [ext_resource type="Script" uid="uid://dqyy5n3uatrtc" path="res://scenes/actors/player/player.gd" id="1_l17oj"]
 [ext_resource type="Texture2D" uid="uid://d4ltavemvqyrk" path="res://assets/images/player/Shinobi Character MASK NEW.png" id="2_oj104"]
@@ -93,37 +93,67 @@ tracks/1/keys = {
 "values": [Vector2i(0, 0)]
 }
 
+[sub_resource type="Animation" id="Animation_yg5k4"]
+resource_name = "sprint"
+length = 0.6
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 18), Vector2i(1, 18), Vector2i(2, 18), Vector2i(3, 18), Vector2i(4, 18), Vector2i(5, 18)]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_mpktj"]
 _data = {
 &"RESET": SubResource("Animation_oj104"),
 &"idle": SubResource("Animation_l17oj"),
-&"run": SubResource("Animation_mpktj")
+&"run": SubResource("Animation_mpktj"),
+&"sprint": SubResource("Animation_yg5k4")
 }
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_l17oj"]
-animation = &"run"
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_oj104"]
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_oj104"]
-animation = &"run"
+[sub_resource type="AnimationNodeBlend2" id="AnimationNodeBlend2_l17oj"]
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mpktj"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_qdyt2"]
 animation = &"idle"
 
-[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_yg5k4"]
-blend_point_0/node = SubResource("AnimationNodeAnimation_l17oj")
-blend_point_0/pos = -1.0
-blend_point_1/node = SubResource("AnimationNodeAnimation_oj104")
-blend_point_1/pos = 1.0
-blend_point_2/node = SubResource("AnimationNodeAnimation_mpktj")
-blend_point_2/pos = 0.0
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_g2g7f"]
+animation = &"run"
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_qdyt2"]
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_fp13k"]
+animation = &"sprint"
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_5bhx7"]
+graph_offset = Vector2(-416.962, 4.54928)
+"nodes/Idle Blend/node" = SubResource("AnimationNodeBlend2_oj104")
+"nodes/Idle Blend/position" = Vector2(210, 80)
+"nodes/Run Blend/node" = SubResource("AnimationNodeBlend2_l17oj")
+"nodes/Run Blend/position" = Vector2(0, 400)
+"nodes/anim idle/node" = SubResource("AnimationNodeAnimation_qdyt2")
+"nodes/anim idle/position" = Vector2(-260, 90)
+"nodes/anim run/node" = SubResource("AnimationNodeAnimation_g2g7f")
+"nodes/anim run/position" = Vector2(-260, 270)
+"nodes/anim sprint/node" = SubResource("AnimationNodeAnimation_fp13k")
+"nodes/anim sprint/position" = Vector2(-260, 460)
+nodes/output/position = Vector2(470, 190)
+node_connections = [&"Idle Blend", 0, &"anim idle", &"Idle Blend", 1, &"Run Blend", &"Run Blend", 0, &"anim run", &"Run Blend", 1, &"anim sprint", &"output", 0, &"Idle Blend"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_i174x"]
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_oj104"]
-states/move/node = SubResource("AnimationNodeBlendSpace1D_yg5k4")
-states/move/position = Vector2(477.5, 111.5)
-transitions = ["Start", "move", SubResource("AnimationNodeStateMachineTransition_qdyt2")]
+states/Movement/node = SubResource("AnimationNodeBlendTree_5bhx7")
+states/Movement/position = Vector2(419, 184.5)
+transitions = ["Start", "Movement", SubResource("AnimationNodeStateMachineTransition_i174x")]
 
 [node name="Player" type="CharacterBody2D"]
 script = ExtResource("1_l17oj")
@@ -149,4 +179,5 @@ libraries = {
 callback_mode_discrete = 1
 tree_root = SubResource("AnimationNodeStateMachine_oj104")
 anim_player = NodePath("../AnimationPlayer")
-parameters/move/blend_position = 0
+"parameters/Movement/Idle Blend/blend_amount" = 0.0
+"parameters/Movement/Run Blend/blend_amount" = 0.0
