@@ -1,12 +1,19 @@
-[gd_scene load_steps=5 format=3 uid="uid://b0aj65tspwkne"]
+[gd_scene load_steps=10 format=3 uid="uid://b0aj65tspwkne"]
 
 [ext_resource type="Texture2D" uid="uid://t47r48p37iun" path="res://assets/images/blockout_texture.png" id="1_hla62"]
 [ext_resource type="PackedScene" uid="uid://deqcnnb5n0asl" path="res://scenes/actors/player/player.tscn" id="2_cqb0r"]
+[ext_resource type="Script" uid="uid://85wqyhk51a1i" path="res://scripts/Debug.gd" id="2_p5kol"]
+[ext_resource type="Script" uid="uid://d24firwlfirrp" path="res://scripts/camera_2d.gd" id="3_fmflo"]
+[ext_resource type="PackedScene" uid="uid://bl6k4ubkub6q6" path="res://scenes/gui/gameover_menu/gameover_menu.tscn" id="3_wiveh"]
+[ext_resource type="PackedScene" uid="uid://6t5562wtp0q7" path="res://scenes/actors/enemy/turret/turret_enemy.tscn" id="4_do1up"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_hla62"]
 font_size = 26
+
+[sub_resource type="LabelSettings" id="LabelSettings_fmflo"]
+font_size = 26
 font_color = Color(0, 0, 0, 1)
-outline_size = 3
+outline_size = 2
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p8pvt"]
@@ -37,13 +44,72 @@ expand_mode = 1
 stretch_mode = 1
 metadata/_edit_lock_ = true
 
-[node name="Label" type="Label" parent="Background"]
-offset_left = 16.0
-offset_top = 8.0
-offset_right = 233.0
-offset_bottom = 53.0
+[node name="MarginContainer" type="MarginContainer" parent="Background"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 36.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+script = ExtResource("2_p5kol")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Background/MarginContainer"]
+layout_mode = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Background/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(800, 0)
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Background/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
 text = "[ TEST SCENE ] - MOCK TEST GROUND"
 label_settings = SubResource("LabelSettings_hla62")
+
+[node name="PlayerLabel" type="Label" parent="Background/MarginContainer/HBoxContainer/VBoxContainer"]
+layout_mode = 2
+text = "PLAYER STATES - "
+label_settings = SubResource("LabelSettings_hla62")
+
+[node name="Control" type="Control" parent="Background/MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="PlayerLabel2" type="RichTextLabel" parent="Background/MarginContainer/HBoxContainer/VBoxContainer"]
+custom_minimum_size = Vector2(0, 200)
+layout_mode = 2
+theme_override_font_sizes/bold_italics_font_size = 24
+theme_override_font_sizes/italics_font_size = 24
+theme_override_font_sizes/mono_font_size = 24
+theme_override_font_sizes/normal_font_size = 24
+theme_override_font_sizes/bold_font_size = 24
+bbcode_enabled = true
+text = "RUN - JUMP"
+autowrap_mode = 2
+language = "a"
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="Background/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Label" type="Label" parent="Background/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "PLAYER CONTROLS"
+label_settings = SubResource("LabelSettings_fmflo")
+horizontal_alignment = 2
+
+[node name="Label2" type="Label" parent="Background/MarginContainer/HBoxContainer/VBoxContainer2"]
+layout_mode = 2
+text = "LEFT MOUSE - PRIMARY ATTACK
+RIGHT MOUSE - SECONDARY ATTACK (*CHARGE ATTACK)
+SPACE - JUMP
+SHIFT - BLOCK/PARRY
+LEFT/RIGHT - MOVE/SPRINT"
+label_settings = SubResource("LabelSettings_fmflo")
+horizontal_alignment = 2
+
+[node name="GameoverMenu" parent="Background" instance=ExtResource("3_wiveh")]
 
 [node name="Ground" type="StaticBody2D" parent="."]
 position = Vector2(0, 1080)
@@ -69,6 +135,11 @@ shape = SubResource("RectangleShape2D_p8pvt")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
+script = ExtResource("3_fmflo")
 
 [node name="Player" parent="." instance=ExtResource("2_cqb0r")]
 position = Vector2(479, 738)
+
+[node name="TurretEnemy" parent="." instance=ExtResource("4_do1up")]
+position = Vector2(1360, 795)
+scale = Vector2(-1, 1)
