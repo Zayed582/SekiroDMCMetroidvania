@@ -7,6 +7,7 @@ extends CharacterBody2D
 @onready var combo_timer = $Timers/ComboTimer
 @onready var parry_timer = $Timers/ParryTimer
 @onready var areas = $Areas
+@onready var player_collision_shape = $CollisionShape2D
 
 enum {
 	IDLE,
@@ -19,7 +20,9 @@ enum {
 	PARRY,
 	BLOCK,
 	BLOCK_HIT,
-	CAN_PARRY
+	CAN_PARRY,
+	HURT,
+	DEAD
 }
 
 var state_label = {
@@ -33,14 +36,18 @@ var state_label = {
 	PARRY: "PARRY",
 	BLOCK: "BLOCK",
 	BLOCK_HIT: "BLOCK_HIT",
-	CAN_PARRY: "CAN_PARRY"
+	CAN_PARRY: "CAN_PARRY",
+	HURT: "HURT",
+	DEAD: "DEAD"
 }
 
-const RUN_SPEED = 300.0
+const RUN_SPEED = 350.0
 const SPRINT_SPEED = 500.0
-const JUMP_VELOCITY = -450.0
+const DECELERATION_SPEED = 1600
+const JUMP_VELOCITY = -800.0
 const MIN_COMBO_TIME = 0
 const MAX_COMBO_TIME = 3
+const GRAVITY = 1300
 
 const ATTACK_MOVEMENT_MAX_SPEED = 1
 var direction = 0
@@ -95,7 +102,7 @@ func handle_state_animations():
 
 func handle_gravity(delta):
 	if not is_on_floor():
-		velocity += get_gravity() * delta
+		velocity.y += GRAVITY * delta
 		anim_tree.set("parameters/Jump/blend_position", sign(velocity.y))
 
 	#Reset animation to idle
@@ -109,6 +116,12 @@ func handle_gravity(delta):
 
 func handle_jump():
 	if stop_process: return
+	
+	
+	if Input.is_action_just_released("jump") or is_on_ceiling():
+		if velocity.y < 0: velocity.y *= 0.6
+		pass
+	
 	if !is_on_floor(): return
 
 	if Input.is_action_just_pressed("jump"):
@@ -131,7 +144,7 @@ func handle_run(delta):
 		handle_sprite_flip(direction)
 	else:
 		sprint_time = 0
-		velocity.x = move_toward(velocity.x, 0, move_speed)
+		velocity.x = move_toward(velocity.x, 0, DECELERATION_SPEED * delta)
 		if is_on_floor(): set_state(IDLE)
 	
 	if !is_on_floor(): return
@@ -171,7 +184,7 @@ func handle_attack():
 		pass
 
 func set_movement_speed_on_attack():
-	velocity.x = velocity.x * 0.8
+	velocity.x = velocity.x * 0.3
 	pass
 
 func stop_movement():
@@ -281,14 +294,34 @@ func take_damage(damage):
 	health -= damage
 	if health <= 0:
 		state_machine.travel("hurt")
-		await get_tree().create_timer(0.1).timeout
-		queue_free()
+		await get_tree().process_frame
+		state_machine.travel("End")
+		handle_death()
+		await get_tree().create_timer(2).timeout
 		GameManager.emit_signal("gameover")
 		pass
 	else:
+		stop_process = true
 		state_machine.travel("hurt")
+		set_state(HURT)
+		await get_tree().create_timer(0.2).timeout
+		stop_process = false
 		pass
 	
+	pass
+
+func handle_death():
+	set_process(false)
+	set_physics_process(false)
+	player_collision_shape.disabled = true
+	
+	for area in areas.get_children():
+		area.set_deferred("monitoring", false)
+		area.set_deferred("monitorable", false)
+		pass
+	
+	
+	set_state(DEAD)
 	pass
 
 func _on_combo_timer_timeout():

@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://b0aj65tspwkne"]
+[gd_scene load_steps=11 format=3 uid="uid://b0aj65tspwkne"]
 
 [ext_resource type="Texture2D" uid="uid://t47r48p37iun" path="res://assets/images/blockout_texture.png" id="1_hla62"]
 [ext_resource type="PackedScene" uid="uid://deqcnnb5n0asl" path="res://scenes/actors/player/player.tscn" id="2_cqb0r"]
@@ -18,6 +18,9 @@ outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_p8pvt"]
 size = Vector2(1934, 254)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wiveh"]
+size = Vector2(160, 32)
 
 [node name="TestGround" type="Node2D"]
 
@@ -112,7 +115,8 @@ horizontal_alignment = 2
 [node name="GameoverMenu" parent="Background" instance=ExtResource("3_wiveh")]
 
 [node name="Ground" type="StaticBody2D" parent="."]
-position = Vector2(0, 1080)
+position = Vector2(-1200, 1080)
+scale = Vector2(2, 1)
 metadata/_edit_group_ = true
 
 [node name="ColorRect" type="ColorRect" parent="Ground"]
@@ -135,11 +139,56 @@ shape = SubResource("RectangleShape2D_p8pvt")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 anchor_mode = 0
+enabled = false
 script = ExtResource("3_fmflo")
-
-[node name="Player" parent="." instance=ExtResource("2_cqb0r")]
-position = Vector2(479, 738)
 
 [node name="TurretEnemy" parent="." instance=ExtResource("4_do1up")]
 position = Vector2(1360, 795)
 scale = Vector2(-1, 1)
+
+[node name="Platform" type="StaticBody2D" parent="."]
+position = Vector2(280, 736)
+metadata/_edit_group_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Platform"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -16.0
+offset_right = 80.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform"]
+shape = SubResource("RectangleShape2D_wiveh")
+one_way_collision = true
+
+[node name="Platform2" type="StaticBody2D" parent="."]
+position = Vector2(472, 616)
+metadata/_edit_group_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Platform2"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -16.0
+offset_right = 80.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2"]
+shape = SubResource("RectangleShape2D_wiveh")
+one_way_collision = true
+
+[node name="Player" parent="." instance=ExtResource("2_cqb0r")]
+position = Vector2(479, 738)
