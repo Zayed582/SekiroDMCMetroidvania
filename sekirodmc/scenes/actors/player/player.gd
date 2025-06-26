@@ -8,6 +8,9 @@ extends CharacterBody2D
 @onready var parry_timer = $Timers/ParryTimer
 @onready var areas = $Areas
 @onready var player_collision_shape = $CollisionShape2D
+@onready var charge_cooldown_timer = $Timers/ChargeCooldownTimer
+@onready var dash_timer = $Timers/DashTimer
+@onready var hurt_area = $Areas/HurtArea
 
 enum {
 	IDLE,
@@ -22,7 +25,11 @@ enum {
 	BLOCK_HIT,
 	CAN_PARRY,
 	HURT,
-	DEAD
+	DEAD,
+	CHARGE_ATTACK,
+	DASH,
+	WALL_CLING,
+	WALL_SLIDE
 }
 
 var state_label = {
@@ -38,30 +45,48 @@ var state_label = {
 	BLOCK_HIT: "BLOCK_HIT",
 	CAN_PARRY: "CAN_PARRY",
 	HURT: "HURT",
-	DEAD: "DEAD"
+	DEAD: "DEAD",
+	CHARGE_ATTACK: "CHARGE_ATTACK",
+	DASH: "DASH",
+	WALL_CLING: "WALL_CLING",
+	WALL_SLIDE: "WALL_SLIDE"
 }
 
 const RUN_SPEED = 350.0
 const SPRINT_SPEED = 500.0
 const DECELERATION_SPEED = 1600
+const DASH_SPEED = 2000
 const JUMP_VELOCITY = -800.0
+const WALL_JUMP_VELOCITY = Vector2(950, -800)
 const MIN_COMBO_TIME = 0
 const MAX_COMBO_TIME = 3
 const GRAVITY = 1300
+const MAX_CHARGE_MOVEMENT_SPEED = 1100
+const MIN_CHARGE_MOVEMENT_SPEED = 400
+const CHARGE_MOVEMENT_INCR = 5
+const MAX_JUMPS = 2
+const WALL_STICK_FORCE = 10
 
 const ATTACK_MOVEMENT_MAX_SPEED = 1
 var direction = 0
+var last_direction = 0
 var move_speed = 300
 var sprint_time = 0
 var sprint_activation_time = 2
 var combo_time = 0
 var health = 3
+var charge_movement_speed = 400
+var jump_count = 0
+
 
 
 var is_blocking = false
 var stop_process = false
 var can_parry = false
 var jumped = false
+var can_use_charge_attack = true
+var is_charge_attacking = false
+var is_on_wall_bool = false
 
 #KNOCKBACK
 @export var knockback_force := 300.0
@@ -82,6 +107,8 @@ func _physics_process(delta):
 	handle_attack()
 	handle_state_animations()
 	handle_block()
+	handle_dash()
+	handle_wall_mechanics()
 	move_and_slide()
 
 func handle_movement(delta):
@@ -101,14 +128,15 @@ func handle_state_animations():
 	pass
 
 func handle_gravity(delta):
-	if not is_on_floor():
+	if not is_on_floor() and state != DASH:
 		velocity.y += GRAVITY * delta
 		anim_tree.set("parameters/Jump/blend_position", sign(velocity.y))
 
 	#Reset animation to idle
-	if is_on_floor() and state == JUMP:
+	if is_on_floor() and (state == JUMP or state == WALL_CLING or state == WALL_SLIDE):
 		set_state(IDLE)
 		state_machine.travel("Movement")
+		jump_count = 0
 		pass
 	
 	anim_tree.set("parameters/conditions/on_floor",is_on_floor())
@@ -117,17 +145,20 @@ func handle_gravity(delta):
 func handle_jump():
 	if stop_process: return
 	
-	
+	# Handle variations in jump height
 	if Input.is_action_just_released("jump") or is_on_ceiling():
 		if velocity.y < 0: velocity.y *= 0.6
 		pass
 	
-	if !is_on_floor(): return
+	if jump_count >= MAX_JUMPS: return
 
 	if Input.is_action_just_pressed("jump"):
 		velocity.y = JUMP_VELOCITY
-		state_machine.travel("Jump")
+		if jump_count == 1:
+			state_machine.travel("backflip")
+		else: state_machine.travel("Jump")
 		anim_tree.set("parameters/Jump/blend_position", sign(velocity.y))
+		jump_count += 1
 		await get_tree().process_frame
 		set_state(JUMP)
 	pass
@@ -139,6 +170,7 @@ func handle_run(delta):
 	if [ATTACK_1, ATTACK_2, ATTACK_3].has(state): return
 
 	if direction:
+		last_direction = direction
 		sprint_time += delta
 		velocity.x = direction * move_speed
 		handle_sprite_flip(direction)
@@ -177,11 +209,88 @@ func handle_attack():
 		if combo_time == MAX_COMBO_TIME:
 			combo_time = MIN_COMBO_TIME
 	
-	if Input.is_action_just_pressed("attack_2"):
-		combo_time = MAX_COMBO_TIME - 1
-		set_movement_speed_on_attack()
-		attack()
+	if Input.is_action_pressed("attack_2"):
+		if can_use_charge_attack:
+			charge_movement_speed = clamp(charge_movement_speed + CHARGE_MOVEMENT_INCR, MIN_CHARGE_MOVEMENT_SPEED, MAX_CHARGE_MOVEMENT_SPEED)
+		velocity.x = 0
+		
+	if Input.is_action_just_pressed("attack_2") and can_use_charge_attack:
+		state_machine.travel("charge")
+		charge_movement_speed = MIN_CHARGE_MOVEMENT_SPEED
+		is_charge_attacking = true
+
+	if Input.is_action_just_released("attack_2") and can_use_charge_attack and is_charge_attacking:
+		state_machine.travel("charge_attack")
+		handle_charge_attack()
+		set_state(IDLE)
+		
+		charge_cooldown_timer.start()
+		can_use_charge_attack = false
+		is_charge_attacking = false
 		pass
+
+func handle_charge_attack():
+	velocity.x += charge_movement_speed * last_direction
+	pass
+
+func handle_dash():
+	if Input.is_action_just_pressed("dash"):
+		velocity.x = DASH_SPEED * last_direction
+		velocity.y = 0
+		
+		set_state(DASH)
+		dash_timer.start()
+		state_machine.travel("dash")
+		var dash_anim = "dash" if is_on_floor() else "air_dash"
+		anim_tree.set("parameters/dash/Transition/transition_request", dash_anim)
+		stop_process = true
+		hurt_area.monitoring = false
+		pass
+	
+	pass
+
+func handle_wall_mechanics():
+	# WALL SLIDE
+	anim_tree.set("parameters/conditions/is_on_wall", !is_on_wall_only())
+	if is_on_wall_only():
+		velocity.x += WALL_STICK_FORCE * last_direction
+		if Input.is_action_pressed("wall_cling"):
+			velocity.y = 0
+			state_machine.travel("wall_slide")
+			set_state(WALL_CLING)
+			pass
+		else:
+			velocity.y *= 0.9
+			state_machine.travel("wall_slide")
+			set_state(WALL_SLIDE)
+		pass
+		
+		if !is_on_wall_bool:
+			jump_count = 0
+			is_on_wall_bool = true
+			
+	else:
+		if is_on_wall_bool:
+			#jump_count = 0
+			is_on_wall_bool = false
+	
+	if jump_count >= MAX_JUMPS: return
+	
+	if Input.is_action_just_pressed("jump") and is_on_wall_only():
+		handle_sprite_flip(-last_direction)
+		var new_velocity_x = WALL_JUMP_VELOCITY.x * -last_direction
+		last_direction = -last_direction
+		velocity.y = WALL_JUMP_VELOCITY.y
+		velocity.x += new_velocity_x
+		if jump_count > 1:
+			state_machine.travel("backflip")
+		else: state_machine.travel("Jump")
+		#jump_count = 0
+		anim_tree.set("parameters/Jump/blend_position", sign(velocity.y))
+		await get_tree().process_frame
+		set_state(JUMP)
+	
+	pass
 
 func set_movement_speed_on_attack():
 	velocity.x = velocity.x * 0.3
@@ -219,6 +328,8 @@ func handle_sprite_flip(dir: int):
 	pass
 
 func handle_block():
+	if is_on_wall_only(): return
+	
 	if Input.is_action_just_pressed("block"):
 		state_machine.travel("block")
 		stop_process = true
@@ -330,19 +441,27 @@ func _on_combo_timer_timeout():
 		combo_timer.stop()
 	pass # Replace with function body.
 
-
 func _on_block_area_area_entered(area):
 	handle_projectile_block(area)
 	pass # Replace with function body.
-
 
 func _on_parry_timer_timeout():
 	can_parry = false
 	set_state(BLOCK)
 	pass # Replace with function body.
 
-
-
 func _on_hurt_area_area_entered(area):
 	handle_take_damage(area)
+	pass # Replace with function body.
+
+func _on_charge_cooldown_timer_timeout():
+	can_use_charge_attack = true
+	pass # Replace with function body.
+
+func _on_dash_timer_timeout():
+	stop_process = false
+	set_state(IDLE)
+	state_machine.travel("Movement")
+	hurt_area.monitoring = true
+	velocity.x = 0
 	pass # Replace with function body.
