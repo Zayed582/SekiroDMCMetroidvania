@@ -11,6 +11,7 @@ extends CharacterBody2D
 @onready var charge_cooldown_timer = $Timers/ChargeCooldownTimer
 @onready var dash_timer = $Timers/DashTimer
 @onready var hurt_area = $Areas/HurtArea
+@onready var wall_jump_cooldown_timer = $Timers/WallJumpCooldownTimer
 
 enum {
 	IDLE,
@@ -57,7 +58,7 @@ const SPRINT_SPEED = 500.0
 const DECELERATION_SPEED = 1600
 const DASH_SPEED = 2000
 const JUMP_VELOCITY = -800.0
-const WALL_JUMP_VELOCITY = Vector2(950, -800)
+const WALL_JUMP_VELOCITY = Vector2(1000, -800)
 const MIN_COMBO_TIME = 0
 const MAX_COMBO_TIME = 3
 const GRAVITY = 1300
@@ -65,7 +66,7 @@ const MAX_CHARGE_MOVEMENT_SPEED = 1100
 const MIN_CHARGE_MOVEMENT_SPEED = 400
 const CHARGE_MOVEMENT_INCR = 5
 const MAX_JUMPS = 2
-const WALL_STICK_FORCE = 10
+const WALL_STICK_FORCE = 20
 
 const ATTACK_MOVEMENT_MAX_SPEED = 1
 var direction = 0
@@ -78,15 +79,15 @@ var health = 3
 var charge_movement_speed = 400
 var jump_count = 0
 
-
-
 var is_blocking = false
 var stop_process = false
+var can_move = true
 var can_parry = false
 var jumped = false
 var can_use_charge_attack = true
 var is_charge_attacking = false
 var is_on_wall_bool = false
+var reset_jump_count = false
 
 #KNOCKBACK
 @export var knockback_force := 300.0
@@ -118,6 +119,8 @@ func handle_movement(delta):
 	pass
 
 func handle_state_animations():
+	if is_on_wall(): return
+	
 	match state:
 		IDLE:
 			anim_tree.set("parameters/Movement/Transition/transition_request", "idle")
@@ -133,10 +136,13 @@ func handle_gravity(delta):
 		anim_tree.set("parameters/Jump/blend_position", sign(velocity.y))
 
 	#Reset animation to idle
-	if is_on_floor() and (state == JUMP or state == WALL_CLING or state == WALL_SLIDE):
-		set_state(IDLE)
-		state_machine.travel("Movement")
+	if is_on_floor() and !is_on_wall() and reset_jump_count:
+		
+		if !is_charge_attacking:
+			set_state(IDLE)
+			state_machine.travel("Movement")
 		jump_count = 0
+		reset_jump_count = false
 		pass
 	
 	anim_tree.set("parameters/conditions/on_floor",is_on_floor())
@@ -159,6 +165,7 @@ func handle_jump():
 		else: state_machine.travel("Jump")
 		anim_tree.set("parameters/Jump/blend_position", sign(velocity.y))
 		jump_count += 1
+		reset_jump_count = true
 		await get_tree().process_frame
 		set_state(JUMP)
 	pass
@@ -171,6 +178,7 @@ func handle_run(delta):
 
 	if direction:
 		last_direction = direction
+		if !can_move: return
 		sprint_time += delta
 		velocity.x = direction * move_speed
 		handle_sprite_flip(direction)
@@ -188,6 +196,8 @@ func handle_run(delta):
 
 func handle_sprint():
 	if stop_process: return
+	if is_on_wall(): return
+	
 	if is_on_floor():
 		if sprint_time > sprint_activation_time:
 			set_state(SPRINT)
@@ -234,6 +244,8 @@ func handle_charge_attack():
 	pass
 
 func handle_dash():
+	if is_on_wall(): return
+
 	if Input.is_action_just_pressed("dash"):
 		velocity.x = DASH_SPEED * last_direction
 		velocity.y = 0
@@ -256,25 +268,22 @@ func handle_wall_mechanics():
 		velocity.x += WALL_STICK_FORCE * last_direction
 		if Input.is_action_pressed("wall_cling"):
 			velocity.y = 0
-			state_machine.travel("wall_slide")
 			set_state(WALL_CLING)
 			pass
 		else:
 			velocity.y *= 0.9
-			state_machine.travel("wall_slide")
 			set_state(WALL_SLIDE)
 		pass
 		
 		if !is_on_wall_bool:
-			jump_count = 0
+			state_machine.travel("wall_slide")
 			is_on_wall_bool = true
 			
 	else:
 		if is_on_wall_bool:
-			#jump_count = 0
 			is_on_wall_bool = false
 	
-	if jump_count >= MAX_JUMPS: return
+	if jump_count > MAX_JUMPS: return
 	
 	if Input.is_action_just_pressed("jump") and is_on_wall_only():
 		handle_sprite_flip(-last_direction)
@@ -282,10 +291,11 @@ func handle_wall_mechanics():
 		last_direction = -last_direction
 		velocity.y = WALL_JUMP_VELOCITY.y
 		velocity.x += new_velocity_x
-		if jump_count > 1:
-			state_machine.travel("backflip")
-		else: state_machine.travel("Jump")
-		#jump_count = 0
+		state_machine.travel("Jump")
+		jump_count = 1
+		reset_jump_count = true
+		can_move = false
+		wall_jump_cooldown_timer.start()
 		anim_tree.set("parameters/Jump/blend_position", sign(velocity.y))
 		await get_tree().process_frame
 		set_state(JUMP)
@@ -459,9 +469,19 @@ func _on_charge_cooldown_timer_timeout():
 	pass # Replace with function body.
 
 func _on_dash_timer_timeout():
+	if is_on_wall(): 
+		stop_process = false
+		return
+
 	stop_process = false
 	set_state(IDLE)
 	state_machine.travel("Movement")
 	hurt_area.monitoring = true
 	velocity.x = 0
+	pass # Replace with function body.
+
+
+func _on_wall_jump_cooldown_timer_timeout():
+	print("cooldown ended")
+	can_move = true
 	pass # Replace with function body.
