@@ -209,6 +209,8 @@ func handle_sprint():
 
 func handle_attack():
 	if stop_process: return
+	if is_on_wall_only(): return
+	
 	if Input.is_action_just_pressed("attack_1"):
 		set_movement_speed_on_attack()
 		attack()
@@ -482,6 +484,5 @@ func _on_dash_timer_timeout():
 
 
 func _on_wall_jump_cooldown_timer_timeout():
-	print("cooldown ended")
 	can_move = true
 	pass # Replace with function body.
