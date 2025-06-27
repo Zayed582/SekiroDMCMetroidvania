@@ -1,14 +1,15 @@
-[gd_scene load_steps=10 format=3 uid="uid://6t5562wtp0q7"]
+[gd_scene load_steps=11 format=3 uid="uid://6t5562wtp0q7"]
 
 [ext_resource type="Texture2D" uid="uid://bi07hksc3frpg" path="res://assets/images/enemies/turret/turret-sprites-deployment.png" id="1_ckrq5"]
 [ext_resource type="Script" uid="uid://cx8hq5j0wna23" path="res://scenes/actors/enemy/turret/turret_enemy.gd" id="1_xqlo1"]
+[ext_resource type="PackedScene" uid="uid://cmhayca7kshmf" path="res://scenes/components/parry_meter/parry_meter.tscn" id="3_bpnds"]
 
 [sub_resource type="Animation" id="Animation_bpnds"]
 length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/path = NodePath("Body/Sprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -20,26 +21,26 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("HurtBox/CollisionShape2D:shape:size")
+tracks/1/path = NodePath("Areas/HurtBox/CollisionShape2D:shape:size")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(20, 63)]
+"values": [Vector2(20, 68)]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("HurtBox/CollisionShape2D:position")
+tracks/2/path = NodePath("Areas/HurtBox/CollisionShape2D:position")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
 "update": 0,
-"values": [Vector2(0, 2.5)]
+"values": [Vector2(0, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_xqlo1"]
@@ -48,7 +49,7 @@ length = 0.27
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:frame")
+tracks/0/path = NodePath("Body/Sprite2D:frame")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -60,26 +61,26 @@ tracks/0/keys = {
 tracks/1/type = "value"
 tracks/1/imported = false
 tracks/1/enabled = true
-tracks/1/path = NodePath("HurtBox/CollisionShape2D:shape:size")
+tracks/1/path = NodePath("Areas/HurtBox/CollisionShape2D:position")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.27),
+"times": PackedFloat32Array(0, 0.133333),
 "transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(20, 63), Vector2(20, 131)]
+"update": 1,
+"values": [Vector2(0, 0), Vector2(0, -31.5)]
 }
 tracks/2/type = "value"
 tracks/2/imported = false
 tracks/2/enabled = true
-tracks/2/path = NodePath("HurtBox/CollisionShape2D:position")
+tracks/2/path = NodePath("Areas/HurtBox/CollisionShape2D:shape:size")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.27),
+"times": PackedFloat32Array(0, 0.133333),
 "transitions": PackedFloat32Array(1, 1),
-"update": 0,
-"values": [Vector2(0, 2.5), Vector2(0, -31.5)]
+"update": 1,
+"values": [Vector2(20, 68), Vector2(20, 131)]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_tf7fd"]
@@ -93,7 +94,7 @@ length = 0.001
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/path = NodePath("Body/Sprite2D:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
@@ -105,15 +106,15 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_tf7fd"]
 resource_name = "hurt"
-length = 0.2
+length = 0.3
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Sprite2D:modulate")
+tracks/0/path = NodePath("Body/Sprite2D:modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.0666667, 0.133333, 0.2),
+"times": PackedFloat32Array(0, 0.0666667, 0.2, 0.266667),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 0,
 "values": [Color(1, 1, 1, 1), Color(0.743186, 3.76623e-06, 7.70092e-07, 1), Color(0.745098, 0, 0, 1), Color(1, 1, 1, 1)]
@@ -126,45 +127,60 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_xqlo1"]
-size = Vector2(20, 63)
+size = Vector2(20, 68)
 
-[node name="TurretEnemy" type="Node2D"]
+[node name="TurretEnemy" type="Node2D" node_paths=PackedStringArray("parry_meter")]
 script = ExtResource("1_xqlo1")
+parry_meter = NodePath("ParryMeter")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Body"]
 texture_filter = 1
-position = Vector2(0, -32)
+position = Vector2(5, -32)
 scale = Vector2(3.5, 4)
 texture = ExtResource("1_ckrq5")
 hframes = 8
 frame = 1
 
-[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+[node name="RayCast2D" type="RayCast2D" parent="Body"]
+target_position = Vector2(600, 0)
+collision_mask = 2
+
+[node name="Marker2D" type="Marker2D" parent="Body"]
+position = Vector2(60, -80)
+
+[node name="Animations" type="Node2D" parent="."]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Animations"]
+root_node = NodePath("../..")
 libraries = {
 &"": SubResource("AnimationLibrary_tf7fd")
 }
 speed_scale = 0.5
 
-[node name="RayCast2D" type="RayCast2D" parent="."]
-target_position = Vector2(600, 0)
-collision_mask = 2
+[node name="AnimationPlayer2" type="AnimationPlayer" parent="Animations"]
+root_node = NodePath("../..")
+libraries = {
+&"": SubResource("AnimationLibrary_o0iyu")
+}
 
 [node name="Timers" type="Node2D" parent="."]
 
 [node name="ShootTimer" type="Timer" parent="Timers"]
 
-[node name="AnimationPlayer2" type="AnimationPlayer" parent="."]
-libraries = {
-&"": SubResource("AnimationLibrary_o0iyu")
-}
+[node name="Areas" type="Node2D" parent="."]
 
-[node name="HurtBox" type="Area2D" parent="."]
-collision_layer = 0
-collision_mask = 256
+[node name="HurtBox" type="Area2D" parent="Areas"]
+collision_layer = 512
+collision_mask = 768
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="HurtBox"]
-position = Vector2(0, 2.5)
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/HurtBox"]
+scale = Vector2(3, 1)
 shape = SubResource("RectangleShape2D_xqlo1")
 
+[node name="ParryMeter" parent="." instance=ExtResource("3_bpnds")]
+max_amount = 1
+
 [connection signal="timeout" from="Timers/ShootTimer" to="." method="_on_shoot_timer_timeout"]
-[connection signal="area_entered" from="HurtBox" to="." method="_on_hurt_box_area_entered"]
+[connection signal="area_entered" from="Areas/HurtBox" to="." method="_on_hurt_box_area_entered"]

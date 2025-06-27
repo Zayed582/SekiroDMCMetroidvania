@@ -31,6 +31,7 @@ layer = -1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 768.0
 grow_horizontal = 2
 grow_vertical = 2
 color = Color(0.223529, 0.603922, 0.756863, 1)
@@ -40,6 +41,7 @@ modulate = Color(0, 0, 0, 0.0509804)
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
+offset_right = 760.0
 grow_horizontal = 2
 grow_vertical = 2
 texture = ExtResource("1_hla62")
@@ -167,8 +169,13 @@ enabled = false
 script = ExtResource("3_fmflo")
 
 [node name="TurretEnemy" parent="." instance=ExtResource("4_do1up")]
-position = Vector2(1360, 795)
-scale = Vector2(-1, 1)
+position = Vector2(1127, 798)
+
+[node name="TurretEnemy2" parent="." instance=ExtResource("4_do1up")]
+position = Vector2(1920, 528)
+
+[node name="TurretEnemy3" parent="." instance=ExtResource("4_do1up")]
+position = Vector2(1920, 794)
 
 [node name="Platform" type="StaticBody2D" parent="."]
 position = Vector2(720, 744)
@@ -211,6 +218,51 @@ grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Platform2"]
+shape = SubResource("RectangleShape2D_wiveh")
+one_way_collision = true
+
+[node name="Platform6" type="StaticBody2D" parent="."]
+position = Vector2(1520, 728)
+metadata/_edit_group_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Platform6"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -16.0
+offset_right = 80.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform6"]
+shape = SubResource("RectangleShape2D_wiveh")
+one_way_collision = true
+
+[node name="Platform5" type="StaticBody2D" parent="."]
+position = Vector2(1584, 576)
+scale = Vector2(5, 1)
+metadata/_edit_group_ = true
+
+[node name="ColorRect" type="ColorRect" parent="Platform5"]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -80.0
+offset_top = -16.0
+offset_right = 80.0
+offset_bottom = 16.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Platform5"]
 shape = SubResource("RectangleShape2D_wiveh")
 one_way_collision = true
 

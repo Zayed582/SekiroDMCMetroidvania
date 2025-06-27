@@ -12,6 +12,7 @@ extends CharacterBody2D
 @onready var dash_timer = $Timers/DashTimer
 @onready var hurt_area = $Areas/HurtArea
 @onready var wall_jump_cooldown_timer = $Timers/WallJumpCooldownTimer
+@onready var hit_area = $Areas/HitArea
 
 enum {
 	IDLE,
@@ -75,9 +76,15 @@ var move_speed = 300
 var sprint_time = 0
 var sprint_activation_time = 2
 var combo_time = 0
-var health = 3
+var health = 50
 var charge_movement_speed = 400
 var jump_count = 0
+
+#DAMAGE
+var damage = 1
+const PRIMARY_ATT_DMG = 1
+const SECONDARY_ATT_DMG = 2
+const DEATHBLOW_DMG = 100000
 
 var is_blocking = false
 var stop_process = false
@@ -92,7 +99,6 @@ var reset_jump_count = false
 #KNOCKBACK
 @export var knockback_force := 300.0
 @export var knockback_duration := 0.2
-
 var knockback_timer := 0.0
 var is_knockback := false
 var knockback_velocity := Vector2.ZERO
@@ -110,6 +116,7 @@ func _physics_process(delta):
 	handle_block()
 	handle_dash()
 	handle_wall_mechanics()
+	handle_fall_through()
 	move_and_slide()
 
 func handle_movement(delta):
@@ -212,8 +219,13 @@ func handle_attack():
 	if is_on_wall_only(): return
 	
 	if Input.is_action_just_pressed("attack_1"):
+		if has_parriable_enemies(): 
+			damage = DEATHBLOW_DMG
+			await handle_deathblow()
+			return
 		set_movement_speed_on_attack()
 		attack()
+		damage = PRIMARY_ATT_DMG
 		
 		combo_timer.start()
 		combo_time = clamp(combo_time + 1, MIN_COMBO_TIME, MAX_COMBO_TIME)
@@ -235,6 +247,7 @@ func handle_attack():
 		state_machine.travel("charge_attack")
 		handle_charge_attack()
 		set_state(IDLE)
+		damage = SECONDARY_ATT_DMG
 		
 		charge_cooldown_timer.start()
 		can_use_charge_attack = false
@@ -242,6 +255,7 @@ func handle_attack():
 		pass
 
 func handle_charge_attack():
+	if !is_on_floor(): return
 	velocity.x += charge_movement_speed * last_direction
 	pass
 
@@ -302,6 +316,45 @@ func handle_wall_mechanics():
 		await get_tree().process_frame
 		set_state(JUMP)
 	
+	pass
+
+func handle_fall_through():
+	if Input.is_action_just_pressed("fall_through"):
+		player_collision_shape.disabled = true
+		set_state(JUMP)
+		state_machine.travel("Jump")
+		reset_jump_count = true  
+		await get_tree().create_timer(0.05).timeout
+		player_collision_shape.disabled = false
+		pass
+	pass
+
+func handle_deathblow():
+	for enemy in GameManager.parriable_enemies:
+		if enemy == null: return
+		state_machine.travel("deathblow")
+		var anim = "deathblow" if is_on_floor() else "air_deathblow"
+		anim_tree.set("parameters/deathblow/Transition/transition_request", anim)
+		hurt_area.monitoring = false
+		player_collision_shape.disabled = true
+		
+		var direction = sign(enemy.global_position -global_position)
+		handle_sprite_flip(direction.x)
+		var offset = Vector2(50 * direction.x, -40)
+		var tween = create_tween()
+		tween.set_trans(Tween.TRANS_LINEAR)
+		tween.tween_property(self, "global_position", enemy.global_position + offset, 0.1)
+		await tween.finished
+		player_collision_shape.disabled = false
+		hurt_area.monitoring = true
+		await get_tree().create_timer(0.2).timeout
+	
+	GameManager.parriable_enemies = []
+	pass
+
+func has_parriable_enemies():
+	var enemies = GameManager.parriable_enemies
+	return enemies.size() > 0
 	pass
 
 func set_movement_speed_on_attack():
@@ -385,6 +438,9 @@ func handle_projectile_block(area):
 				set_state(PARRY)
 				stop_process = false
 				area.reflect()
+				GameManager.emit_signal("shake_camera", 0.2, 4.0)
+				if area.sender and area.sender.has_method("handle_parry"):
+					area.sender.handle_parry()
 		pass
 	pass
 
@@ -410,7 +466,6 @@ func handle_knockback(delta):
 			knockback_velocity = Vector2.ZERO
 		velocity = knockback_velocity
 		move_and_slide()
-	return
 	pass
 
 func take_damage(damage):
@@ -471,8 +526,9 @@ func _on_charge_cooldown_timer_timeout():
 	pass # Replace with function body.
 
 func _on_dash_timer_timeout():
-	if is_on_wall(): 
+	if is_on_wall_only(): 
 		stop_process = false
+		hurt_area.monitoring = true
 		return
 
 	stop_process = false
@@ -485,4 +541,9 @@ func _on_dash_timer_timeout():
 
 func _on_wall_jump_cooldown_timer_timeout():
 	can_move = true
+	pass # Replace with function body.
+
+
+func _on_hit_area_area_entered(area):
+	area.get_parent().get_parent().take_damage(global_position, damage)
 	pass # Replace with function body.

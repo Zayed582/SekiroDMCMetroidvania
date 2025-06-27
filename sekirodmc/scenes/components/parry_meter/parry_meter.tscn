@@ -1,0 +1,35 @@
+[gd_scene load_steps=4 format=3 uid="uid://cmhayca7kshmf"]
+
+[ext_resource type="Script" uid="uid://b7pscodsicj4x" path="res://scenes/components/parry_meter/parry_meter.gd" id="1_ms0td"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vntf1"]
+bg_color = Color(0, 0, 0, 0.666667)
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rynlo"]
+bg_color = Color(1, 1, 1, 1)
+
+[node name="ParryMeter" type="Node2D"]
+script = ExtResource("1_ms0td")
+
+[node name="ProgressBar" type="ProgressBar" parent="."]
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -23.0
+offset_top = 16.0
+offset_right = 23.0
+offset_bottom = 24.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 10
+theme_override_styles/background = SubResource("StyleBoxFlat_vntf1")
+theme_override_styles/fill = SubResource("StyleBoxFlat_rynlo")
+show_percentage = false
+
+[node name="CooldownTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="CooldownTimer" to="." method="_on_cooldown_timer_timeout"]

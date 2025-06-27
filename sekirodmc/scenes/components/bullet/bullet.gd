@@ -3,6 +3,7 @@ extends Area2D
 var direction = 1
 var speed = 400
 var damage = 1
+var sender = null
 
 func _ready():
 	pass # Replace with function body.
