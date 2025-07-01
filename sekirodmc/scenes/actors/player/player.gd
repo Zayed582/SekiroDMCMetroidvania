@@ -1,5 +1,22 @@
 extends CharacterBody2D
 
+@export var MAX_HEALTH = 50
+@export var MAX_MANA = 50
+@export var MAX_STAMINA = 50
+
+@onready var health = MAX_HEALTH
+@onready var mana = MAX_MANA
+@onready var stamina = MAX_STAMINA
+
+var stamina_run_decrement = 0.5
+var stamina_block_decrement = 0.75
+var stamina_parry_decrement = 5
+
+var mana_charge_attack_value = 10
+var mana_charge_attack_decrement = 10
+var mana_recovery_rate = 0.005
+var stamina_recovery_rate = 0.2
+
 @onready var sprite = $Sprite2D
 @onready var anim_tree = $AnimationTree
 @onready var state: int = IDLE
@@ -13,6 +30,8 @@ extends CharacterBody2D
 @onready var hurt_area = $Areas/HurtArea
 @onready var wall_jump_cooldown_timer = $Timers/WallJumpCooldownTimer
 @onready var hit_area = $Areas/HitArea
+@onready var pojo_area_detector = $Areas/PogoArea
+@onready var player_hud = $CanvasLayer/PlayerHUD
 
 enum {
 	IDLE,
@@ -31,7 +50,8 @@ enum {
 	CHARGE_ATTACK,
 	DASH,
 	WALL_CLING,
-	WALL_SLIDE
+	WALL_SLIDE,
+	POGO_JUMPING
 }
 
 var state_label = {
@@ -51,7 +71,8 @@ var state_label = {
 	CHARGE_ATTACK: "CHARGE_ATTACK",
 	DASH: "DASH",
 	WALL_CLING: "WALL_CLING",
-	WALL_SLIDE: "WALL_SLIDE"
+	WALL_SLIDE: "WALL_SLIDE",
+	POGO_JUMPING: "POGO_JUMPING"
 }
 
 const RUN_SPEED = 350.0
@@ -60,6 +81,8 @@ const DECELERATION_SPEED = 1600
 const DASH_SPEED = 2000
 const JUMP_VELOCITY = -800.0
 const WALL_JUMP_VELOCITY = Vector2(1000, -800)
+const POGO_JUMP_VELOCITY = -600
+const MAX_SLASH_VELOCITY = 800
 const MIN_COMBO_TIME = 0
 const MAX_COMBO_TIME = 3
 const GRAVITY = 1300
@@ -76,7 +99,6 @@ var move_speed = 300
 var sprint_time = 0
 var sprint_activation_time = 2
 var combo_time = 0
-var health = 50
 var charge_movement_speed = 400
 var jump_count = 0
 
@@ -95,6 +117,7 @@ var can_use_charge_attack = true
 var is_charge_attacking = false
 var is_on_wall_bool = false
 var reset_jump_count = false
+var is_pogo_jumping = false
 
 #KNOCKBACK
 @export var knockback_force := 300.0
@@ -103,10 +126,27 @@ var knockback_timer := 0.0
 var is_knockback := false
 var knockback_velocity := Vector2.ZERO
 
+var closest_angle = 0
+var slash_velocity = 0
+var slash_decrement_percentage = 0.6
 func _ready():
+	init()
+
+func init():
 	anim_tree.active = true
-	#TODO: REMOVE THIS
-	GameManager.connect("update_player_debug_state", _update_player_debug_state)
+	player_hud.set_max_health(MAX_HEALTH)
+	player_hud.set_max_mana(MAX_MANA)
+	player_hud.set_max_stamina(MAX_STAMINA)
+	
+	pass
+
+func _process(delta):
+	mana = move_toward(mana, MAX_MANA, mana_recovery_rate)
+	stamina = move_toward(stamina, MAX_STAMINA, stamina_recovery_rate)
+	player_hud.set_stamina(stamina)
+	player_hud.set_mana(mana)
+	
+	pass
 
 func _physics_process(delta):
 	handle_knockback(delta)
@@ -117,6 +157,8 @@ func _physics_process(delta):
 	handle_dash()
 	handle_wall_mechanics()
 	handle_fall_through()
+	handle_recover()
+	set_closest_angle()
 	move_and_slide()
 
 func handle_movement(delta):
@@ -138,6 +180,11 @@ func handle_state_animations():
 	pass
 
 func handle_gravity(delta):
+	#handle directional attack
+	if is_on_floor() and slash_velocity != MAX_SLASH_VELOCITY:
+		slash_velocity = MAX_SLASH_VELOCITY
+		pass
+	
 	if not is_on_floor() and state != DASH:
 		velocity.y += GRAVITY * delta
 		anim_tree.set("parameters/Jump/blend_position", sign(velocity.y))
@@ -189,6 +236,7 @@ func handle_run(delta):
 		sprint_time += delta
 		velocity.x = direction * move_speed
 		handle_sprite_flip(direction)
+		reduce_stamina(stamina_run_decrement)
 	else:
 		sprint_time = 0
 		velocity.x = move_toward(velocity.x, 0, DECELERATION_SPEED * delta)
@@ -219,13 +267,21 @@ func handle_attack():
 	if is_on_wall_only(): return
 	
 	if Input.is_action_just_pressed("attack_1"):
+		set_movement_speed_on_attack()
+		damage = PRIMARY_ATT_DMG
+		
+		if is_pogo_jumping and !is_on_floor():
+			return
 		if has_parriable_enemies(): 
 			damage = DEATHBLOW_DMG
 			await handle_deathblow()
 			return
-		set_movement_speed_on_attack()
+		
+		if !is_on_floor():
+			handle_directional_attack()
+			pass
+		
 		attack()
-		damage = PRIMARY_ATT_DMG
 		
 		combo_timer.start()
 		combo_time = clamp(combo_time + 1, MIN_COMBO_TIME, MAX_COMBO_TIME)
@@ -233,26 +289,28 @@ func handle_attack():
 		if combo_time == MAX_COMBO_TIME:
 			combo_time = MIN_COMBO_TIME
 	
-	if Input.is_action_pressed("attack_2"):
-		if can_use_charge_attack:
-			charge_movement_speed = clamp(charge_movement_speed + CHARGE_MOVEMENT_INCR, MIN_CHARGE_MOVEMENT_SPEED, MAX_CHARGE_MOVEMENT_SPEED)
-		velocity.x = 0
-		
-	if Input.is_action_just_pressed("attack_2") and can_use_charge_attack:
-		state_machine.travel("charge")
-		charge_movement_speed = MIN_CHARGE_MOVEMENT_SPEED
-		is_charge_attacking = true
+	if mana > mana_charge_attack_decrement:
+		if Input.is_action_pressed("attack_2"):
+			if can_use_charge_attack:
+				charge_movement_speed = clamp(charge_movement_speed + CHARGE_MOVEMENT_INCR, MIN_CHARGE_MOVEMENT_SPEED, MAX_CHARGE_MOVEMENT_SPEED)
+			velocity.x = 0
+			
+		if Input.is_action_just_pressed("attack_2") and can_use_charge_attack:
+			state_machine.travel("charge")
+			charge_movement_speed = MIN_CHARGE_MOVEMENT_SPEED
+			is_charge_attacking = true
 
-	if Input.is_action_just_released("attack_2") and can_use_charge_attack and is_charge_attacking:
-		state_machine.travel("charge_attack")
-		handle_charge_attack()
-		set_state(IDLE)
-		damage = SECONDARY_ATT_DMG
-		
-		charge_cooldown_timer.start()
-		can_use_charge_attack = false
-		is_charge_attacking = false
-		pass
+		if Input.is_action_just_released("attack_2") and can_use_charge_attack and is_charge_attacking:
+			state_machine.travel("charge_attack")
+			handle_charge_attack()
+			set_state(IDLE)
+			damage = SECONDARY_ATT_DMG
+			
+			charge_cooldown_timer.start()
+			can_use_charge_attack = false
+			is_charge_attacking = false
+			reduce_mana(mana_charge_attack_decrement)
+			pass
 
 func handle_charge_attack():
 	if !is_on_floor(): return
@@ -333,21 +391,11 @@ func handle_deathblow():
 	for enemy in GameManager.parriable_enemies:
 		if enemy == null: return
 		state_machine.travel("deathblow")
-		var anim = "deathblow" if is_on_floor() else "air_deathblow"
-		anim_tree.set("parameters/deathblow/Transition/transition_request", anim)
-		hurt_area.monitoring = false
-		player_collision_shape.disabled = true
-		
 		var direction = sign(enemy.global_position -global_position)
 		handle_sprite_flip(direction.x)
-		var offset = Vector2(50 * direction.x, -40)
-		var tween = create_tween()
-		tween.set_trans(Tween.TRANS_LINEAR)
-		tween.tween_property(self, "global_position", enemy.global_position + offset, 0.1)
-		await tween.finished
-		player_collision_shape.disabled = false
-		hurt_area.monitoring = true
-		await get_tree().create_timer(0.2).timeout
+		var offset = Vector2(-20 * direction.x, -50)
+		global_position = enemy.global_position + offset
+		await get_tree().create_timer(0.1).timeout
 	
 	GameManager.parriable_enemies = []
 	pass
@@ -395,7 +443,16 @@ func handle_sprite_flip(dir: int):
 func handle_block():
 	if is_on_wall_only(): return
 	
-	if Input.is_action_just_pressed("block"):
+	if is_blocking:
+		reduce_stamina(stamina_block_decrement)
+		if stamina < MAX_STAMINA * 0.05:
+			is_blocking = false
+			stop_process = false
+			anim_tree.set("parameters/conditions/blocking", !is_blocking)
+			reset_movement()
+			pass
+	
+	if Input.is_action_just_pressed("block") and stamina > MAX_STAMINA * 0.2:
 		state_machine.travel("block")
 		stop_process = true
 		is_blocking = true
@@ -413,7 +470,6 @@ func handle_block():
 
 func update_state_label(_state: int):
 	var text = str(state_label[_state])
-	GameManager.emit_signal("update_player_debug_state", text)
 	pass
 
 func set_state(_state: int):
@@ -441,6 +497,7 @@ func handle_projectile_block(area):
 				GameManager.emit_signal("shake_camera", 0.2, 4.0)
 				if area.sender and area.sender.has_method("handle_parry"):
 					area.sender.handle_parry()
+				reduce_stamina(stamina_parry_decrement)
 		pass
 	pass
 
@@ -450,6 +507,7 @@ func handle_take_damage(area):
 	apply_knockback(area.global_position)
 	GameManager.emit_signal("shake_camera",0.2,8.0)
 	area.queue_free()
+	GameManager.emit_signal("clear_parrys")
 	pass
 
 func apply_knockback(from_position: Vector2):
@@ -470,6 +528,7 @@ func handle_knockback(delta):
 
 func take_damage(damage):
 	health -= damage
+	player_hud.set_health(health)
 	if health <= 0:
 		state_machine.travel("hurt")
 		await get_tree().process_frame
@@ -502,6 +561,33 @@ func handle_death():
 	set_state(DEAD)
 	pass
 
+func reduce_stamina(value):
+	stamina = clamp(stamina - value, 0, MAX_STAMINA)
+	pass
+
+func reduce_mana(value):
+	mana = clamp(mana - value, 0, MAX_MANA)
+	pass
+
+func reduce_health(value):
+	health = clamp(health - value, 0, MAX_HEALTH)
+	pass
+
+func handle_recover():
+	if Input.is_action_just_pressed("recover") and mana == MAX_MANA:
+		health = MAX_HEALTH
+		player_hud.set_max_health(MAX_HEALTH)
+		reduce_mana(MAX_MANA)
+		pass
+	
+	pass
+
+func handle_directional_attack():
+	velocity = get_slash_velocity()
+	set_player_direction()
+	slash_velocity *= slash_decrement_percentage
+	pass
+
 func _on_combo_timer_timeout():
 	combo_time = clamp(combo_time - 1, MIN_COMBO_TIME, MAX_COMBO_TIME)
 	if combo_time <= 0:
@@ -520,6 +606,54 @@ func _on_parry_timer_timeout():
 func _on_hurt_area_area_entered(area):
 	handle_take_damage(area)
 	pass # Replace with function body.
+
+func handle_mini_jump():
+	velocity.y = POGO_JUMP_VELOCITY
+	pass
+
+func get_aim_direction() -> Vector2:
+	var offset = Vector2(0,30)
+	return get_global_mouse_position() - (global_position - offset)
+	pass
+
+func set_closest_angle():
+	var aim_vector = get_aim_direction()
+	var angle_deg = rad_to_deg(aim_vector.angle())
+	angle_deg = fposmod(angle_deg + 360.0, 360.0)
+	var allowed_angles = [0, 45, 90, 135, 180, 225, 270, 315]
+
+	var _closest_angle = allowed_angles[0]
+	var min_diff = abs(angle_deg - _closest_angle)
+	for a in allowed_angles:
+		var diff = abs(angle_deg - a)
+		if diff < min_diff:
+			_closest_angle = a
+			min_diff = diff
+	
+	closest_angle = _closest_angle
+
+func get_slash_velocity():
+	var vel = Vector2.ZERO
+	match closest_angle:
+		0: vel = Vector2(1,0)
+		45: vel = Vector2(1,1)
+		90: vel = Vector2(0,1)
+		135: vel = Vector2(-1,1)
+		180: vel = Vector2(-1,0)
+		225: vel = Vector2(-1,-1)
+		270: vel = Vector2(0,-1)
+		315: vel = Vector2(1,-1)
+		
+	
+	return vel.normalized() * slash_velocity
+
+func set_player_direction():
+	var snapped_angle_rad = deg_to_rad(closest_angle)
+	var snapped_direction = Vector2.from_angle(snapped_angle_rad).normalized()
+	
+	sprite.flip_h = snapped_direction.x < 0
+	last_direction = snapped_direction.x
+	pass
 
 func _on_charge_cooldown_timer_timeout():
 	can_use_charge_attack = true
@@ -546,4 +680,18 @@ func _on_wall_jump_cooldown_timer_timeout():
 
 func _on_hit_area_area_entered(area):
 	area.get_parent().get_parent().take_damage(global_position, damage)
+	if is_pogo_jumping and !is_on_floor():
+		handle_mini_jump()
+		set_state(POGO_JUMPING)
+	pass # Replace with function body.
+
+
+func _on_pogo_area_area_entered(area):
+	is_pogo_jumping = true
+	jump_count = 1
+	pass # Replace with function body.
+
+
+func _on_pogo_area_area_exited(area):
+	is_pogo_jumping = false
 	pass # Replace with function body.

@@ -4,6 +4,6 @@ extends Node
 signal update_player_debug_state(text)
 signal shake_camera(duration, intensity)
 signal gameover
-
+signal clear_parrys
 
 var parriable_enemies = []

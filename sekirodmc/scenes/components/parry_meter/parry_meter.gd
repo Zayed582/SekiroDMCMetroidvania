@@ -18,6 +18,7 @@ var can_parry = false
 
 func _ready():
 	progress_bar.max_value = max_amount
+	GameManager.connect("clear_parrys", clear_parry)
 	pass
 
 func _process(delta):
@@ -37,13 +38,18 @@ func set_parry_details(_amount, _sender):
 	cooldown_timer.start(delay_value)
 	pass
 
+func clear_parry():
+	delay_value = DEFAULT_DELAY_VALUE
+	decay_value = ACTIVE_PARRY_DECAY_VALUE
+	can_parry = false
+	if GameManager.parriable_enemies.has(sender):
+		GameManager.parriable_enemies.erase(sender)
+	
+	set_process(true)
+	pass
 
 func _on_cooldown_timer_timeout():
 	if can_parry:
-		delay_value = DEFAULT_DELAY_VALUE
-		decay_value = ACTIVE_PARRY_DECAY_VALUE
-		can_parry = false
-		if GameManager.parriable_enemies.has(sender):
-			GameManager.parriable_enemies.erase(sender)
+		clear_parry()
 	set_process(true)
 	pass # Replace with function body.

@@ -1,0 +1,109 @@
+[gd_scene load_steps=14 format=3 uid="uid://dcsw484jo1tps"]
+
+[ext_resource type="Script" uid="uid://d253v4bkxm0hd" path="res://scenes/gui/player_hud/player_hud.gd" id="1_aand0"]
+[ext_resource type="Texture2D" uid="uid://dkulk0b0ydmat" path="res://assets/images/gui/player_hud/hud_bg_without_custom_meter.png" id="1_p56wo"]
+[ext_resource type="Texture2D" uid="uid://dpy37x8xx08xs" path="res://assets/images/avatars/con9.png" id="2_17ee5"]
+[ext_resource type="Texture2D" uid="uid://i26retyh1xgw" path="res://assets/images/gui/player_hud/5-1.png" id="3_17ee5"]
+[ext_resource type="Texture2D" uid="uid://cytipc0layf1e" path="res://assets/images/gui/player_hud/hp_bar.png" id="3_v23ny"]
+[ext_resource type="Texture2D" uid="uid://cvoet0k6wt4yt" path="res://assets/images/gui/player_hud/mp_bar.png" id="4_a01rw"]
+[ext_resource type="FontFile" uid="uid://frujxh1gih4r" path="res://fonts/Digitag.ttf" id="6_a01rw"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p56wo"]
+bg_color = Color(0.00566115, 0.00566115, 0.00566114, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_aand0"]
+texture = ExtResource("3_v23ny")
+region_rect = Rect2(95, 12, 133, 23)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_y4tgt"]
+texture = ExtResource("4_a01rw")
+region_rect = Rect2(86, 40, 169, 7)
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_tv4wk"]
+texture = ExtResource("3_17ee5")
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bsunt"]
+bg_color = Color(0.866667, 0.87451, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.8, 0.8, 0.8, 0)
+
+[sub_resource type="LabelSettings" id="LabelSettings_aand0"]
+font = ExtResource("6_a01rw")
+font_size = 48
+outline_size = 10
+outline_color = Color(0, 0, 0, 1)
+
+[node name="PlayerHUD" type="MarginContainer"]
+custom_minimum_size = Vector2(200, 0)
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+script = ExtResource("1_aand0")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(2, 2)
+texture = ExtResource("1_p56wo")
+centered = false
+
+[node name="TextureRect" type="TextureRect" parent="Sprite2D"]
+show_behind_parent = true
+offset_left = 12.0
+offset_top = 12.0
+offset_right = 73.0
+offset_bottom = 73.0
+texture = ExtResource("2_17ee5")
+expand_mode = 2
+stretch_mode = 3
+
+[node name="HealthBar" type="ProgressBar" parent="Sprite2D"]
+show_behind_parent = true
+texture_filter = 1
+offset_left = 81.0
+offset_top = 24.0
+offset_right = 250.0
+offset_bottom = 36.0
+theme_override_styles/background = SubResource("StyleBoxFlat_p56wo")
+theme_override_styles/fill = SubResource("StyleBoxTexture_aand0")
+show_percentage = false
+
+[node name="ManaBar" type="ProgressBar" parent="Sprite2D"]
+texture_filter = 1
+offset_left = 81.0
+offset_top = 38.0
+offset_right = 250.0
+offset_bottom = 45.0
+theme_override_styles/background = SubResource("StyleBoxFlat_p56wo")
+theme_override_styles/fill = SubResource("StyleBoxTexture_y4tgt")
+show_percentage = false
+
+[node name="StaminaBar" type="ProgressBar" parent="Sprite2D"]
+offset_left = 81.0
+offset_top = 47.0
+offset_right = 204.0
+offset_bottom = 52.0
+theme_override_styles/background = SubResource("StyleBoxTexture_tv4wk")
+theme_override_styles/fill = SubResource("StyleBoxFlat_bsunt")
+show_percentage = false
+
+[node name="Label" type="Label" parent="Sprite2D"]
+texture_filter = 1
+offset_left = 68.0
+offset_top = 48.0
+offset_right = 177.0
+offset_bottom = 99.0
+text = "ZABUZA"
+label_settings = SubResource("LabelSettings_aand0")
