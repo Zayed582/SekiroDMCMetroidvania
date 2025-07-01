@@ -388,16 +388,21 @@ func handle_fall_through():
 	pass
 
 func handle_deathblow():
+	set_physics_process(false)
 	for enemy in GameManager.parriable_enemies:
 		if enemy == null: return
+		
 		state_machine.travel("deathblow")
-		var direction = sign(enemy.global_position -global_position)
+		var direction = sign(enemy.global_position - global_position)
 		handle_sprite_flip(direction.x)
-		var offset = Vector2(-20 * direction.x, -50)
+		var offset = Vector2(0 * direction.x, -50)
 		global_position = enemy.global_position + offset
-		await get_tree().create_timer(0.1).timeout
+		velocity = Vector2.ZERO
+		await get_tree().create_timer(0.2).timeout
 	
 	GameManager.parriable_enemies = []
+	set_physics_process(true)
+	velocity = Vector2.ZERO
 	pass
 
 func has_parriable_enemies():
