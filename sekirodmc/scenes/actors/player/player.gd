@@ -170,6 +170,7 @@ func handle_movement(delta):
 func handle_state_animations():
 	if is_on_wall(): return
 	
+	anim_tree.set("parameters/Movement/FallTransition/blend_amount", 0 if is_on_floor() else 1)
 	match state:
 		IDLE:
 			anim_tree.set("parameters/Movement/Transition/transition_request", "idle")
@@ -270,8 +271,8 @@ func handle_attack():
 		set_movement_speed_on_attack()
 		damage = PRIMARY_ATT_DMG
 		
-		if is_pogo_jumping and !is_on_floor():
-			return
+		#if is_pogo_jumping and !is_on_floor():
+			#return
 		if has_parriable_enemies(): 
 			damage = DEATHBLOW_DMG
 			await handle_deathblow()
@@ -326,7 +327,7 @@ func handle_dash():
 		
 		set_state(DASH)
 		dash_timer.start()
-		state_machine.travel("dash")
+		state_machine.start("dash")
 		var dash_anim = "dash" if is_on_floor() else "air_dash"
 		anim_tree.set("parameters/dash/Transition/transition_request", dash_anim)
 		stop_process = true
@@ -685,18 +686,18 @@ func _on_wall_jump_cooldown_timer_timeout():
 
 func _on_hit_area_area_entered(area):
 	area.get_parent().get_parent().take_damage(global_position, damage)
-	if is_pogo_jumping and !is_on_floor():
-		handle_mini_jump()
-		set_state(POGO_JUMPING)
+	#if is_pogo_jumping and !is_on_floor():
+		#handle_mini_jump()
+		#set_state(POGO_JUMPING)
 	pass # Replace with function body.
 
 
 func _on_pogo_area_area_entered(area):
-	is_pogo_jumping = true
-	jump_count = 1
+	#is_pogo_jumping = true
+	#jump_count = 1
 	pass # Replace with function body.
 
 
 func _on_pogo_area_area_exited(area):
-	is_pogo_jumping = false
+	#is_pogo_jumping = false
 	pass # Replace with function body.
