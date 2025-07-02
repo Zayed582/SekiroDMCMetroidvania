@@ -1014,7 +1014,6 @@ script = ExtResource("3_oj104")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="PlayerHUD" parent="CanvasLayer" instance=ExtResource("4_mpktj")]
-visible = false
 
 [connection signal="timeout" from="Timers/ComboTimer" to="." method="_on_combo_timer_timeout"]
 [connection signal="timeout" from="Timers/ParryTimer" to="." method="_on_parry_timer_timeout"]

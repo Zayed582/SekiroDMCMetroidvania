@@ -285,9 +285,9 @@ func handle_attack():
 			await handle_deathblow()
 			return
 		
-		if !is_on_floor():
+		if !is_on_floor() and directional_attack_count < MAX_DIRECTIONAL_ATTACKS:
 			handle_directional_attack()
-			pass
+			return
 		
 		if mana > mana_charge_attack_decrement:
 			charge_attack_timer.start()
@@ -598,13 +598,13 @@ func handle_recover():
 	pass
 
 func handle_directional_attack():
-	if directional_attack_count >= MAX_DIRECTIONAL_ATTACKS: return
-	
 	directional_attack_count += 1
 	velocity = get_slash_velocity()
-	print(velocity, "velociry")
 	set_player_direction()
 	slash_velocity *= slash_decrement_percentage
+	
+	set_state(ATTACK_1)
+	state_machine.travel("attack_1")
 	pass
 
 func _on_combo_timer_timeout():
