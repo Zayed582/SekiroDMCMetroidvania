@@ -323,23 +323,7 @@ func handle_attack():
 			can_use_charge_attack = false
 			reduce_mana(mana_charge_attack_decrement)
 		can_charge_attack = false
-		
 		pass
-
-		#if Input.is_action_just_released("attack_1") and can_use_charge_attack and can_charge_attack:
-			#charge_attack_timer.stop()
-			#if !can_charge_attack: return
-			#
-			#state_machine.travel("charge_attack")
-			#handle_charge_attack()
-			#set_state(IDLE)
-			#damage = SECONDARY_ATT_DMG
-			#
-			#charge_cooldown_timer.start()
-			#can_use_charge_attack = false
-			#can_charge_attack = false
-			#reduce_mana(mana_charge_attack_decrement)
-			#pass
 
 func handle_charge_attack():
 	if !is_on_floor(): return
