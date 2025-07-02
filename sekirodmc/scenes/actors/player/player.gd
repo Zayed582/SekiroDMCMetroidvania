@@ -98,8 +98,6 @@ const ATTACK_MOVEMENT_MAX_SPEED = 1
 var direction = 0
 var last_direction = 0
 var move_speed = 300
-var sprint_time = 0
-var sprint_activation_time = 2
 var combo_time = 0
 var charge_movement_speed = 400
 var jump_count = 0
@@ -240,12 +238,10 @@ func handle_run(delta):
 	if direction:
 		last_direction = direction
 		if !can_move: return
-		sprint_time += delta
 		velocity.x = direction * move_speed
 		handle_sprite_flip(direction)
 		reduce_stamina(stamina_run_decrement)
 	else:
-		sprint_time = 0
 		velocity.x = move_toward(velocity.x, 0, DECELERATION_SPEED * delta)
 		if is_on_floor(): set_state(IDLE)
 	
@@ -261,7 +257,7 @@ func handle_sprint():
 	if is_on_wall(): return
 	
 	if is_on_floor():
-		if sprint_time > sprint_activation_time:
+		if Input.is_action_pressed("sprint"):
 			set_state(SPRINT)
 			move_speed = SPRINT_SPEED
 		else:

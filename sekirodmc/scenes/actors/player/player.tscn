@@ -970,7 +970,7 @@ wait_time = 0.3
 one_shot = true
 
 [node name="ChargeAttackTimer" type="Timer" parent="Timers"]
-wait_time = 0.15
+wait_time = 0.2
 one_shot = true
 
 [node name="Areas" type="Node2D" parent="."]
