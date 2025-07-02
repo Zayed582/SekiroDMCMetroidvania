@@ -12,8 +12,8 @@ var stamina_run_decrement = 0.5
 var stamina_block_decrement = 0.75
 var stamina_parry_decrement = 5
 
-var mana_charge_attack_value = 10
-var mana_charge_attack_decrement = 10
+var mana_charge_attack_value = 2
+var mana_charge_attack_decrement = 2
 var mana_recovery_rate = 0.005
 var stamina_recovery_rate = 0.2
 
@@ -32,6 +32,7 @@ var stamina_recovery_rate = 0.2
 @onready var hit_area = $Areas/HitArea
 @onready var pojo_area_detector = $Areas/PogoArea
 @onready var player_hud = $CanvasLayer/PlayerHUD
+@onready var charge_attack_timer = $Timers/ChargeAttackTimer
 
 enum {
 	IDLE,
@@ -91,6 +92,7 @@ const MIN_CHARGE_MOVEMENT_SPEED = 400
 const CHARGE_MOVEMENT_INCR = 5
 const MAX_JUMPS = 2
 const WALL_STICK_FORCE = 20
+const MAX_DIRECTIONAL_ATTACKS = 1
 
 const ATTACK_MOVEMENT_MAX_SPEED = 1
 var direction = 0
@@ -101,6 +103,7 @@ var sprint_activation_time = 2
 var combo_time = 0
 var charge_movement_speed = 400
 var jump_count = 0
+var directional_attack_count = 0
 
 #DAMAGE
 var damage = 1
@@ -118,6 +121,7 @@ var is_charge_attacking = false
 var is_on_wall_bool = false
 var reset_jump_count = false
 var is_pogo_jumping = false
+var can_charge_attack = false
 
 #KNOCKBACK
 @export var knockback_force := 300.0
@@ -126,6 +130,7 @@ var knockback_timer := 0.0
 var is_knockback := false
 var knockback_velocity := Vector2.ZERO
 
+#DIRECTIONAL ATTACK
 var closest_angle = 0
 var slash_velocity = 0
 var slash_decrement_percentage = 0.6
@@ -197,6 +202,7 @@ func handle_gravity(delta):
 			set_state(IDLE)
 			state_machine.travel("Movement")
 		jump_count = 0
+		directional_attack_count = 0
 		reset_jump_count = false
 		pass
 	
@@ -267,7 +273,12 @@ func handle_attack():
 	if stop_process: return
 	if is_on_wall_only(): return
 	
+	anim_tree.set("parameters/conditions/can_charge_attack", can_charge_attack and mana > mana_charge_attack_decrement)
+	
 	if Input.is_action_just_pressed("attack_1"):
+		can_charge_attack = false
+		charge_movement_speed = MIN_CHARGE_MOVEMENT_SPEED
+		
 		set_movement_speed_on_attack()
 		damage = PRIMARY_ATT_DMG
 		
@@ -282,6 +293,9 @@ func handle_attack():
 			handle_directional_attack()
 			pass
 		
+		if mana > mana_charge_attack_decrement:
+			charge_attack_timer.start()
+		
 		attack()
 		
 		combo_timer.start()
@@ -291,17 +305,15 @@ func handle_attack():
 			combo_time = MIN_COMBO_TIME
 	
 	if mana > mana_charge_attack_decrement:
-		if Input.is_action_pressed("attack_2"):
-			if can_use_charge_attack:
+		if Input.is_action_pressed("attack_1"):
+			if can_use_charge_attack and can_charge_attack:
 				charge_movement_speed = clamp(charge_movement_speed + CHARGE_MOVEMENT_INCR, MIN_CHARGE_MOVEMENT_SPEED, MAX_CHARGE_MOVEMENT_SPEED)
-			velocity.x = 0
+				velocity.x = 0
+	
+	if Input.is_action_just_released("attack_1"):
+		charge_attack_timer.stop()
+		if can_charge_attack and mana > mana_charge_attack_decrement:
 			
-		if Input.is_action_just_pressed("attack_2") and can_use_charge_attack:
-			state_machine.travel("charge")
-			charge_movement_speed = MIN_CHARGE_MOVEMENT_SPEED
-			is_charge_attacking = true
-
-		if Input.is_action_just_released("attack_2") and can_use_charge_attack and is_charge_attacking:
 			state_machine.travel("charge_attack")
 			handle_charge_attack()
 			set_state(IDLE)
@@ -309,9 +321,25 @@ func handle_attack():
 			
 			charge_cooldown_timer.start()
 			can_use_charge_attack = false
-			is_charge_attacking = false
 			reduce_mana(mana_charge_attack_decrement)
-			pass
+		can_charge_attack = false
+		
+		pass
+
+		#if Input.is_action_just_released("attack_1") and can_use_charge_attack and can_charge_attack:
+			#charge_attack_timer.stop()
+			#if !can_charge_attack: return
+			#
+			#state_machine.travel("charge_attack")
+			#handle_charge_attack()
+			#set_state(IDLE)
+			#damage = SECONDARY_ATT_DMG
+			#
+			#charge_cooldown_timer.start()
+			#can_use_charge_attack = false
+			#can_charge_attack = false
+			#reduce_mana(mana_charge_attack_decrement)
+			#pass
 
 func handle_charge_attack():
 	if !is_on_floor(): return
@@ -426,6 +454,7 @@ func reset_movement():
 func attack():
 	match combo_time:
 		0: 
+			#await get_tree().create_timer(0.2).timeout
 			set_state(ATTACK_1)
 			state_machine.travel("attack_1")
 		1: 
@@ -589,7 +618,11 @@ func handle_recover():
 	pass
 
 func handle_directional_attack():
+	if directional_attack_count >= MAX_DIRECTIONAL_ATTACKS: return
+	
+	directional_attack_count += 1
 	velocity = get_slash_velocity()
+	print(velocity, "velociry")
 	set_player_direction()
 	slash_velocity *= slash_decrement_percentage
 	pass
@@ -700,4 +733,9 @@ func _on_pogo_area_area_entered(area):
 
 func _on_pogo_area_area_exited(area):
 	#is_pogo_jumping = false
+	pass # Replace with function body.
+
+
+func _on_charge_attack_timer_timeout():
+	can_charge_attack = true
 	pass # Replace with function body.

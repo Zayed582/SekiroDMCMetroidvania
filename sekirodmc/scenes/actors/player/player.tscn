@@ -96,7 +96,7 @@ tracks/1/keys = {
 [sub_resource type="Animation" id="Animation_g2g7f"]
 resource_name = "attack_1"
 length = 0.4
-step = 0.1
+step = 0.01
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -130,7 +130,7 @@ tracks/2/path = NodePath("Areas/HitArea:monitoring")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.155719, 0.2, 0.32579),
+"times": PackedFloat32Array(0, 0.12, 0.3, 0.4),
 "transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
 "values": [false, true, true, false]
@@ -312,10 +312,10 @@ tracks/1/path = NodePath("Areas/HitArea:monitoring")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.366667),
-"transitions": PackedFloat32Array(1, 1),
+"times": PackedFloat32Array(0, 0.0333333, 0.466667, 0.5),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
 "update": 1,
-"values": [true, false]
+"values": [false, true, true, false]
 }
 
 [sub_resource type="Animation" id="Animation_5mkge"]
@@ -764,14 +764,22 @@ switch_mode = 2
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7i6t6"]
+advance_mode = 2
+advance_condition = &"can_charge_attack"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_e5w6i"]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mpktj"]
+advance_mode = 2
+advance_condition = &"can_charge_attack"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_yg5k4"]
+advance_mode = 2
+advance_condition = &"can_charge_attack"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_qdyt2"]
+advance_mode = 2
+advance_condition = &"can_charge_attack"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_g2g7f"]
 
@@ -847,13 +855,13 @@ states/block/position = Vector2(397.25, 239.393)
 states/block_hit/node = SubResource("AnimationNodeAnimation_5bhx7")
 states/block_hit/position = Vector2(398.819, 450.424)
 states/charge/node = SubResource("AnimationNodeAnimation_hcvpp")
-states/charge/position = Vector2(398.406, -50.0145)
+states/charge/position = Vector2(190.958, -72.7073)
 states/charge_attack/node = SubResource("AnimationNodeAnimation_xducv")
-states/charge_attack/position = Vector2(191.019, -171.421)
+states/charge_attack/position = Vector2(73.019, -249.421)
 states/dash/node = SubResource("AnimationNodeBlendTree_biscu")
 states/dash/position = Vector2(590.63, -44.7267)
 states/deathblow/node = SubResource("AnimationNodeAnimation_qxscg")
-states/deathblow/position = Vector2(190.921, -50.9001)
+states/deathblow/position = Vector2(42.421, -42.8134)
 states/die/node = SubResource("AnimationNodeAnimation_inh5e")
 states/die/position = Vector2(748.481, 81.373)
 states/hurt/node = SubResource("AnimationNodeAnimation_8bj4u")
@@ -863,7 +871,7 @@ states/parry/position = Vector2(400.042, 346.955)
 states/wall_slide/node = SubResource("AnimationNodeAnimation_yab6n")
 states/wall_slide/position = Vector2(190.945, 84.045)
 transitions = ["Start", "Movement", SubResource("AnimationNodeStateMachineTransition_i174x"), "Movement", "attack_1", SubResource("AnimationNodeStateMachineTransition_fp13k"), "Movement", "attack_2", SubResource("AnimationNodeStateMachineTransition_5bhx7"), "Movement", "attack_3", SubResource("AnimationNodeStateMachineTransition_8bj4u"), "attack_1", "attack_2", SubResource("AnimationNodeStateMachineTransition_inh5e"), "attack_2", "attack_3", SubResource("AnimationNodeStateMachineTransition_hcvpp"), "attack_1", "Movement", SubResource("AnimationNodeStateMachineTransition_4iwnj"), "attack_2", "Movement", SubResource("AnimationNodeStateMachineTransition_068wj"), "attack_3", "Movement", SubResource("AnimationNodeStateMachineTransition_xducv"), "Movement", "block", SubResource("AnimationNodeStateMachineTransition_yab6n"), "block", "Movement", SubResource("AnimationNodeStateMachineTransition_5mkge"), "block", "block_hit", SubResource("AnimationNodeStateMachineTransition_q2guw"), "block_hit", "Movement", SubResource("AnimationNodeStateMachineTransition_npmmh"), "block", "parry", SubResource("AnimationNodeStateMachineTransition_qxscg"), "parry", "Movement", SubResource("AnimationNodeStateMachineTransition_biscu"), "Movement", "parry", SubResource("AnimationNodeStateMachineTransition_8bu7j"), "Movement", "hurt", SubResource("AnimationNodeStateMachineTransition_1a0p2"), "hurt", "Movement", SubResource("AnimationNodeStateMachineTransition_0w3ce"), "Jump", "Movement", SubResource("AnimationNodeStateMachineTransition_l17oj"), "Movement", "Jump", SubResource("AnimationNodeStateMachineTransition_oj104"), "hurt", "die", SubResource("AnimationNodeStateMachineTransition_ffoq6"), "die", "End", SubResource("AnimationNodeStateMachineTransition_cat03"), "charge_attack", "Movement", SubResource("AnimationNodeStateMachineTransition_t1vny"), "Movement", "charge", SubResource("AnimationNodeStateMachineTransition_7i6t6"), "charge", "charge_attack", SubResource("AnimationNodeStateMachineTransition_e5w6i"), "attack_1", "charge", SubResource("AnimationNodeStateMachineTransition_mpktj"), "attack_2", "charge", SubResource("AnimationNodeStateMachineTransition_yg5k4"), "attack_3", "charge", SubResource("AnimationNodeStateMachineTransition_qdyt2"), "dash", "Movement", SubResource("AnimationNodeStateMachineTransition_g2g7f"), "Movement", "dash", SubResource("AnimationNodeStateMachineTransition_0e3lr"), "attack_1", "dash", SubResource("AnimationNodeStateMachineTransition_llrf1"), "attack_2", "dash", SubResource("AnimationNodeStateMachineTransition_owjsm"), "attack_3", "dash", SubResource("AnimationNodeStateMachineTransition_haoly"), "Movement", "wall_slide", SubResource("AnimationNodeStateMachineTransition_xsnmo"), "Jump", "wall_slide", SubResource("AnimationNodeStateMachineTransition_msxka"), "wall_slide", "Movement", SubResource("AnimationNodeStateMachineTransition_gisjq"), "wall_slide", "Jump", SubResource("AnimationNodeStateMachineTransition_3f3m1"), "Jump", "backflip", SubResource("AnimationNodeStateMachineTransition_sn63g"), "backflip", "Jump", SubResource("AnimationNodeStateMachineTransition_eh6yv"), "dash", "wall_slide", SubResource("AnimationNodeStateMachineTransition_shibf"), "deathblow", "Movement", SubResource("AnimationNodeStateMachineTransition_jk84i"), "Movement", "deathblow", SubResource("AnimationNodeStateMachineTransition_u0jtt"), "Jump", "deathblow", SubResource("AnimationNodeStateMachineTransition_eltio"), "backflip", "deathblow", SubResource("AnimationNodeStateMachineTransition_kn7dg"), "Movement", "air_deathblow", SubResource("AnimationNodeStateMachineTransition_75awx"), "Jump", "air_deathblow", SubResource("AnimationNodeStateMachineTransition_mfpx7"), "backflip", "air_deathblow", SubResource("AnimationNodeStateMachineTransition_lguxi"), "air_deathblow", "Jump", SubResource("AnimationNodeStateMachineTransition_fqgpy"), "attack_1", "air_deathblow", SubResource("AnimationNodeStateMachineTransition_w0i13"), "air_deathblow", "Movement", SubResource("AnimationNodeStateMachineTransition_fvo2l")]
-graph_offset = Vector2(-337.939, -269.564)
+graph_offset = Vector2(-138.499, -294.157)
 
 [sub_resource type="LabelSettings" id="LabelSettings_l17oj"]
 font_size = 24
@@ -912,6 +920,7 @@ callback_mode_discrete = 1
 tree_root = SubResource("AnimationNodeStateMachine_oj104")
 anim_player = NodePath("../AnimationPlayer")
 parameters/conditions/blocking = false
+parameters/conditions/can_charge_attack = false
 parameters/conditions/is_on_wall = false
 parameters/Jump/blend_position = 0.0
 parameters/Movement/FallTransition/blend_amount = 0.0
@@ -960,6 +969,10 @@ one_shot = true
 wait_time = 0.3
 one_shot = true
 
+[node name="ChargeAttackTimer" type="Timer" parent="Timers"]
+wait_time = 0.15
+one_shot = true
+
 [node name="Areas" type="Node2D" parent="."]
 
 [node name="BlockArea" type="Area2D" parent="Areas"]
@@ -1001,12 +1014,14 @@ script = ExtResource("3_oj104")
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="PlayerHUD" parent="CanvasLayer" instance=ExtResource("4_mpktj")]
+visible = false
 
 [connection signal="timeout" from="Timers/ComboTimer" to="." method="_on_combo_timer_timeout"]
 [connection signal="timeout" from="Timers/ParryTimer" to="." method="_on_parry_timer_timeout"]
 [connection signal="timeout" from="Timers/ChargeCooldownTimer" to="." method="_on_charge_cooldown_timer_timeout"]
 [connection signal="timeout" from="Timers/DashTimer" to="." method="_on_dash_timer_timeout"]
 [connection signal="timeout" from="Timers/WallJumpCooldownTimer" to="." method="_on_wall_jump_cooldown_timer_timeout"]
+[connection signal="timeout" from="Timers/ChargeAttackTimer" to="." method="_on_charge_attack_timer_timeout"]
 [connection signal="area_entered" from="Areas/BlockArea" to="." method="_on_block_area_area_entered"]
 [connection signal="area_entered" from="Areas/HurtArea" to="." method="_on_hurt_area_area_entered"]
 [connection signal="area_entered" from="Areas/HitArea" to="." method="_on_hit_area_area_entered"]
