@@ -62,6 +62,7 @@ enum {
 	WALL_CLING,
 	WALL_SLIDE,
 	POGO_JUMPING,
+	DIRECTIONAL_ATTACK
 }
 
 var state_label = {
@@ -82,7 +83,8 @@ var state_label = {
 	DASH: "DASH",
 	WALL_CLING: "WALL_CLING",
 	WALL_SLIDE: "WALL_SLIDE",
-	POGO_JUMPING: "POGO_JUMPING"
+	POGO_JUMPING: "POGO_JUMPING",
+	DIRECTIONAL_ATTACK: "DIRECTIONAL ATTACK"
 }
 
 const RUN_SPEED = 350.0
@@ -92,7 +94,7 @@ const DASH_SPEED = 2000
 const JUMP_VELOCITY = -800.0
 const WALL_JUMP_VELOCITY = Vector2(1000, -800)
 const POGO_JUMP_VELOCITY = -600
-const MAX_SLASH_VELOCITY = 800
+const MAX_SLASH_VELOCITY = 1000
 const MIN_COMBO_TIME = 0
 const MAX_COMBO_TIME = 3
 const GRAVITY = 1300
@@ -502,6 +504,7 @@ func handle_block():
 
 func update_state_label(_state: int):
 	var text = str(state_label[_state])
+	_update_player_debug_state(text)
 	pass
 
 func set_state(_state: int):
@@ -669,7 +672,7 @@ func handle_directional_attack():
 	velocity = get_slash_velocity()
 	slash_velocity *= slash_decrement_percentage
 	
-	set_state(ATTACK_1)
+	set_state(DIRECTIONAL_ATTACK)
 	state_machine.travel("attack_1")
 	pass
 
