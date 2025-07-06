@@ -9,7 +9,7 @@ extends Node2D
 
 var sender = null
 
-const ACTIVE_PARRY_DELAY_VALUE = 40.0
+const ACTIVE_PARRY_DELAY_VALUE = 4.0
 const ACTIVE_PARRY_DECAY_VALUE = 0.1
 const DEFAULT_DELAY_VALUE = 2.0
 const DEFAULT_DECAY_VALUE = 0.006

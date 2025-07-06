@@ -180,7 +180,7 @@ scale = Vector2(3, 1)
 shape = SubResource("RectangleShape2D_xqlo1")
 
 [node name="ParryMeter" parent="." instance=ExtResource("3_bpnds")]
-max_amount = 1
+max_amount = 4
 
 [connection signal="timeout" from="Timers/ShootTimer" to="." method="_on_shoot_timer_timeout"]
 [connection signal="area_entered" from="Areas/HurtBox" to="." method="_on_hurt_box_area_entered"]
