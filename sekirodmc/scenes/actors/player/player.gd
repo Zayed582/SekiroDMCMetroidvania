@@ -289,7 +289,7 @@ func handle_attack():
 			handle_directional_attack()
 			return
 		
-		if mana > mana_charge_attack_decrement:
+		if mana > mana_charge_attack_decrement and can_use_charge_attack:
 			charge_attack_timer.start()
 		
 		attack()
