@@ -95,8 +95,8 @@ const WALL_STICK_FORCE = 20
 const MAX_DIRECTIONAL_ATTACKS = 1
 
 const ATTACK_MOVEMENT_MAX_SPEED = 1
-var direction = 0
-var last_direction = 0
+var direction = 1
+var last_direction = 1
 var move_speed = 300
 var combo_time = 0
 var charge_movement_speed = 400
