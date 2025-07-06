@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://dcsw484jo1tps"]
+[gd_scene load_steps=17 format=3 uid="uid://dcsw484jo1tps"]
 
 [ext_resource type="Script" uid="uid://d253v4bkxm0hd" path="res://scenes/gui/player_hud/player_hud.gd" id="1_aand0"]
 [ext_resource type="Texture2D" uid="uid://dkulk0b0ydmat" path="res://assets/images/gui/player_hud/hud_bg_without_custom_meter.png" id="1_p56wo"]
@@ -18,6 +18,20 @@ corner_radius_bottom_left = 8
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_aand0"]
 texture = ExtResource("3_v23ny")
 region_rect = Rect2(95, 12, 133, 23)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_aand0"]
+bg_color = Color(0.00566115, 0.00566115, 0.00566114, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bsunt"]
+texture = ExtResource("4_a01rw")
+region_rect = Rect2(86, 40, 169, 7)
+modulate_color = Color(1, 1, 1, 0.580392)
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_aand0"]
 
 [sub_resource type="StyleBoxTexture" id="StyleBoxTexture_y4tgt"]
 texture = ExtResource("4_a01rw")
@@ -80,14 +94,26 @@ theme_override_styles/background = SubResource("StyleBoxFlat_p56wo")
 theme_override_styles/fill = SubResource("StyleBoxTexture_aand0")
 show_percentage = false
 
+[node name="ManaBar2" type="ProgressBar" parent="Sprite2D"]
+texture_filter = 1
+offset_left = 81.0
+offset_top = 38.0
+offset_right = 250.0
+offset_bottom = 45.0
+theme_override_styles/background = SubResource("StyleBoxFlat_aand0")
+theme_override_styles/fill = SubResource("StyleBoxTexture_bsunt")
+value = 100.0
+show_percentage = false
+
 [node name="ManaBar" type="ProgressBar" parent="Sprite2D"]
 texture_filter = 1
 offset_left = 81.0
 offset_top = 38.0
 offset_right = 250.0
 offset_bottom = 45.0
-theme_override_styles/background = SubResource("StyleBoxFlat_p56wo")
+theme_override_styles/background = SubResource("StyleBoxEmpty_aand0")
 theme_override_styles/fill = SubResource("StyleBoxTexture_y4tgt")
+value = 50.0
 show_percentage = false
 
 [node name="StaminaBar" type="ProgressBar" parent="Sprite2D"]

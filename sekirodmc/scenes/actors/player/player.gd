@@ -1,21 +1,30 @@
 extends CharacterBody2D
 
-@export var MAX_HEALTH = 50
-@export var MAX_MANA = 50
+@export var MAX_HEALTH = 6
+@export var MAX_MANA = 100
 @export var MAX_STAMINA = 50
 
 @onready var health = MAX_HEALTH
 @onready var mana = MAX_MANA
 @onready var stamina = MAX_STAMINA
+@onready var last_mana_value = mana
+@onready var mana_progress = mana
+
+#This is for the recovery mechanic, to calculate the health charge from the base
+@onready var mana_base_value = mana
 
 var stamina_run_decrement = 0.5
 var stamina_block_decrement = 0.75
 var stamina_parry_decrement = 5
 
+var mana_progress_decrement = 0.65
 var mana_charge_attack_value = 2
 var mana_charge_attack_decrement = 2
 var mana_recovery_rate = 0.005
 var stamina_recovery_rate = 0.2
+
+var mana_health_charge = 30
+var health_increment_value = 0
 
 @onready var sprite = $Sprite2D
 @onready var anim_tree = $AnimationTree
@@ -52,7 +61,7 @@ enum {
 	DASH,
 	WALL_CLING,
 	WALL_SLIDE,
-	POGO_JUMPING
+	POGO_JUMPING,
 }
 
 var state_label = {
@@ -120,6 +129,7 @@ var is_on_wall_bool = false
 var reset_jump_count = false
 var is_pogo_jumping = false
 var can_charge_attack = false
+var is_recovering_mana = false
 
 #KNOCKBACK
 @export var knockback_force := 300.0
@@ -132,6 +142,7 @@ var knockback_velocity := Vector2.ZERO
 var closest_angle = 0
 var slash_velocity = 0
 var slash_decrement_percentage = 0.6
+
 func _ready():
 	init()
 
@@ -140,7 +151,6 @@ func init():
 	player_hud.set_max_health(MAX_HEALTH)
 	player_hud.set_max_mana(MAX_MANA)
 	player_hud.set_max_stamina(MAX_STAMINA)
-	
 	pass
 
 func _process(delta):
@@ -233,8 +243,8 @@ func handle_run(delta):
 	if stop_process: return
 	direction = Input.get_axis("move_left", "move_right")
 	
-	if [ATTACK_1, ATTACK_2, ATTACK_3].has(state): return
-
+	if [ATTACK_1, ATTACK_2, ATTACK_3, CHARGE_ATTACK].has(state): return
+	
 	if direction:
 		last_direction = direction
 		if !can_move: return
@@ -285,6 +295,8 @@ func handle_attack():
 			await handle_deathblow()
 			return
 		
+		handle_attack_midair()
+		
 		if !is_on_floor() and directional_attack_count < MAX_DIRECTIONAL_ATTACKS:
 			handle_directional_attack()
 			return
@@ -308,7 +320,7 @@ func handle_attack():
 	
 	if Input.is_action_just_released("attack_1"):
 		charge_attack_timer.stop()
-		if can_charge_attack and mana > mana_charge_attack_decrement:
+		if can_charge_attack and mana > mana_charge_attack_decrement and state == CHARGE_ATTACK:
 			
 			state_machine.travel("charge_attack")
 			handle_charge_attack()
@@ -414,6 +426,11 @@ func handle_deathblow():
 	velocity = Vector2.ZERO
 	pass
 
+func handle_attack_midair():
+	if !is_on_floor() and !is_on_wall(): set_player_direction()
+	
+	pass
+
 func has_parriable_enemies():
 	var enemies = GameManager.parriable_enemies
 	return enemies.size() > 0
@@ -489,6 +506,7 @@ func update_state_label(_state: int):
 
 func set_state(_state: int):
 	state = _state
+	await get_tree().process_frame
 	update_state_label(state)
 	pass
 
@@ -513,11 +531,18 @@ func handle_projectile_block(area):
 				if area.sender and area.sender.has_method("handle_parry"):
 					area.sender.handle_parry()
 				reduce_stamina(stamina_parry_decrement)
+				increase_mana(10)
 		pass
 	pass
 
 func handle_take_damage(area):
 	var damage = area.damage
+	
+	#Restart charge cooldown
+	can_use_charge_attack = false
+	charge_cooldown_timer.start()
+	reset_mana_progress()
+	
 	take_damage(damage)
 	apply_knockback(area.global_position)
 	GameManager.emit_signal("shake_camera",0.2,8.0)
@@ -572,7 +597,6 @@ func handle_death():
 		area.set_deferred("monitorable", false)
 		pass
 	
-	
 	set_state(DEAD)
 	pass
 
@@ -584,23 +608,65 @@ func reduce_mana(value):
 	mana = clamp(mana - value, 0, MAX_MANA)
 	pass
 
+func reduce_mana_progress(value):
+	mana_progress = clamp(mana_progress - value, 0, MAX_MANA)
+	player_hud.set_mana_progress(mana_progress)
+	pass
+
+func increase_mana(value):
+	mana = clamp(mana + value, 0, MAX_MANA)
+	last_mana_value = mana
+	mana_progress = mana
+	mana_base_value = mana
+	pass
+
+func increase_health(value):
+	health = clamp(health + value, 0, MAX_HEALTH)
+
+func set_mana(value):
+	mana = value
+	mana_progress = value
+	player_hud.set_mana_progress(mana_progress)
+	player_hud.set_mana(mana)
+	pass
+
+func reset_mana_progress():
+	var mana = stepped_from_base(mana_progress, mana_base_value, mana_health_charge)
+	set_mana(mana)
+	is_recovering_mana = false
+	pass
+
 func reduce_health(value):
 	health = clamp(health - value, 0, MAX_HEALTH)
 	pass
 
 func handle_recover():
-	if Input.is_action_just_pressed("recover") and mana == MAX_MANA:
-		health = MAX_HEALTH
-		player_hud.set_max_health(MAX_HEALTH)
-		reduce_mana(MAX_MANA)
+	if Input.is_action_just_pressed("recover"):
+		mana_progress = mana
+		mana_base_value = mana
+		reduce_mana(mana_health_charge)
+		health_increment_value = 0
+		is_recovering_mana = true
 		pass
 	
+	if Input.is_action_pressed("recover") and is_recovering_mana:
+		reduce_mana_progress(mana_progress_decrement)
+		var mana = stepped_from_base(mana_progress, mana_base_value, mana_health_charge)
+		if last_mana_value > mana:
+			health_increment_value += 1
+			last_mana_value = mana
+			reduce_mana(mana_health_charge)
+		pass
+	
+	if Input.is_action_just_released("recover") and is_recovering_mana:
+		increase_health(health_increment_value)
+		player_hud.set_health(health)
+		reset_mana_progress()
 	pass
 
 func handle_directional_attack():
 	directional_attack_count += 1
 	velocity = get_slash_velocity()
-	set_player_direction()
 	slash_velocity *= slash_decrement_percentage
 	
 	set_state(ATTACK_1)
@@ -674,6 +740,10 @@ func set_player_direction():
 	last_direction = snapped_direction.x
 	pass
 
+func stepped_from_base(current_value: float, base_value: float, step: float) -> float:
+	var steps_down = floor((base_value - current_value) / step)
+	return base_value - (steps_down * step)
+
 func _on_charge_cooldown_timer_timeout():
 	can_use_charge_attack = true
 	pass # Replace with function body.
@@ -718,4 +788,5 @@ func _on_pogo_area_area_exited(area):
 
 func _on_charge_attack_timer_timeout():
 	can_charge_attack = true
+	set_state(CHARGE_ATTACK)
 	pass # Replace with function body.
