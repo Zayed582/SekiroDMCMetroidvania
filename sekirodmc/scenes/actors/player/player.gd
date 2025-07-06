@@ -314,7 +314,7 @@ func handle_attack():
 		if combo_time == MAX_COMBO_TIME:
 			combo_time = MIN_COMBO_TIME
 	
-	if mana > mana_charge_attack_decrement:
+	if mana > mana_charge_attack_decrement and state == CHARGE_ATTACK:
 		if Input.is_action_pressed("attack_1"):
 			if can_use_charge_attack and can_charge_attack:
 				charge_movement_speed = clamp(charge_movement_speed + CHARGE_MOVEMENT_INCR, MIN_CHARGE_MOVEMENT_SPEED, MAX_CHARGE_MOVEMENT_SPEED)
@@ -509,7 +509,6 @@ func update_state_label(_state: int):
 
 func set_state(_state: int):
 	state = _state
-	await get_tree().process_frame
 	update_state_label(state)
 	pass
 

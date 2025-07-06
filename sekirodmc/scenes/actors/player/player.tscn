@@ -289,6 +289,18 @@ tracks/0/keys = {
 "update": 1,
 "values": [Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Areas/HitArea:monitoring")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.5),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [false, false]
+}
 
 [sub_resource type="Animation" id="Animation_yab6n"]
 resource_name = "charge_attack"
@@ -764,7 +776,6 @@ switch_mode = 2
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_7i6t6"]
-advance_mode = 2
 advance_condition = &"can_charge_attack"
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_e5w6i"]
@@ -862,7 +873,7 @@ states/block/position = Vector2(397.25, 239.393)
 states/block_hit/node = SubResource("AnimationNodeAnimation_5bhx7")
 states/block_hit/position = Vector2(398.819, 450.424)
 states/charge/node = SubResource("AnimationNodeAnimation_hcvpp")
-states/charge/position = Vector2(174.458, -173.846)
+states/charge/position = Vector2(216.958, -147.346)
 states/charge_attack/node = SubResource("AnimationNodeAnimation_xducv")
 states/charge_attack/position = Vector2(176.238, -291.921)
 states/dash/node = SubResource("AnimationNodeBlendTree_biscu")
