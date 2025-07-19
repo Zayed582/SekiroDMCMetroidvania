@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="SekiroDMC"
-run/main_scene="uid://b0aj65tspwkne"
+run/main_scene="uid://brqeqqysgk5jb"
 config/features=PackedStringArray("4.4", "GL Compatibility")
 config/icon="res://assets/icons/icon.svg"
 
@@ -19,6 +19,7 @@ config/icon="res://assets/icons/icon.svg"
 
 GameManager="*res://scripts/GameManager.gd"
 TransitionScene="*res://scenes/gui/transition_scene/transition_scene.tscn"
+BackgroundMusic="*res://scenes/gui/background_music/background_music.tscn"
 
 [display]
 
@@ -96,5 +97,7 @@ pointing/emulate_touch_from_mouse=true
 
 [rendering]
 
+textures/canvas_textures/default_texture_filter=0
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+environment/defaults/default_clear_color=Color(0.180175, 0.150858, 0.320577, 1)

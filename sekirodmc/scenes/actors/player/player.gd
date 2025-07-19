@@ -18,8 +18,8 @@ var stamina_block_decrement = 0.75
 var stamina_parry_decrement = 5
 
 var mana_progress_decrement = 0.65
-var mana_charge_attack_value = 2
-var mana_charge_attack_decrement = 2
+var mana_charge_attack_value = 20
+var mana_charge_attack_decrement = 20
 var mana_recovery_rate = 0.005
 var stamina_recovery_rate = 0.2
 
@@ -40,7 +40,6 @@ var health_increment_value = 0
 @onready var wall_jump_cooldown_timer = $Timers/WallJumpCooldownTimer
 @onready var hit_area = $Areas/HitArea
 @onready var pojo_area_detector = $Areas/PogoArea
-@onready var player_hud = $CanvasLayer/PlayerHUD
 @onready var charge_attack_timer = $Timers/ChargeAttackTimer
 
 enum {
@@ -62,7 +61,8 @@ enum {
 	WALL_CLING,
 	WALL_SLIDE,
 	POGO_JUMPING,
-	DIRECTIONAL_ATTACK
+	DIRECTIONAL_ATTACK,
+	RECOVER_HEALTH
 }
 
 var state_label = {
@@ -84,11 +84,12 @@ var state_label = {
 	WALL_CLING: "WALL_CLING",
 	WALL_SLIDE: "WALL_SLIDE",
 	POGO_JUMPING: "POGO_JUMPING",
-	DIRECTIONAL_ATTACK: "DIRECTIONAL ATTACK"
+	DIRECTIONAL_ATTACK: "DIRECTIONAL ATTACK",
+	RECOVER_HEALTH: "RECOVER_HEALTH"
 }
 
 const RUN_SPEED = 350.0
-const SPRINT_SPEED = 500.0
+const SPRINT_SPEED = 700.0
 const DECELERATION_SPEED = 1600
 const DASH_SPEED = 2000
 const JUMP_VELOCITY = -800.0
@@ -101,7 +102,9 @@ const GRAVITY = 1300
 const MAX_CHARGE_MOVEMENT_SPEED = 1100
 const MIN_CHARGE_MOVEMENT_SPEED = 400
 const CHARGE_MOVEMENT_INCR = 5
-const MAX_JUMPS = 2
+
+# UNLOCK DOUBLE JUMP, SET MAX_JUMPS = 2
+const MAX_JUMPS = 1
 const WALL_STICK_FORCE = 20
 const MAX_DIRECTIONAL_ATTACKS = 1
 
@@ -136,6 +139,7 @@ var is_recovering_mana = false
 #KNOCKBACK
 @export var knockback_force := 300.0
 @export var knockback_duration := 0.2
+
 var knockback_timer := 0.0
 var is_knockback := false
 var knockback_velocity := Vector2.ZERO
@@ -145,21 +149,44 @@ var closest_angle = 0
 var slash_velocity = 0
 var slash_decrement_percentage = 0.6
 
+#Sounds
+@onready var slash_1 = $Sounds/SlashPlayer1
+@onready var slash_2 = $Sounds/SlashPlayer1
+@onready var slash_3 = $Sounds/SlashPlayer3
+@onready var charged_attack_player = $Sounds/ChargeAttackPlayer
+@onready var walk_1 = $Sounds/Walk1
+
+#WALK SOUND
+var step_timer := 0.0
+var step_interval := 0.3
+
+#ABILITIES
+var unlocked_abilities = [
+	IDLE,
+	RUN,
+	JUMP,
+	ATTACK_1,
+	ATTACK_2,
+	ATTACK_3,
+	SPRINT
+]
+
 func _ready():
 	init()
 
 func init():
 	anim_tree.active = true
-	player_hud.set_max_health(MAX_HEALTH)
-	player_hud.set_max_mana(MAX_MANA)
-	player_hud.set_max_stamina(MAX_STAMINA)
+	await get_tree().process_frame
+	GameManager.emit_signal("set_max_health", MAX_HEALTH)
+	GameManager.emit_signal("set_max_mana", MAX_MANA)
+	GameManager.emit_signal("set_max_stamina", MAX_STAMINA)
 	pass
 
 func _process(delta):
 	mana = move_toward(mana, MAX_MANA, mana_recovery_rate)
 	stamina = move_toward(stamina, MAX_STAMINA, stamina_recovery_rate)
-	player_hud.set_stamina(stamina)
-	player_hud.set_mana(mana)
+	GameManager.emit_signal("set_stamina", stamina)
+	GameManager.emit_signal("set_mana", mana)
 	
 	pass
 
@@ -253,8 +280,11 @@ func handle_run(delta):
 		velocity.x = direction * move_speed
 		handle_sprite_flip(direction)
 		reduce_stamina(stamina_run_decrement)
+		step_timer -= delta
+		#handle_run_sound()
 	else:
 		velocity.x = move_toward(velocity.x, 0, DECELERATION_SPEED * delta)
+		step_timer = 0.0
 		if is_on_floor(): set_state(IDLE)
 	
 	if !is_on_floor(): return
@@ -264,12 +294,20 @@ func handle_run(delta):
 		set_state(IDLE)
 	pass
 
+func handle_run_sound():
+	if is_on_floor():
+		if step_timer <= 0.0:
+			walk_1.pitch_scale = randf_range(0.85, 1.15)
+			walk_1.play()
+			step_timer = step_interval
+	pass
+
 func handle_sprint():
 	if stop_process: return
 	if is_on_wall(): return
 	
 	if is_on_floor():
-		if Input.is_action_pressed("sprint"):
+		if Input.is_action_pressed("sprint") and has_unlocked_ability(SPRINT):
 			set_state(SPRINT)
 			move_speed = SPRINT_SPEED
 		else:
@@ -299,11 +337,11 @@ func handle_attack():
 		
 		handle_attack_midair()
 		
-		if !is_on_floor() and directional_attack_count < MAX_DIRECTIONAL_ATTACKS:
+		if !is_on_floor() and directional_attack_count < MAX_DIRECTIONAL_ATTACKS and has_unlocked_ability(DIRECTIONAL_ATTACK):
 			handle_directional_attack()
 			return
 		
-		if mana > mana_charge_attack_decrement and can_use_charge_attack:
+		if mana > mana_charge_attack_decrement and can_use_charge_attack and has_unlocked_ability(CHARGE_ATTACK):
 			charge_attack_timer.start()
 		
 		attack()
@@ -314,16 +352,18 @@ func handle_attack():
 		if combo_time == MAX_COMBO_TIME:
 			combo_time = MIN_COMBO_TIME
 	
-	if mana > mana_charge_attack_decrement and state == CHARGE_ATTACK:
+	if mana > mana_charge_attack_decrement and has_unlocked_ability(CHARGE_ATTACK):
 		if Input.is_action_pressed("attack_1"):
 			if can_use_charge_attack and can_charge_attack:
+				state_machine.travel("charge")
 				charge_movement_speed = clamp(charge_movement_speed + CHARGE_MOVEMENT_INCR, MIN_CHARGE_MOVEMENT_SPEED, MAX_CHARGE_MOVEMENT_SPEED)
 				velocity.x = 0
 	
-	if Input.is_action_just_released("attack_1"):
+	if Input.is_action_just_released("attack_1") and has_unlocked_ability(CHARGE_ATTACK):
 		charge_attack_timer.stop()
-		if can_charge_attack and mana > mana_charge_attack_decrement and state == CHARGE_ATTACK:
-			
+		if can_charge_attack and mana > mana_charge_attack_decrement:
+			#print("released")
+			handle_charge_hitstop()
 			state_machine.travel("charge_attack")
 			handle_charge_attack()
 			set_state(IDLE)
@@ -332,15 +372,21 @@ func handle_attack():
 			charge_cooldown_timer.start()
 			can_use_charge_attack = false
 			reduce_mana(mana_charge_attack_decrement)
+			
 		can_charge_attack = false
 		pass
 
 func handle_charge_attack():
 	if !is_on_floor(): return
-	velocity.x += charge_movement_speed * last_direction
+	velocity.x = charge_movement_speed * last_direction
+	pass
+
+func handle_charge_hitstop():
+	GameManager.emit_signal("hitstop", 0.2)
 	pass
 
 func handle_dash():
+	if !has_unlocked_ability(DASH): return
 	if is_on_wall(): return
 
 	if Input.is_action_just_pressed("dash"):
@@ -360,6 +406,8 @@ func handle_dash():
 
 func handle_wall_mechanics():
 	# WALL SLIDE
+	if !has_unlocked_ability(WALL_CLING): return
+	
 	anim_tree.set("parameters/conditions/is_on_wall", !is_on_wall_only())
 	if is_on_wall_only():
 		velocity.x += WALL_STICK_FORCE * last_direction
@@ -382,6 +430,7 @@ func handle_wall_mechanics():
 	
 	if jump_count > MAX_JUMPS: return
 	
+	# WALL JUMP
 	if Input.is_action_just_pressed("jump") and is_on_wall_only():
 		handle_sprite_flip(-last_direction)
 		var new_velocity_x = WALL_JUMP_VELOCITY.x * -last_direction
@@ -475,6 +524,7 @@ func handle_sprite_flip(dir: int):
 	pass
 
 func handle_block():
+	if !has_unlocked_ability(BLOCK): return
 	if is_on_wall_only(): return
 	
 	if is_blocking:
@@ -534,6 +584,7 @@ func handle_projectile_block(area):
 					area.sender.handle_parry()
 				reduce_stamina(stamina_parry_decrement)
 				increase_mana(10)
+				GameManager.emit_signal("hitstop", 0.2)
 		pass
 	pass
 
@@ -565,12 +616,13 @@ func handle_knockback(delta):
 			is_knockback = false
 			knockback_velocity = Vector2.ZERO
 		velocity = knockback_velocity
+		floor_stop_on_slope = false
 		move_and_slide()
 	pass
 
 func take_damage(damage):
 	health -= damage
-	player_hud.set_health(health)
+	GameManager.emit_signal("set_health", health)
 	if health <= 0:
 		state_machine.travel("hurt")
 		await get_tree().process_frame
@@ -612,7 +664,7 @@ func reduce_mana(value):
 
 func reduce_mana_progress(value):
 	mana_progress = clamp(mana_progress - value, 0, MAX_MANA)
-	player_hud.set_mana_progress(mana_progress)
+	GameManager.emit_signal("set_mana_progress", mana_progress)
 	pass
 
 func increase_mana(value):
@@ -628,8 +680,8 @@ func increase_health(value):
 func set_mana(value):
 	mana = value
 	mana_progress = value
-	player_hud.set_mana_progress(mana_progress)
-	player_hud.set_mana(mana)
+	GameManager.emit_signal("set_mana_progress", mana_progress)
+	GameManager.emit_signal("set_mana", mana)
 	pass
 
 func reset_mana_progress():
@@ -643,6 +695,8 @@ func reduce_health(value):
 	pass
 
 func handle_recover():
+	if !has_unlocked_ability(RECOVER_HEALTH): return
+
 	if Input.is_action_just_pressed("recover"):
 		mana_progress = mana
 		mana_base_value = mana
@@ -662,7 +716,7 @@ func handle_recover():
 	
 	if Input.is_action_just_released("recover") and is_recovering_mana:
 		increase_health(health_increment_value)
-		player_hud.set_health(health)
+		GameManager.emit_signal("set_health", health)
 		reset_mana_progress()
 	pass
 
@@ -746,6 +800,10 @@ func stepped_from_base(current_value: float, base_value: float, step: float) -> 
 	var steps_down = floor((base_value - current_value) / step)
 	return base_value - (steps_down * step)
 
+func has_unlocked_ability(ability):
+	return unlocked_abilities.has(ability)
+	pass
+
 func _on_charge_cooldown_timer_timeout():
 	can_use_charge_attack = true
 	pass # Replace with function body.
@@ -771,6 +829,8 @@ func _on_wall_jump_cooldown_timer_timeout():
 
 func _on_hit_area_area_entered(area):
 	area.get_parent().get_parent().take_damage(global_position, damage)
+	
+	#GameManager.emit_signal("hitstop")
 	#if is_pogo_jumping and !is_on_floor():
 		#handle_mini_jump()
 		#set_state(POGO_JUMPING)
