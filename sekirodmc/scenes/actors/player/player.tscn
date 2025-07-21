@@ -1,4 +1,4 @@
-[gd_scene load_steps=119 format=3 uid="uid://deqcnnb5n0asl"]
+[gd_scene load_steps=120 format=3 uid="uid://deqcnnb5n0asl"]
 
 [ext_resource type="Script" uid="uid://dqyy5n3uatrtc" path="res://scenes/actors/player/player.gd" id="1_l17oj"]
 [ext_resource type="Texture2D" uid="uid://d4ltavemvqyrk" path="res://assets/images/player/Shinobi Character MASK NEW.png" id="2_oj104"]
@@ -7,6 +7,7 @@
 [ext_resource type="AudioStream" uid="uid://dtlidvu05ay0g" path="res://sounds/SwordSlash3.mp3" id="7_fp13k"]
 [ext_resource type="AudioStream" uid="uid://d2t85wniqir6a" path="res://sounds/GRASS - Walk short 4.wav" id="8_5bhx7"]
 [ext_resource type="AudioStream" uid="uid://b660pevflhn0d" path="res://sounds/SwordSlash4.mp3" id="8_fp13k"]
+[ext_resource type="Texture2D" uid="uid://cr740vcuc3fto" path="res://assets/sfx/light2d.png" id="8_i174x"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yg5k4"]
 radius = 33.0
@@ -962,7 +963,7 @@ size = Vector2(183, 211)
 size = Vector2(122, 194)
 
 [node name="Player" type="CharacterBody2D"]
-collision_layer = 3
+collision_layer = 2
 collision_mask = 3
 script = ExtResource("1_l17oj")
 
@@ -1077,7 +1078,11 @@ shape = SubResource("RectangleShape2D_mpktj")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(0, -200)
+zoom = Vector2(1.05, 1.05)
 limit_left = 0
+limit_top = 255
+limit_bottom = 1280
+limit_smoothed = true
 position_smoothing_enabled = true
 script = ExtResource("3_oj104")
 
@@ -1102,6 +1107,14 @@ volume_db = -10.0
 [node name="Walk1" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource("8_5bhx7")
 volume_db = -15.0
+
+[node name="Sfx" type="Node2D" parent="."]
+
+[node name="PointLight2D" type="PointLight2D" parent="Sfx"]
+color = Color(0.994234, 0.673051, 1, 1)
+energy = 0.8
+texture = ExtResource("8_i174x")
+texture_scale = 16.0
 
 [connection signal="timeout" from="Timers/ComboTimer" to="." method="_on_combo_timer_timeout"]
 [connection signal="timeout" from="Timers/ParryTimer" to="." method="_on_parry_timer_timeout"]

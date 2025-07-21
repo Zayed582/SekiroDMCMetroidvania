@@ -1,8 +1,12 @@
-[gd_scene load_steps=2 format=3 uid="uid://cm73xjditugvt"]
+[gd_scene load_steps=3 format=3 uid="uid://cm73xjditugvt"]
 
 [ext_resource type="PackedScene" uid="uid://c6qq72gxakhyl" path="res://scenes/levels/level_1.tscn" id="1_j2425"]
+[ext_resource type="PackedScene" uid="uid://8n13ndx38w1l" path="res://scenes/actors/enemy/slime/slime.tscn" id="2_g2h2n"]
 
 [node name="Level2" instance=ExtResource("1_j2425")]
 
-[node name="Marker2D" parent="." index="6"]
-position = Vector2(76, 130)
+[node name="Marker2D" parent="." index="3"]
+position = Vector2(282, 759)
+
+[node name="Slime" parent="Enemies" index="0" instance=ExtResource("2_g2h2n")]
+position = Vector2(752, 830)

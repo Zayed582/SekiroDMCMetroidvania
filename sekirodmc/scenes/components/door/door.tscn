@@ -1,7 +1,8 @@
-[gd_scene load_steps=6 format=3 uid="uid://c5qhl3bn6uskp"]
+[gd_scene load_steps=7 format=3 uid="uid://c5qhl3bn6uskp"]
 
 [ext_resource type="Script" uid="uid://d0ealf7x3wcw0" path="res://scenes/components/door/door.gd" id="1_yr6el"]
 [ext_resource type="Texture2D" uid="uid://bwviu4llyveoq" path="res://assets/tilesets/tiles.png" id="2_an1vm"]
+[ext_resource type="Texture2D" uid="uid://cr740vcuc3fto" path="res://assets/sfx/light2d.png" id="3_y00uw"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_y00uw"]
 texture = ExtResource("2_an1vm")
@@ -181,5 +182,12 @@ scale = Vector2(6, 6)
 texture = ExtResource("2_an1vm")
 region_enabled = true
 region_rect = Rect2(288, 16, 64, 48)
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(0, -83)
+color = Color(0.625597, 0.625597, 0.625597, 1)
+blend_mode = 1
+texture = ExtResource("3_y00uw")
+texture_scale = 15.0
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

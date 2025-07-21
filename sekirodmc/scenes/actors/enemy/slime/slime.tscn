@@ -1,0 +1,185 @@
+[gd_scene load_steps=20 format=3 uid="uid://8n13ndx38w1l"]
+
+[ext_resource type="Texture2D" uid="uid://cf7octmbhpdy2" path="res://assets/characters/enemies/slime/Slime_Green_32x32.png" id="1_pyrnv"]
+[ext_resource type="Script" uid="uid://pq4wd2syp010" path="res://scenes/actors/enemy/slime/slime.gd" id="1_rrbe6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_pyrnv"]
+size = Vector2(72, 20)
+
+[sub_resource type="Animation" id="Animation_7rp6p"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Animation/Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [Vector2i(0, 2)]
+}
+
+[sub_resource type="Animation" id="Animation_3wjmc"]
+resource_name = "die"
+length = 0.7
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Animation/Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 4), Vector2i(1, 4), Vector2i(2, 4), Vector2i(3, 4), Vector2i(4, 4), Vector2i(5, 4), Vector2i(6, 4)]
+}
+tracks/1/type = "method"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath(".")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.7),
+"transitions": PackedFloat32Array(1),
+"values": [{
+"args": [],
+"method": &"queue_free"
+}]
+}
+
+[sub_resource type="Animation" id="Animation_rrbe6"]
+resource_name = "hurt"
+length = 0.4
+step = 0.05
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Animation/Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 1), Vector2i(1, 1), Vector2i(2, 1), Vector2i(3, 1), Vector2i(4, 1), Vector2i(5, 1), Vector2i(6, 1)]
+}
+
+[sub_resource type="Animation" id="Animation_scmf1"]
+resource_name = "idle"
+length = 1.2
+loop_mode = 1
+step = 0.1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("Animation/Sprite2D:frame_coords")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8, 1),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [Vector2i(0, 2), Vector2i(1, 2), Vector2i(2, 2), Vector2i(3, 2), Vector2i(4, 2), Vector2i(5, 2)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_1annv"]
+_data = {
+&"RESET": SubResource("Animation_7rp6p"),
+&"die": SubResource("Animation_3wjmc"),
+&"hurt": SubResource("Animation_rrbe6"),
+&"idle": SubResource("Animation_scmf1")
+}
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_gra43"]
+animation = &"die"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_rrbe6"]
+animation = &"hurt"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_3wjmc"]
+animation = &"idle"
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_gra43"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mgh5a"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_rrbe6"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_f6drr"]
+switch_mode = 2
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_3wjmc"]
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_gra43"]
+states/die/node = SubResource("AnimationNodeAnimation_gra43")
+states/die/position = Vector2(784, 99.75)
+states/hurt/node = SubResource("AnimationNodeAnimation_rrbe6")
+states/hurt/position = Vector2(559.5, 101)
+states/idle/node = SubResource("AnimationNodeAnimation_3wjmc")
+states/idle/position = Vector2(378, 98.75)
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_gra43"), "idle", "hurt", SubResource("AnimationNodeStateMachineTransition_mgh5a"), "hurt", "idle", SubResource("AnimationNodeStateMachineTransition_rrbe6"), "die", "End", SubResource("AnimationNodeStateMachineTransition_f6drr"), "hurt", "die", SubResource("AnimationNodeStateMachineTransition_3wjmc")]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rrbe6"]
+radius = 36.0139
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3wjmc"]
+radius = 29.0172
+
+[node name="Slime" type="CharacterBody2D"]
+collision_layer = 0
+script = ExtResource("1_rrbe6")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(2, -10)
+shape = SubResource("RectangleShape2D_pyrnv")
+
+[node name="Animation" type="Node2D" parent="."]
+
+[node name="Sprite2D" type="Sprite2D" parent="Animation"]
+position = Vector2(0, -80)
+scale = Vector2(5, 5)
+texture = ExtResource("1_pyrnv")
+hframes = 7
+vframes = 6
+frame = 14
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Animation"]
+root_node = NodePath("../..")
+libraries = {
+&"": SubResource("AnimationLibrary_1annv")
+}
+autoplay = "idle"
+
+[node name="AnimationTree" type="AnimationTree" parent="Animation"]
+root_node = NodePath("../..")
+tree_root = SubResource("AnimationNodeStateMachine_gra43")
+anim_player = NodePath("../AnimationPlayer")
+
+[node name="Areas" type="Node2D" parent="."]
+
+[node name="HurtBox" type="Area2D" parent="Areas"]
+collision_layer = 512
+collision_mask = 512
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/HurtBox"]
+position = Vector2(0, -24)
+shape = SubResource("CircleShape2D_rrbe6")
+
+[node name="HitBox" type="Area2D" parent="Areas"]
+collision_layer = 256
+collision_mask = 256
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/HitBox"]
+position = Vector2(0, -24)
+shape = SubResource("CircleShape2D_3wjmc")
+
+[node name="Detectors" type="Node2D" parent="."]

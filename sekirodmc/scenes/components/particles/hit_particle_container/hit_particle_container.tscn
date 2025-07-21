@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://btfj223wsljku"]
+
+[ext_resource type="Script" uid="uid://cdljmty1jfrgl" path="res://scenes/components/particles/hit_particle_container/hit_particle_container.gd" id="1_e78is"]
+
+[node name="HitParticleContainer" type="Node2D"]
+script = ExtResource("1_e78is")

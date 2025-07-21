@@ -589,7 +589,12 @@ func handle_projectile_block(area):
 	pass
 
 func handle_take_damage(area):
-	var damage = area.damage
+	var damage = 0
+	if area.get_parent().get_parent().damage:
+		damage = area.get_parent().get_parent().damage
+	else:
+		damage = area.damage
+	#area.get_parent().get_parent().damage if area.get_parent().get_parent().has_method("damage") else area.damage
 	
 	#Restart charge cooldown
 	can_use_charge_attack = false
@@ -599,7 +604,7 @@ func handle_take_damage(area):
 	take_damage(damage)
 	apply_knockback(area.global_position)
 	GameManager.emit_signal("shake_camera",0.2,8.0)
-	area.queue_free()
+	if area.is_in_group("projectile"): area.queue_free()
 	GameManager.emit_signal("clear_parrys")
 	pass
 
