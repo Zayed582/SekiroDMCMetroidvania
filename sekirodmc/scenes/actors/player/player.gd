@@ -590,7 +590,7 @@ func handle_projectile_block(area):
 
 func handle_take_damage(area):
 	var damage = 0
-	if area.get_parent().get_parent().damage:
+	if area.get_parent().get_parent().get("damage"):
 		damage = area.get_parent().get_parent().damage
 	else:
 		damage = area.damage

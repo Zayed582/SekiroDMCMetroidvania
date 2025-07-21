@@ -1,15 +1,15 @@
 [gd_scene load_steps=4 format=3 uid="uid://cvbwo18rp84sj"]
 
-[ext_resource type="FontFile" uid="uid://bynpmsu0p51tv" path="res://fonts/AngelRhapsodyRegular-ZVGJz.ttf" id="1_3hiw6"]
 [ext_resource type="Script" uid="uid://3dynh15kdqjs" path="res://scenes/components/particles/hit_particle/hit_particle.gd" id="1_8hc8v"]
+[ext_resource type="FontFile" uid="uid://frujxh1gih4r" path="res://fonts/Digitag.ttf" id="2_8hc8v"]
 
 [sub_resource type="LabelSettings" id="LabelSettings_8hc8v"]
-font = ExtResource("1_3hiw6")
-font_size = 32
-outline_size = 4
+font = ExtResource("2_8hc8v")
+font_size = 48
+outline_size = 15
 outline_color = Color(0, 0, 0, 1)
-shadow_color = Color(0, 0, 0, 1)
-shadow_offset = Vector2(0, 2)
+shadow_color = Color(0.40642, 0.40642, 0.40642, 1)
+shadow_offset = Vector2(0, 5)
 
 [node name="HitParticle" type="Node2D"]
 script = ExtResource("1_8hc8v")
@@ -20,8 +20,8 @@ script = ExtResource("1_8hc8v")
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
-offset_top = -32.0
-offset_right = 40.0
+offset_top = -52.0
+offset_right = 49.0
 grow_vertical = 0
 text = "-10"
 label_settings = SubResource("LabelSettings_8hc8v")
