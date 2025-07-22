@@ -18,13 +18,11 @@ func _ready():
 
 func _on_set_health(value):
 	health_bar.value = value
-	print("health value", value)
 	pass
 
 func _on_set_max_health(value):
 	health_bar.max_value = value
 	health_bar.value = value
-	print("max value", value)
 	pass
 
 func _on_set_mana(value):

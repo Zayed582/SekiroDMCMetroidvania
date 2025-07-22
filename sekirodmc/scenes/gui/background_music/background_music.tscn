@@ -1,11 +1,10 @@
 [gd_scene load_steps=2 format=3 uid="uid://vwqhy13uxlqn"]
 
-[ext_resource type="AudioStream" uid="uid://dqe7386i02ib" path="res://sounds/samurai-deeply-meditation-304944.mp3" id="1_mnuj3"]
+[ext_resource type="AudioStream" uid="uid://bhwhqnhx80g1p" path="res://sounds/Dead Cells - ClockTower (Official Soundtrack).mp3" id="1_mnuj3"]
 
 [node name="BackgroundMusic" type="Node"]
 
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("1_mnuj3")
-volume_db = -25.0
-pitch_scale = 1.1
+volume_db = -20.0
 autoplay = true

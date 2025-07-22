@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://bhwhqnhx80g1p"
+path="res://.godot/imported/Dead Cells - ClockTower (Official Soundtrack).mp3-3a7241d511b048a8d7ccc424c8a8613c.mp3str"
+
+[deps]
+
+source_file="res://sounds/Dead Cells - ClockTower (Official Soundtrack).mp3"
+dest_files=["res://.godot/imported/Dead Cells - ClockTower (Official Soundtrack).mp3-3a7241d511b048a8d7ccc424c8a8613c.mp3str"]
+
+[params]
+
+loop=false
+loop_offset=0
+bpm=0
+beat_count=0
+bar_beats=4

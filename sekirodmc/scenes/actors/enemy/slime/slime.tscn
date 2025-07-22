@@ -1,7 +1,10 @@
-[gd_scene load_steps=20 format=3 uid="uid://8n13ndx38w1l"]
+[gd_scene load_steps=21 format=3 uid="uid://8n13ndx38w1l"]
 
 [ext_resource type="Texture2D" uid="uid://cf7octmbhpdy2" path="res://assets/characters/enemies/slime/Slime_Green_32x32.png" id="1_pyrnv"]
 [ext_resource type="Script" uid="uid://pq4wd2syp010" path="res://scenes/actors/enemy/slime/slime.gd" id="1_rrbe6"]
+[ext_resource type="PackedScene" uid="uid://cuevyd6xmehmc" path="res://scenes/components/hit_boxes/enemy_hit_box/enemy_hit_box.tscn" id="3_3wjmc"]
+[ext_resource type="PackedScene" uid="uid://bsf4hvqu4ny4a" path="res://scenes/components/hurt_boxes/enemy_hurt_box/enemy_hurt_box.tscn" id="3_gra43"]
+[ext_resource type="PackedScene" uid="uid://cktg12us11a14" path="res://scenes/components/detectors/slime_edge_detector/slime_edge_detector.tscn" id="5_mgh5a"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_pyrnv"]
 size = Vector2(72, 20)
@@ -128,24 +131,23 @@ states/idle/node = SubResource("AnimationNodeAnimation_3wjmc")
 states/idle/position = Vector2(378, 98.75)
 transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_gra43"), "idle", "hurt", SubResource("AnimationNodeStateMachineTransition_mgh5a"), "hurt", "idle", SubResource("AnimationNodeStateMachineTransition_rrbe6"), "die", "End", SubResource("AnimationNodeStateMachineTransition_f6drr"), "hurt", "die", SubResource("AnimationNodeStateMachineTransition_3wjmc")]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_rrbe6"]
-radius = 36.0139
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_3wjmc"]
-radius = 29.0172
-
 [node name="Slime" type="CharacterBody2D"]
 collision_layer = 0
 script = ExtResource("1_rrbe6")
+hit_box = ExtResource("3_3wjmc")
+hurt_box = ExtResource("3_gra43")
+edge_detector = ExtResource("5_mgh5a")
+has_wall_detection = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(2, -10)
+visible = false
+position = Vector2(2, 22)
 shape = SubResource("RectangleShape2D_pyrnv")
 
 [node name="Animation" type="Node2D" parent="."]
 
 [node name="Sprite2D" type="Sprite2D" parent="Animation"]
-position = Vector2(0, -80)
+position = Vector2(0, -48)
 scale = Vector2(5, 5)
 texture = ExtResource("1_pyrnv")
 hframes = 7
@@ -163,23 +165,3 @@ autoplay = "idle"
 root_node = NodePath("../..")
 tree_root = SubResource("AnimationNodeStateMachine_gra43")
 anim_player = NodePath("../AnimationPlayer")
-
-[node name="Areas" type="Node2D" parent="."]
-
-[node name="HurtBox" type="Area2D" parent="Areas"]
-collision_layer = 512
-collision_mask = 512
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/HurtBox"]
-position = Vector2(0, -24)
-shape = SubResource("CircleShape2D_rrbe6")
-
-[node name="HitBox" type="Area2D" parent="Areas"]
-collision_layer = 256
-collision_mask = 256
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/HitBox"]
-position = Vector2(0, -24)
-shape = SubResource("CircleShape2D_3wjmc")
-
-[node name="Detectors" type="Node2D" parent="."]

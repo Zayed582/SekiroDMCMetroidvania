@@ -1,0 +1,12 @@
+[gd_scene load_steps=2 format=3 uid="uid://cuevyd6xmehmc"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_3wjmc"]
+radius = 29.0172
+
+[node name="HitBox" type="Area2D"]
+collision_layer = 256
+collision_mask = 256
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_3wjmc")

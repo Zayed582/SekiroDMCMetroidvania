@@ -18,10 +18,11 @@ signal set_max_stamina(MAX_STAMINA)
 
 #PARTICE AND SFX
 signal add_hit_particle(text, pos)
+signal add_flash_particle()
 
 var parriable_enemies = []
 
-var current_level = 1
+var current_level = 2
 var max_levels = 2
 
 func _ready():

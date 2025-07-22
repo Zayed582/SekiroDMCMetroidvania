@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=4 uid="uid://c6qq72gxakhyl"]
+[gd_scene load_steps=19 format=4 uid="uid://c6qq72gxakhyl"]
 
 [ext_resource type="Script" uid="uid://dqupomdb7ma4n" path="res://scenes/levels/level.gd" id="1_oc4kc"]
 [ext_resource type="Texture2D" uid="uid://b5hu45r8pny6e" path="res://assets/tilesets/middleground.png" id="1_sk5k4"]
@@ -6,6 +6,7 @@
 [ext_resource type="FontFile" uid="uid://dh0p07u4qacbu" path="res://fonts/MountainKingRegular-woBYn.ttf" id="4_dga24"]
 [ext_resource type="PackedScene" uid="uid://bl6k4ubkub6q6" path="res://scenes/gui/gameover_menu/gameover_menu.tscn" id="5_dga24"]
 [ext_resource type="PackedScene" uid="uid://dcsw484jo1tps" path="res://scenes/gui/player_hud/player_hud.tscn" id="5_qxy0u"]
+[ext_resource type="PackedScene" uid="uid://btsdal3unww32" path="res://scenes/components/particles/flash_particle/flash_particle.tscn" id="6_excbq"]
 [ext_resource type="PackedScene" uid="uid://c5qhl3bn6uskp" path="res://scenes/components/door/door.tscn" id="6_sk5k4"]
 [ext_resource type="PackedScene" uid="uid://56dppt7syu8d" path="res://scenes/components/torch/torch.tscn" id="7_oc4kc"]
 [ext_resource type="PackedScene" uid="uid://brs28as3eschd" path="res://scenes/components/death_zone/death_zone.tscn" id="8_s8va5"]
@@ -508,6 +509,8 @@ offset_right = -1355.0
 offset_bottom = -861.0
 
 [node name="GameoverMenu" parent="Graphics/GUI" instance=ExtResource("5_dga24")]
+
+[node name="FlashParticle" parent="Graphics/GUI" instance=ExtResource("6_excbq")]
 
 [node name="ColorBackground" type="CanvasLayer" parent="Graphics"]
 layer = -1

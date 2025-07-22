@@ -5,7 +5,7 @@
 
 [sub_resource type="LabelSettings" id="LabelSettings_8hc8v"]
 font = ExtResource("2_8hc8v")
-font_size = 48
+font_size = 42
 outline_size = 15
 outline_color = Color(0, 0, 0, 1)
 shadow_color = Color(0.40642, 0.40642, 0.40642, 1)
@@ -20,8 +20,9 @@ script = ExtResource("1_8hc8v")
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0
+offset_left = -24.0
 offset_top = -52.0
-offset_right = 49.0
+offset_right = 25.0
 grow_vertical = 0
 text = "-10"
 label_settings = SubResource("LabelSettings_8hc8v")

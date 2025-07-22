@@ -155,6 +155,7 @@ var slash_decrement_percentage = 0.6
 @onready var slash_3 = $Sounds/SlashPlayer3
 @onready var charged_attack_player = $Sounds/ChargeAttackPlayer
 @onready var walk_1 = $Sounds/Walk1
+@onready var death_sound = $Sounds/DeathPlayer
 
 #WALK SOUND
 var step_timer := 0.0
@@ -362,7 +363,6 @@ func handle_attack():
 	if Input.is_action_just_released("attack_1") and has_unlocked_ability(CHARGE_ATTACK):
 		charge_attack_timer.stop()
 		if can_charge_attack and mana > mana_charge_attack_decrement:
-			#print("released")
 			handle_charge_hitstop()
 			state_machine.travel("charge_attack")
 			handle_charge_attack()
@@ -590,8 +590,8 @@ func handle_projectile_block(area):
 
 func handle_take_damage(area):
 	var damage = 0
-	if area.get_parent().get_parent().get("damage"):
-		damage = area.get_parent().get_parent().damage
+	if area.get_parent().get("damage"):
+		damage = area.get_parent().damage
 	else:
 		damage = area.damage
 	#area.get_parent().get_parent().damage if area.get_parent().get_parent().has_method("damage") else area.damage
@@ -628,7 +628,9 @@ func handle_knockback(delta):
 func take_damage(damage):
 	health -= damage
 	GameManager.emit_signal("set_health", health)
+	GameManager.emit_signal("add_flash_particle")
 	if health <= 0:
+		death_sound.play()
 		state_machine.travel("hurt")
 		await get_tree().process_frame
 		state_machine.travel("End")
@@ -833,7 +835,7 @@ func _on_wall_jump_cooldown_timer_timeout():
 
 
 func _on_hit_area_area_entered(area):
-	area.get_parent().get_parent().take_damage(global_position, damage)
+	area.get_parent().take_damage(global_position, damage)
 	
 	#GameManager.emit_signal("hitstop")
 	#if is_pogo_jumping and !is_on_floor():

@@ -4,7 +4,6 @@ extends Node2D
 @onready var label = $Body/Label
 
 func animate_hit(text):
-	print("connected")
 	label.text = "-" + str(text)
 	
 	var tween = create_tween()
@@ -15,7 +14,7 @@ func animate_hit(text):
 	tween2.tween_property(body, "modulate", Color("red"), 0.5)
 	tween.set_ease(Tween.EASE_IN_OUT)
 	tween.set_trans(Tween.TRANS_BOUNCE)
-	tween.tween_property(body, "global_position", global_position + Vector2(0,-100), 0.5)
+	tween.tween_property(body, "global_position", global_position + Vector2(0,-100), 0.45)
 	
 	await tween.finished
 	queue_free()

@@ -8,10 +8,8 @@ func _ready():
 	pass
 
 func _on_add_hit_particle(text, pos):
-	print(text, pos, "position")
 	var hit_particle: Node2D = hit_particle_scene.instantiate()
 	add_child(hit_particle)
-	#hit_particle.top_level = true
 	hit_particle.global_position = pos + Vector2(0, -20)
 	hit_particle.animate_hit(text)
 	pass
