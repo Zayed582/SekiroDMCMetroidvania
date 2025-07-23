@@ -83,8 +83,12 @@ func add_node(scene: PackedScene):
 	return child
 
 func silence_monitoring_node():
-	if hit_box_node: hit_box_node.monitoring = false
-	if hurt_box_node: hurt_box_node.monitoring = false
+	if hit_box_node: 
+		hit_box_node.set_deferred("monitoring", false)
+		hit_box_node.set_deferred("monitorable", false)
+	if hurt_box_node: 
+		hurt_box_node.set_deferred("monitoring", false)
+		hurt_box_node.set_deferred("monitorable", false)
 	pass
 
 func handle_flips():
