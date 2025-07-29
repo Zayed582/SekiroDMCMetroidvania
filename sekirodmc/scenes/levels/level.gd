@@ -6,6 +6,7 @@ extends Node2D
 
 func _ready():
 	spawn_player()
+	GameManager.reset_game()
 	pass
 
 func spawn_player():

@@ -13,7 +13,7 @@ extends CharacterBody2D
 #This is for the recovery mechanic, to calculate the health charge from the base
 @onready var mana_base_value = mana
 
-var stamina_run_decrement = 0.5
+var stamina_run_decrement = 0.4
 var stamina_block_decrement = 0.75
 var stamina_parry_decrement = 5
 
@@ -88,17 +88,17 @@ var state_label = {
 	RECOVER_HEALTH: "RECOVER_HEALTH"
 }
 
-const RUN_SPEED = 350.0
+const RUN_SPEED = 450.0
 const SPRINT_SPEED = 700.0
-const DECELERATION_SPEED = 1600
+const DECELERATION_SPEED = 3000
 const DASH_SPEED = 2000
-const JUMP_VELOCITY = -800.0
+const JUMP_VELOCITY = -1200.0
 const WALL_JUMP_VELOCITY = Vector2(1000, -800)
 const POGO_JUMP_VELOCITY = -600
 const MAX_SLASH_VELOCITY = 1000
 const MIN_COMBO_TIME = 0
 const MAX_COMBO_TIME = 3
-const GRAVITY = 1300
+const GRAVITY = 3400
 const MAX_CHARGE_MOVEMENT_SPEED = 1100
 const MIN_CHARGE_MOVEMENT_SPEED = 400
 const CHARGE_MOVEMENT_INCR = 5
@@ -252,7 +252,7 @@ func handle_jump():
 	
 	# Handle variations in jump height
 	if Input.is_action_just_released("jump") or is_on_ceiling():
-		if velocity.y < 0: velocity.y *= 0.6
+		if velocity.y < 0: velocity.y *= 0.2
 		pass
 	
 	if jump_count >= MAX_JUMPS: return
@@ -306,11 +306,12 @@ func handle_run_sound():
 func handle_sprint():
 	if stop_process: return
 	if is_on_wall(): return
-	
+
 	if is_on_floor():
-		if Input.is_action_pressed("sprint") and has_unlocked_ability(SPRINT):
+		if Input.is_action_pressed("sprint") and has_unlocked_ability(SPRINT) and stamina > MAX_STAMINA * 0.1:
 			set_state(SPRINT)
 			move_speed = SPRINT_SPEED
+			reduce_stamina(stamina_run_decrement)
 		else:
 			set_state(RUN)
 			move_speed = RUN_SPEED
@@ -604,6 +605,7 @@ func handle_take_damage(area):
 	take_damage(damage)
 	apply_knockback(area.global_position)
 	GameManager.emit_signal("shake_camera",0.2,8.0)
+	GameManager.emit_signal("hitstop", 0.2)
 	if area.is_in_group("projectile"): area.queue_free()
 	GameManager.emit_signal("clear_parrys")
 	pass

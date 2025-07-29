@@ -1,23 +1,33 @@
-[gd_scene load_steps=19 format=4 uid="uid://c6qq72gxakhyl"]
+[gd_scene load_steps=26 format=4 uid="uid://c6qq72gxakhyl"]
 
 [ext_resource type="Script" uid="uid://dqupomdb7ma4n" path="res://scenes/levels/level.gd" id="1_oc4kc"]
 [ext_resource type="Texture2D" uid="uid://b5hu45r8pny6e" path="res://assets/tilesets/middleground.png" id="1_sk5k4"]
 [ext_resource type="Texture2D" uid="uid://bwviu4llyveoq" path="res://assets/tilesets/tiles.png" id="3_s8va5"]
-[ext_resource type="FontFile" uid="uid://dh0p07u4qacbu" path="res://fonts/MountainKingRegular-woBYn.ttf" id="4_dga24"]
 [ext_resource type="PackedScene" uid="uid://bl6k4ubkub6q6" path="res://scenes/gui/gameover_menu/gameover_menu.tscn" id="5_dga24"]
 [ext_resource type="PackedScene" uid="uid://dcsw484jo1tps" path="res://scenes/gui/player_hud/player_hud.tscn" id="5_qxy0u"]
+[ext_resource type="FontFile" uid="uid://ctjda20r0q0" path="res://fonts/Frost Scream.otf" id="6_dnkej"]
 [ext_resource type="PackedScene" uid="uid://btsdal3unww32" path="res://scenes/components/particles/flash_particle/flash_particle.tscn" id="6_excbq"]
+[ext_resource type="Texture2D" uid="uid://duq08ni8l1gec" path="res://assets/decorations/animated_items_outline.png" id="6_iav0o"]
 [ext_resource type="PackedScene" uid="uid://c5qhl3bn6uskp" path="res://scenes/components/door/door.tscn" id="6_sk5k4"]
+[ext_resource type="Script" uid="uid://2o8yhes2352b" path="res://scripts/coin_label.gd" id="7_mm8aj"]
 [ext_resource type="PackedScene" uid="uid://56dppt7syu8d" path="res://scenes/components/torch/torch.tscn" id="7_oc4kc"]
 [ext_resource type="PackedScene" uid="uid://brs28as3eschd" path="res://scenes/components/death_zone/death_zone.tscn" id="8_s8va5"]
 [ext_resource type="PackedScene" uid="uid://btfj223wsljku" path="res://scenes/components/particles/hit_particle_container/hit_particle_container.tscn" id="9_qxy0u"]
+[ext_resource type="PackedScene" uid="uid://6xaufxvn04ev" path="res://scenes/components/coin/coin.tscn" id="12_iav0o"]
+[ext_resource type="PackedScene" uid="uid://8n13ndx38w1l" path="res://scenes/actors/enemy/slime/slime.tscn" id="13_wtwp4"]
+[ext_resource type="PackedScene" uid="uid://c6b2tjocq15nt" path="res://scenes/components/coin_spawner/coin_spawner.tscn" id="16_iwr0g"]
+[ext_resource type="PackedScene" uid="uid://cgyrtxeg5mjs0" path="res://scenes/components/traps/ground_spike/ground_spike.tscn" id="17_bahl2"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_4wyf3"]
 load_path = "res://.godot/imported/clouds_01.png-55a5ea82b99b0781a58f4cc22b62f805.ctex"
 
-[sub_resource type="LabelSettings" id="LabelSettings_k0juu"]
-font = ExtResource("4_dga24")
+[sub_resource type="LabelSettings" id="LabelSettings_mm8aj"]
+font = ExtResource("6_dnkej")
 font_size = 64
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_dnkej"]
+atlas = ExtResource("6_iav0o")
+region = Rect2(229, 229, 22, 22)
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6761a"]
 texture = ExtResource("3_s8va5")
@@ -491,19 +501,6 @@ texture = SubResource("CompressedTexture2D_4wyf3")
 
 [node name="GUI" type="CanvasLayer" parent="Graphics"]
 
-[node name="Timer" type="Label" parent="Graphics/GUI"]
-visible = false
-anchors_preset = 1
-anchor_left = 1.0
-anchor_right = 1.0
-offset_left = -220.0
-offset_bottom = 131.0
-grow_horizontal = 0
-text = "00:01"
-label_settings = SubResource("LabelSettings_k0juu")
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="PlayerHUD" parent="Graphics/GUI" instance=ExtResource("5_qxy0u")]
 offset_right = -1355.0
 offset_bottom = -861.0
@@ -511,6 +508,49 @@ offset_bottom = -861.0
 [node name="GameoverMenu" parent="Graphics/GUI" instance=ExtResource("5_dga24")]
 
 [node name="FlashParticle" parent="Graphics/GUI" instance=ExtResource("6_excbq")]
+
+[node name="GemContainer" type="Control" parent="Graphics/GUI"]
+layout_mode = 3
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -360.0
+offset_bottom = 112.0
+grow_horizontal = 0
+
+[node name="MarginContainer" type="MarginContainer" parent="Graphics/GUI/GemContainer"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 24
+theme_override_constants/margin_top = 24
+theme_override_constants/margin_right = 24
+theme_override_constants/margin_bottom = 24
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Graphics/GUI/GemContainer/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 12
+alignment = 2
+
+[node name="CoinLabel" type="Label" parent="Graphics/GUI/GemContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "0"
+label_settings = SubResource("LabelSettings_mm8aj")
+horizontal_alignment = 2
+vertical_alignment = 1
+script = ExtResource("7_mm8aj")
+
+[node name="TextureRect" type="TextureRect" parent="Graphics/GUI/GemContainer/MarginContainer/HBoxContainer"]
+custom_minimum_size = Vector2(60, 60)
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = SubResource("AtlasTexture_dnkej")
 
 [node name="ColorBackground" type="CanvasLayer" parent="Graphics"]
 layer = -1
@@ -526,6 +566,7 @@ color = Color(0, 0.125907, 0.25084, 0.141176)
 [node name="Collisions" type="Node2D" parent="."]
 
 [node name="Ground2" type="TileMapLayer" parent="Collisions"]
+z_index = -1
 texture_filter = 1
 scale = Vector2(4, 4)
 tile_map_data = PackedByteArray("AAD9/wQAAAABAAEAAAAAABEAAAADAAMAAAAAABAAAAADAAIAAAAAAA8AAAADAAIAAAAAAA4AAAACAAIAAAAAAA0AAAACAAIAAAAAAAwAAAACAAIAAAAAAAsAAAACAAIAAAAAAAoAAAACAAIAAAAAAAkAAAACAAIAAAAAAAgAAAACAAIAAAAAAAcAAAACAAIAAAAAAAYAAAACAAIAAAAAAAUAAAACAAIAAAAAAAQAAAACAAEAAAD//xEAAAACAAMAAAD//xAAAAACAAIAAAD//w8AAAACAAIAAAD//w4AAAACAAIAAAD//w0AAAACAAIAAAD//wwAAAACAAIAAAD//wsAAAACAAIAAAD//woAAAACAAIAAAD//wkAAAACAAIAAAD//wgAAAACAAIAAAD//wcAAAACAAIAAAD//wYAAAACAAIAAAD//wUAAAACAAIAAAD//wQAAAACAAEAAAD+/xEAAAACAAMAAAD+/xAAAAACAAIAAAD+/w8AAAACAAIAAAD+/w4AAAACAAIAAAD+/w0AAAACAAIAAAD+/wwAAAACAAIAAAD+/wsAAAACAAIAAAD+/woAAAACAAIAAAD+/wkAAAACAAIAAAD+/wgAAAACAAIAAAD+/wcAAAACAAIAAAD+/wYAAAACAAIAAAD+/wUAAAACAAIAAAD+/wQAAAACAAEAAAD9/xEAAAABAAMAAAD9/xAAAAABAAIAAAD9/w8AAAABAAIAAAD9/w4AAAABAAIAAAD9/w0AAAABAAIAAAD9/wwAAAABAAIAAAD9/wsAAAABAAIAAAD9/woAAAABAAIAAAD9/wkAAAABAAIAAAD9/wgAAAABAAIAAAD9/wcAAAABAAIAAAD9/wYAAAABAAIAAAD9/wUAAAABAAIAAAABAA4AAAADAAMAAAABAA0AAAADAAIAAAABAAwAAAADAAIAAAABAAsAAAADAAIAAAABAAoAAAADAAIAAAABAAkAAAADAAIAAAABAAgAAAADAAIAAAABAAcAAAADAAIAAAABAAYAAAADAAIAAAABAAUAAAADAAIAAAABAAQAAAADAAEAAAAyAA0AAAACAAMAAAAyAAwAAAACAAIAAAAyAAsAAAACAAIAAAAyAAoAAAACAAEAAAAxAA0AAAACAAMAAAAxAAwAAAACAAIAAAAxAAsAAAACAAIAAAAxAAoAAAACAAEAAAAwAA0AAAABAAMAAAAwAAwAAAABAAIAAAAwAAsAAAABAAIAAAAwAAoAAAABAAEAAAAzAA0AAAACAAMAAAAzAAwAAAACAAIAAAAzAAsAAAACAAIAAAAzAAoAAAACAAEAAAA2AA0AAAADAAMAAAA2AAwAAAADAAIAAAA2AAsAAAADAAIAAAA2AAoAAAADAAEAAAA1AA0AAAACAAMAAAA1AAwAAAACAAIAAAA1AAsAAAACAAIAAAA1AAoAAAACAAEAAAA0AA0AAAACAAMAAAA0AAwAAAACAAIAAAA0AAsAAAACAAIAAAA0AAoAAAACAAEAAAA=")
@@ -556,9 +597,7 @@ color = Color(0.67069, 0.67069, 0.67069, 1)
 
 [node name="Decorations" type="Node2D" parent="."]
 
-[node name="Sfx" type="Node2D" parent="."]
-
-[node name="Torch" parent="Sfx" instance=ExtResource("7_oc4kc")]
+[node name="Torch" parent="Decorations" instance=ExtResource("7_oc4kc")]
 position = Vector2(1560, 736)
 
 [node name="Areas" type="Node2D" parent="."]
@@ -574,4 +613,48 @@ scale = Vector2(3, 1)
 
 [node name="Enemies" type="Node2D" parent="."]
 
-[node name="HitParticleContainer" parent="." instance=ExtResource("9_qxy0u")]
+[node name="Slime" parent="Enemies" instance=ExtResource("13_wtwp4")]
+position = Vector2(2296, 784)
+
+[node name="Objects" type="Node2D" parent="."]
+
+[node name="Coin" parent="Objects" instance=ExtResource("12_iav0o")]
+position = Vector2(640, 768)
+
+[node name="Coin2" parent="Objects" instance=ExtResource("12_iav0o")]
+position = Vector2(1120, 768)
+
+[node name="Coin3" parent="Objects" instance=ExtResource("12_iav0o")]
+position = Vector2(3295, 768)
+
+[node name="Coin4" parent="Objects" instance=ExtResource("12_iav0o")]
+position = Vector2(3335, 784)
+
+[node name="Coin5" parent="Objects" instance=ExtResource("12_iav0o")]
+position = Vector2(3255, 784)
+
+[node name="Spawners" type="Node2D" parent="."]
+
+[node name="CoinSpawner" parent="Spawners" instance=ExtResource("16_iwr0g")]
+
+[node name="Particles" type="Node2D" parent="."]
+
+[node name="HitParticleContainer" parent="Particles" instance=ExtResource("9_qxy0u")]
+
+[node name="Traps" type="Node2D" parent="."]
+
+[node name="GroundSpike" parent="Traps" instance=ExtResource("17_bahl2")]
+z_index = -1
+position = Vector2(2040, 824)
+
+[node name="GroundSpike2" parent="Traps" instance=ExtResource("17_bahl2")]
+z_index = -1
+position = Vector2(3152, 824)
+activate_wait_time = 0.5
+deactivate_wait_time = 0.5
+
+[node name="GroundSpike5" parent="Traps" instance=ExtResource("17_bahl2")]
+z_index = -1
+position = Vector2(3440, 824)
+activate_wait_time = 0.75
+deactivate_wait_time = 0.5

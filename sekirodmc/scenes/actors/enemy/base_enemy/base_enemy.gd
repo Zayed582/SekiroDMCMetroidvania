@@ -111,6 +111,7 @@ func take_damage(pos, damage):
 	if health <= 0:
 		silence_monitoring_node()
 		state_machine.start("die")
+		GameManager.emit_signal("spawn_coin", global_position, 2)
 		pass
 	
 	await get_tree().create_timer(1).timeout
