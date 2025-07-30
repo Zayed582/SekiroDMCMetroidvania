@@ -228,7 +228,8 @@ texture = ExtResource("3_s8va5")
 28:3/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_sk5k4"]
-physics_layer_0/collision_layer = 1
+physics_layer_0/collision_layer = 8
+physics_layer_0/collision_mask = 8
 terrain_set_0/mode = 0
 terrain_set_0/terrain_0/name = "Terrain 0"
 terrain_set_0/terrain_0/color = Color(0.5, 0.34375, 0.25, 1)

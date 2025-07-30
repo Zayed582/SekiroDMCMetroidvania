@@ -964,8 +964,8 @@ size = Vector2(183, 211)
 size = Vector2(122, 194)
 
 [node name="Player" type="CharacterBody2D"]
-collision_layer = 2
-collision_mask = 3
+collision_layer = 10
+collision_mask = 11
 script = ExtResource("1_l17oj")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

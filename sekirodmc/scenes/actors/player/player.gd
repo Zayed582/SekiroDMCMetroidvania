@@ -172,6 +172,9 @@ var unlocked_abilities = [
 	SPRINT
 ]
 
+#ONEWAY
+var one_way_collision_layer = 4
+
 func _ready():
 	init()
 
@@ -288,8 +291,9 @@ func handle_run(delta):
 		step_timer = 0.0
 		if is_on_floor(): set_state(IDLE)
 	
+	print(velocity.x, "vel")
 	if !is_on_floor(): return
-	if direction: 
+	if velocity.x != 0: 
 		handle_sprint()
 	else:
 		set_state(IDLE)
@@ -451,12 +455,14 @@ func handle_wall_mechanics():
 
 func handle_fall_through():
 	if Input.is_action_just_pressed("fall_through"):
-		player_collision_shape.disabled = true
+		set_collision_layer_value(one_way_collision_layer, false)
+		set_collision_mask_value(one_way_collision_layer, false)
 		set_state(JUMP)
 		state_machine.travel("Jump")
 		reset_jump_count = true  
-		await get_tree().create_timer(0.05).timeout
-		player_collision_shape.disabled = false
+		await get_tree().create_timer(0.2).timeout
+		set_collision_layer_value(one_way_collision_layer, true)
+		set_collision_mask_value(one_way_collision_layer, true)
 		pass
 	pass
 
