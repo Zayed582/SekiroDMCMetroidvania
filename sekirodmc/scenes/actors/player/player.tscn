@@ -964,7 +964,7 @@ size = Vector2(183, 211)
 size = Vector2(122, 194)
 
 [node name="Player" type="CharacterBody2D"]
-collision_layer = 10
+collision_layer = 2
 collision_mask = 11
 script = ExtResource("1_l17oj")
 
@@ -1078,11 +1078,9 @@ position = Vector2(0, 26)
 shape = SubResource("RectangleShape2D_mpktj")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-offset = Vector2(0, -200)
+offset = Vector2(0, -80)
 zoom = Vector2(1.2, 1.2)
 limit_left = 0
-limit_top = 255
-limit_bottom = 1280
 limit_smoothed = true
 position_smoothing_enabled = true
 script = ExtResource("3_oj104")

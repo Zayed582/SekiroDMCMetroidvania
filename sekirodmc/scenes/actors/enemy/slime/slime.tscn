@@ -133,6 +133,7 @@ transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition
 
 [node name="Slime" type="CharacterBody2D"]
 collision_layer = 0
+collision_mask = 9
 script = ExtResource("1_rrbe6")
 hit_box = ExtResource("3_3wjmc")
 hurt_box = ExtResource("3_gra43")

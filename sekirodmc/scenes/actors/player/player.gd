@@ -90,15 +90,16 @@ var state_label = {
 
 const RUN_SPEED = 450.0
 const SPRINT_SPEED = 700.0
-const DECELERATION_SPEED = 3000
+const ACCELERATION_SPEED = 2000
+const DECELERATION_SPEED = 2000
 const DASH_SPEED = 2000
-const JUMP_VELOCITY = -1200.0
+const JUMP_VELOCITY = -1000.0
 const WALL_JUMP_VELOCITY = Vector2(1000, -800)
 const POGO_JUMP_VELOCITY = -600
 const MAX_SLASH_VELOCITY = 1000
 const MIN_COMBO_TIME = 0
 const MAX_COMBO_TIME = 3
-const GRAVITY = 3400
+const GRAVITY = 1800
 const MAX_CHARGE_MOVEMENT_SPEED = 1100
 const MIN_CHARGE_MOVEMENT_SPEED = 400
 const CHARGE_MOVEMENT_INCR = 5
@@ -109,13 +110,15 @@ const WALL_STICK_FORCE = 20
 const MAX_DIRECTIONAL_ATTACKS = 1
 
 const ATTACK_MOVEMENT_MAX_SPEED = 1
-var direction = 1
+var direction = 1.0
+var move_input = 1
 var last_direction = 1
 var move_speed = 300
 var combo_time = 0
 var charge_movement_speed = 400
 var jump_count = 0
 var directional_attack_count = 0
+var direction_decay = 0.5
 
 #DAMAGE
 var damage = 1
@@ -255,7 +258,7 @@ func handle_jump():
 	
 	# Handle variations in jump height
 	if Input.is_action_just_released("jump") or is_on_ceiling():
-		if velocity.y < 0: velocity.y *= 0.2
+		if velocity.y < 0: velocity.y *= 0.6
 		pass
 	
 	if jump_count >= MAX_JUMPS: return
@@ -274,15 +277,18 @@ func handle_jump():
 
 func handle_run(delta):
 	if stop_process: return
-	direction = Input.get_axis("move_left", "move_right")
+	move_input = Input.get_axis("move_left", "move_right")
+	direction = lerp(direction, move_input, direction_decay)
+	if !move_input and abs(direction) < 0.1: direction = 0.0
 	
 	if [ATTACK_1, ATTACK_2, ATTACK_3, CHARGE_ATTACK].has(state): return
 	
-	if direction:
-		last_direction = direction
+	if move_input:
+		last_direction = move_input
 		if !can_move: return
-		velocity.x = direction * move_speed
-		handle_sprite_flip(direction)
+		velocity.x = move_toward(velocity.x, direction * move_speed, ACCELERATION_SPEED * delta)
+		if move_input: handle_sprite_flip(move_input)
+		else: handle_sprite_flip(move_input)
 		reduce_stamina(stamina_run_decrement)
 		step_timer -= delta
 		#handle_run_sound()
@@ -291,7 +297,6 @@ func handle_run(delta):
 		step_timer = 0.0
 		if is_on_floor(): set_state(IDLE)
 	
-	print(velocity.x, "vel")
 	if !is_on_floor(): return
 	if velocity.x != 0: 
 		handle_sprint()
@@ -315,7 +320,7 @@ func handle_sprint():
 		if Input.is_action_pressed("sprint") and has_unlocked_ability(SPRINT) and stamina > MAX_STAMINA * 0.1:
 			set_state(SPRINT)
 			move_speed = SPRINT_SPEED
-			reduce_stamina(stamina_run_decrement)
+			#reduce_stamina(stamina_run_decrement)
 		else:
 			set_state(RUN)
 			move_speed = RUN_SPEED
@@ -525,7 +530,8 @@ func handle_attack_exit():
 	set_state(IDLE)
 	pass
 
-func handle_sprite_flip(dir: int):
+func handle_sprite_flip(dir):
+	print("flip dir", dir)
 	sprite.flip_h = dir < 0
 	areas.scale.x = dir
 	pass

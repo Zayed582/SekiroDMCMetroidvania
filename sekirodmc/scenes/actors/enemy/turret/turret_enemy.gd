@@ -2,7 +2,8 @@ extends Node2D
 
 @export_enum("Left", "Right") var look_at = "Left"
 @export var parry_meter = Node2D
-@export var health = 20
+@export var health = 8
+@export var damage = 1
 
 @onready var body = $Body
 @onready var anim = $Animations/AnimationPlayer
@@ -73,6 +74,7 @@ func shoot_bullet():
 	var direction = sign(body.scale.x)
 	bullet.global_position = global_position + Vector2(muzzle.position.x * direction, muzzle.position.y)
 	bullet.direction = direction
+	bullet.damage = damage
 	bullet.sender = self
 	get_parent().add_child(bullet)
 	pass
@@ -84,7 +86,7 @@ func apply_knockback(from_position: Vector2, strength: float):
 func take_damage(pos, damage):
 	health -= damage
 	anim2.play("hurt")
-	apply_knockback(pos, 250)
+	#apply_knockback(pos, 250)
 	GameManager.emit_signal("shake_camera",0.2, 4.0)
 	await get_tree().create_timer(0.2).timeout
 	stop_process = true
