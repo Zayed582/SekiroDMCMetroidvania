@@ -531,7 +531,6 @@ func handle_attack_exit():
 	pass
 
 func handle_sprite_flip(dir):
-	print("flip dir", dir)
 	sprite.flip_h = dir < 0
 	areas.scale.x = dir
 	pass
