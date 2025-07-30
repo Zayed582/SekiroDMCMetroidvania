@@ -1077,6 +1077,12 @@ collision_mask = 512
 position = Vector2(0, 26)
 shape = SubResource("RectangleShape2D_mpktj")
 
+[node name="FallthroughRayCast" type="RayCast2D" parent="Areas"]
+position = Vector2(0, 88)
+target_position = Vector2(0, 5)
+collision_mask = 8
+hit_from_inside = true
+
 [node name="Camera2D" type="Camera2D" parent="."]
 offset = Vector2(0, -120)
 limit_left = 0

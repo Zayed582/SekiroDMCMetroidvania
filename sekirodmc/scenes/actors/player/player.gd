@@ -41,6 +41,7 @@ var health_increment_value = 0
 @onready var hit_area = $Areas/HitArea
 @onready var pojo_area_detector = $Areas/PogoArea
 @onready var charge_attack_timer = $Timers/ChargeAttackTimer
+@onready var fall_through_raycast = $Areas/FallthroughRayCast
 
 enum {
 	IDLE,
@@ -258,7 +259,7 @@ func handle_jump():
 	
 	# Handle variations in jump height
 	if Input.is_action_just_released("jump") or is_on_ceiling():
-		if velocity.y < 0: velocity.y *= 0.6
+		if velocity.y < 0: velocity.y *= 0.05
 		pass
 	
 	if jump_count >= MAX_JUMPS: return
@@ -459,7 +460,7 @@ func handle_wall_mechanics():
 	pass
 
 func handle_fall_through():
-	if Input.is_action_just_pressed("fall_through"):
+	if Input.is_action_just_pressed("fall_through") and fall_through_raycast.is_colliding():
 		set_collision_layer_value(one_way_collision_layer, false)
 		set_collision_mask_value(one_way_collision_layer, false)
 		set_state(JUMP)
