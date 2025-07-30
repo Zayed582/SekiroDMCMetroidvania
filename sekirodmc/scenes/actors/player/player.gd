@@ -259,7 +259,7 @@ func handle_jump():
 	
 	# Handle variations in jump height
 	if Input.is_action_just_released("jump") or is_on_ceiling():
-		if velocity.y < 0: velocity.y *= 0.05
+		if velocity.y < 0: velocity.y =0
 		pass
 	
 	if jump_count >= MAX_JUMPS: return
