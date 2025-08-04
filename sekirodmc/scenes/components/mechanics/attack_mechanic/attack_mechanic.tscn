@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://dlx432237ugkd"]
+
+[ext_resource type="Script" uid="uid://cyjuwaateewin" path="res://scenes/components/mechanics/attack_mechanic/attack_mechanic.gd" id="1_hwqn5"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2x3t6"]
+radius = 81.0555
+
+[node name="AttackMechanic" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_hwqn5")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_2x3t6")
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]

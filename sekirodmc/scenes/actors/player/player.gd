@@ -607,7 +607,6 @@ func handle_take_damage(area):
 		damage = area.get_parent().damage
 	else:
 		damage = area.damage
-	#area.get_parent().get_parent().damage if area.get_parent().get_parent().has_method("damage") else area.damage
 	
 	#Restart charge cooldown
 	can_use_charge_attack = false

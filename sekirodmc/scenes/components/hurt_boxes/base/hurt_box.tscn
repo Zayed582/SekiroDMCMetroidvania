@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://w7ejo3mfihp6"]
+
+[ext_resource type="Script" uid="uid://clho3617fx3ev" path="res://scenes/components/hurt_boxes/base/hurt_box.gd" id="1_gs1gg"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4rixn"]
+radius = 37.0
+height = 114.0
+
+[node name="HurtBox" type="Area2D"]
+collision_layer = 512
+collision_mask = 0
+script = ExtResource("1_gs1gg")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_4rixn")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]

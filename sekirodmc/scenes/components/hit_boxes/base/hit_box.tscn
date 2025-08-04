@@ -1,0 +1,32 @@
+[gd_scene load_steps=3 format=3 uid="uid://q54c24r5l5cd"]
+
+[sub_resource type="GDScript" id="GDScript_o6161"]
+script/source = "extends Area2D
+
+var damage = 1
+
+func init(data):
+	var _damage = damage
+	pass
+
+func _on_body_entered(body):
+	var player = body
+	player.hitbox.emit_signal(\"take_damage\", damage)
+	pass # Replace with function body.
+"
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pno6f"]
+radius = 94.0053
+
+[node name="HitBox" type="Area2D"]
+collision_layer = 256
+collision_mask = 0
+monitoring = false
+monitorable = false
+script = SubResource("GDScript_o6161")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_pno6f")
+debug_color = Color(0.810216, 0.312465, 0.684885, 0.42)
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
