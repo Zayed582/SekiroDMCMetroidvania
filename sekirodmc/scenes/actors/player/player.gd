@@ -603,7 +603,29 @@ func handle_projectile_block(area):
 		pass
 	pass
 
+func handle_melee_block(area):
+	match state:
+		BLOCK:
+			state_machine.travel("block_hit")
+			set_state(BLOCK_HIT)
+			apply_knockback(area.global_position)
+			return true
+		CAN_PARRY:
+			state_machine.travel("parry")
+			set_state(PARRY)
+			if area.get_parent().has_method("take_damage"):
+				area.get_parent().handle_parry(self)
+			GameManager.emit_signal("shake_camera", 0.2, 4.0)
+			GameManager.emit_signal("hitstop", 0.2)
+			increase_mana(10)
+			reduce_stamina(stamina_parry_decrement)
+			return true
+	return false
+	pass
+
 func handle_take_damage(area):
+	if handle_melee_block(area): return
+	
 	var damage = 0
 	if area.get_parent().get("damage"):
 		damage = area.get_parent().damage

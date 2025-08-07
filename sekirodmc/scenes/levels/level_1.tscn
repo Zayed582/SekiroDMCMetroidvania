@@ -747,10 +747,10 @@ position = Vector2(3960, -162)
 damage = 10
 
 [node name="ArcherSkeleton" parent="Enemies" instance=ExtResource("14_np2pn")]
-position = Vector2(1032, 776)
+position = Vector2(2136, 776)
 
 [node name="Bat" parent="Enemies" instance=ExtResource("15_v6ha0")]
-position = Vector2(1624, 736)
+position = Vector2(928, 776)
 
 [node name="Objects" type="Node2D" parent="."]
 

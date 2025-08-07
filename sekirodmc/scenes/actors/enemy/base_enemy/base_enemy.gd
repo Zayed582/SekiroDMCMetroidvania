@@ -44,6 +44,7 @@ class_name BaseEnemy extends CharacterBody2D
 @export var has_gravity = false
 
 #NODES
+@onready var animation_container = $Animation
 @onready var state_machine = $Animation/AnimationTree.get("parameters/playback")
 @onready var sprite = $Sprite2D
 
@@ -57,6 +58,7 @@ var edge_detector_node = null
 var player = null
 var stop_process = false
 var is_on_edge = false
+var attack_mechanic_node: Area2D = null
 
 
 #KNOCKBACK
@@ -119,7 +121,7 @@ func init_dependencies():
 			"attack_distance": attack_distance
 		})
 	if attack_mechanic:
-		var attack_mechanic_node = add_node(attack_mechanic)
+		attack_mechanic_node = add_node(attack_mechanic)
 		attack_mechanic_node.init({
 			"parent": self
 		})
@@ -211,6 +213,8 @@ func set_direction(dir) -> void:
 		#elif PlayerManager.player.position.x < position.x:
 			#dir = -1
 	#print("Direction: ", dir)
+	direction = dir
+	animation_container.scale.x = dir
 	sprite.flip_h = dir > 0
 
 func apply_knockback(from_position: Vector2):
@@ -230,6 +234,9 @@ func handle_knockback(delta):
 		move_and_slide()
 	pass
 
+func handle_parry(body):
+	apply_knockback(body.global_position)
+	pass
 
 func set_state(_state):
 	state = _state
@@ -241,13 +248,13 @@ func handle_gravity(delta):
 		velocity.y += GRAVITY * delta
 	pass
 
-func silence_monitoring_node():
+func silence_monitoring_node(_bool = true):
 	if hit_box_node: 
-		hit_box_node.set_deferred("monitoring", false)
-		hit_box_node.set_deferred("monitorable", false)
+		hit_box_node.set_deferred("monitoring", !_bool)
+		hit_box_node.set_deferred("monitorable", !_bool)
 	if hurt_box_node: 
-		hurt_box_node.set_deferred("monitoring", false)
-		hurt_box_node.set_deferred("monitorable", false)
+		hurt_box_node.set_deferred("monitoring", !_bool)
+		hurt_box_node.set_deferred("monitorable", !_bool)
 	pass
 
 func handle_flips():

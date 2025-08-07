@@ -3,12 +3,12 @@
 [ext_resource type="Script" uid="uid://clho3617fx3ev" path="res://scenes/components/hurt_boxes/base/hurt_box.gd" id="1_gs1gg"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4rixn"]
-radius = 37.0
+radius = 27.0
 height = 114.0
 
 [node name="HurtBox" type="Area2D"]
-collision_layer = 512
-collision_mask = 768
+collision_layer = 1536
+collision_mask = 1536
 script = ExtResource("1_gs1gg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

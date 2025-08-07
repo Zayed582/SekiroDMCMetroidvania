@@ -1,10 +1,10 @@
 extends Area2D
 
 @onready var sprite = $Sprite2D
+@export var speed = 600
 
 var damage = 1
 var direction = -1
-@export var speed = 400
 var sender = null
 
 func _physics_process(delta):

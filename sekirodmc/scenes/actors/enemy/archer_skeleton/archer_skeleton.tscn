@@ -1,8 +1,7 @@
-[gd_scene load_steps=37 format=3 uid="uid://t7lnw7sw7fe1"]
+[gd_scene load_steps=36 format=3 uid="uid://t7lnw7sw7fe1"]
 
 [ext_resource type="Script" uid="uid://ddsssas6exs43" path="res://scenes/actors/enemy/archer_skeleton/archer_skeleton.gd" id="1_1bau3"]
 [ext_resource type="Texture2D" uid="uid://d2cl6e78l5y2p" path="res://assets/characters/enemies/archer_skeleton/Archer Skeleton.png" id="1_geie8"]
-[ext_resource type="PackedScene" uid="uid://q54c24r5l5cd" path="res://scenes/components/hit_boxes/base/hit_box.tscn" id="2_amu5r"]
 [ext_resource type="PackedScene" uid="uid://30uw6haf3ev8" path="res://scenes/components/mechanics/attack_mechanic/archer_attack_mechanic.tscn" id="2_s85ik"]
 [ext_resource type="PackedScene" uid="uid://w7ejo3mfihp6" path="res://scenes/components/hurt_boxes/base/hurt_box.tscn" id="3_vdum6"]
 
@@ -103,7 +102,7 @@ tracks/2/path = NodePath("..")
 tracks/2/interp = 1
 tracks/2/loop_wrap = true
 tracks/2/keys = {
-"times": PackedFloat32Array(0.8),
+"times": PackedFloat32Array(0.75),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -223,6 +222,8 @@ advance_mode = 2
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_u7u7m"]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_l723t"]
+switch_mode = 2
+advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_1h2j0"]
 
@@ -243,12 +244,13 @@ advance_mode = 2
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_amt0a"]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_jsgpf"]
+priority = 0
 switch_mode = 2
 advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_vdum6"]
 states/attack/node = SubResource("AnimationNodeAnimation_vdum6")
-states/attack/position = Vector2(395.76, 253.575)
+states/attack/position = Vector2(399.38, 253.575)
 states/die/node = SubResource("AnimationNodeAnimation_e358d")
 states/die/position = Vector2(743.5, 99.4688)
 states/hurt/node = SubResource("AnimationNodeAnimation_s85ik")
@@ -266,7 +268,6 @@ graph_offset = Vector2(6.96629e-07, 57.9375)
 collision_layer = 512
 script = ExtResource("1_1bau3")
 attack_mechanic = ExtResource("2_s85ik")
-hit_box = ExtResource("2_amu5r")
 hurt_box = ExtResource("3_vdum6")
 has_gravity = true
 
@@ -293,5 +294,5 @@ autoplay = "idle"
 tree_root = SubResource("AnimationNodeStateMachine_vdum6")
 anim_player = NodePath("../AnimationPlayer")
 
-[node name="Marker2D" type="Marker2D" parent="."]
-position = Vector2(-64, 12)
+[node name="Marker2D" type="Marker2D" parent="Animation"]
+position = Vector2(-64, 10)

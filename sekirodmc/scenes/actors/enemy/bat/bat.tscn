@@ -71,7 +71,6 @@ tracks/3/keys = {
 [sub_resource type="Animation" id="Animation_yhew5"]
 resource_name = "attack"
 length = 0.8
-loop_mode = 1
 step = 0.025
 tracks/0/type = "value"
 tracks/0/imported = false
@@ -402,6 +401,8 @@ advance_mode = 2
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_0g3xs"]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_e2ayu"]
+switch_mode = 2
+advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_ng70x"]
 
@@ -438,7 +439,7 @@ states/patrol/position = Vector2(590, 282.5)
 states/run/node = SubResource("AnimationNodeAnimation_navny")
 states/run/position = Vector2(595.5, 101)
 transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_hs0pq"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_ivhpx"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_m8oai"), "run", "attack", SubResource("AnimationNodeStateMachineTransition_ttf0s"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_dljl5"), "attack", "run", SubResource("AnimationNodeStateMachineTransition_0g3xs"), "attack", "idle", SubResource("AnimationNodeStateMachineTransition_e2ayu"), "run", "patrol", SubResource("AnimationNodeStateMachineTransition_ng70x"), "attack", "patrol", SubResource("AnimationNodeStateMachineTransition_lmiw4"), "idle", "patrol", SubResource("AnimationNodeStateMachineTransition_a46lt"), "patrol", "idle", SubResource("AnimationNodeStateMachineTransition_bm4sd"), "hurt", "idle", SubResource("AnimationNodeStateMachineTransition_grmrj"), "idle", "hurt", SubResource("AnimationNodeStateMachineTransition_41sy4"), "attack", "hurt", SubResource("AnimationNodeStateMachineTransition_dqkh4"), "die", "End", SubResource("AnimationNodeStateMachineTransition_f601c")]
-graph_offset = Vector2(-14.8199, 11.8279)
+graph_offset = Vector2(-181.02, 46.5903)
 
 [node name="Bat" type="CharacterBody2D"]
 collision_layer = 512
