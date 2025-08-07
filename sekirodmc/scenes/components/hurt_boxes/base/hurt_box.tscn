@@ -8,7 +8,7 @@ height = 114.0
 
 [node name="HurtBox" type="Area2D"]
 collision_layer = 512
-collision_mask = 0
+collision_mask = 768
 script = ExtResource("1_gs1gg")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

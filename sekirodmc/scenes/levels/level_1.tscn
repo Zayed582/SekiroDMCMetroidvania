@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=4 uid="uid://c6qq72gxakhyl"]
+[gd_scene load_steps=29 format=4 uid="uid://c6qq72gxakhyl"]
 
 [ext_resource type="Script" uid="uid://dqupomdb7ma4n" path="res://scenes/levels/level.gd" id="1_oc4kc"]
 [ext_resource type="Texture2D" uid="uid://b5hu45r8pny6e" path="res://assets/tilesets/middleground.png" id="1_sk5k4"]
@@ -15,7 +15,8 @@
 [ext_resource type="PackedScene" uid="uid://6xaufxvn04ev" path="res://scenes/components/coin/coin.tscn" id="12_iav0o"]
 [ext_resource type="PackedScene" uid="uid://6t5562wtp0q7" path="res://scenes/actors/enemy/turret/turret_enemy.tscn" id="13_bahl2"]
 [ext_resource type="PackedScene" uid="uid://8n13ndx38w1l" path="res://scenes/actors/enemy/slime/slime.tscn" id="13_wtwp4"]
-[ext_resource type="PackedScene" uid="uid://nbuakiq05kix" path="res://scenes/actors/enemy/AirEnemyBase/air_enemy.tscn" id="14_np2pn"]
+[ext_resource type="PackedScene" uid="uid://t7lnw7sw7fe1" path="res://scenes/actors/enemy/archer_skeleton/archer_skeleton.tscn" id="14_np2pn"]
+[ext_resource type="PackedScene" uid="uid://nbuakiq05kix" path="res://scenes/actors/enemy/bat/bat.tscn" id="15_v6ha0"]
 [ext_resource type="PackedScene" uid="uid://c6b2tjocq15nt" path="res://scenes/components/coin_spawner/coin_spawner.tscn" id="16_iwr0g"]
 [ext_resource type="PackedScene" uid="uid://cgyrtxeg5mjs0" path="res://scenes/components/traps/ground_spike/ground_spike.tscn" id="17_bahl2"]
 
@@ -571,9 +572,9 @@ sources/0 = SubResource("TileSetAtlasSource_4wyf3")
 size = Vector2(84, 1184)
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_np2pn"]
-vertices = PackedVector2Array(1516.97, 1006.54, 289.367, 1069.5, 250.609, 433.719, 1454.99, 402.242)
+vertices = PackedVector2Array(1910.85, 89.6328, 2013.02, 1174.16, -125.094, 1205.83, -22.8516, 10.3828)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(240, 424, 1464, 392, 1528, 1016, 280, 1080)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-32, 0, 1920, 80, 2024, 1184, -136, 1216)])
 
 [node name="Level1" type="Node2D"]
 script = ExtResource("1_oc4kc")
@@ -697,6 +698,7 @@ position = Vector2(-32, 582)
 shape = SubResource("RectangleShape2D_4wyf3")
 
 [node name="NavigationRegion2D" type="NavigationRegion2D" parent="Collisions"]
+visible = false
 navigation_polygon = SubResource("NavigationPolygon_np2pn")
 
 [node name="Doors" type="Node2D" parent="."]
@@ -744,8 +746,11 @@ position = Vector2(4808, 464)
 position = Vector2(3960, -162)
 damage = 10
 
-[node name="Bat" parent="Enemies" instance=ExtResource("14_np2pn")]
-position = Vector2(872, 752)
+[node name="ArcherSkeleton" parent="Enemies" instance=ExtResource("14_np2pn")]
+position = Vector2(1032, 776)
+
+[node name="Bat" parent="Enemies" instance=ExtResource("15_v6ha0")]
+position = Vector2(1624, 736)
 
 [node name="Objects" type="Node2D" parent="."]
 

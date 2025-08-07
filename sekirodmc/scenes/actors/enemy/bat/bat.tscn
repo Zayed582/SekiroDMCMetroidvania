@@ -1,6 +1,7 @@
-[gd_scene load_steps=42 format=3 uid="uid://nbuakiq05kix"]
+[gd_scene load_steps=43 format=3 uid="uid://nbuakiq05kix"]
 
 [ext_resource type="Texture2D" uid="uid://8lc5t8lbixxh" path="res://assets/characters/enemies/bat/Bat-IdleFly.png" id="1_7ixnm"]
+[ext_resource type="Script" uid="uid://cecwq7rx6l4xi" path="res://scenes/actors/enemy/base_enemy/base_enemy.gd" id="1_i2pfg"]
 [ext_resource type="PackedScene" uid="uid://w7ejo3mfihp6" path="res://scenes/components/hurt_boxes/base/hurt_box.tscn" id="2_5otes"]
 [ext_resource type="PackedScene" uid="uid://bko1lysqn2h5r" path="res://scenes/components/mechanics/chase_mechanic/chase_mechanic.tscn" id="2_qhnb7"]
 [ext_resource type="PackedScene" uid="uid://q54c24r5l5cd" path="res://scenes/components/hit_boxes/base/hit_box.tscn" id="3_48sth"]
@@ -10,209 +11,6 @@
 [ext_resource type="Texture2D" uid="uid://bx7mg6s8qwkj5" path="res://assets/characters/enemies/bat/Bat-Die.png" id="5_crilq"]
 [ext_resource type="PackedScene" uid="uid://dhkblkcfiuekm" path="res://scenes/components/detectors/air_player_detector/air_player_detector.tscn" id="8_le26l"]
 [ext_resource type="Texture2D" uid="uid://cu0qwlil58ei3" path="res://assets/characters/enemies/bat/Bat-Attack1.png" id="10_m6d6k"]
-
-[sub_resource type="GDScript" id="GDScript_cq423"]
-script/source = "extends AirBaseEnemy
-
-@export_category(\"BaseEnemy\")
-
-#EXPORTS
-@export_subgroup(\"Health\")
-@export var max_health: int = 3
-@export var current_health: int = 3
-
-@export_subgroup(\"Physics\")
-@export var chase_speed: float = 140.0
-@export var patrol_speed: float = 120.0
-@export var attack_distance: float = 30.0
-
-@export_subgroup(\"Detectors\")
-@export var player_detector_area: PackedScene
-
-@export_group(\"Mechanics\")
-@export var chase_mechanic: PackedScene
-@export var attack_mechanic: PackedScene
-@export var parol_mechanic: PackedScene
-
-@export_group(\"Animations\")
-@export_subgroup(\"Hit\")
-@export var hit_box: PackedScene
-@export var hit_sound: AudioStream
-
-@export_subgroup(\"Hurt\")
-@export var hurt_box: PackedScene
-@export var hurt_sound: AudioStream
-
-@export_subgroup(\"Die\")
-@export var die_sound: AudioStream
-
-@export_subgroup(\"Conditions\")
-@export var has_navigation = false
-
-#SIGNALS
-#signal take_damage(damage_value)
-
-#NODES
-@onready var animation_player: AnimationPlayer = $Animation/AnimationPlayer
-@onready var state_machine = $Animation/AnimationTree.get(\"parameters/playback\")
-@onready var sprite = $Sprite2D
-
-#NODES
-var death_audio = null
-var hurt_audio = null
-var hit_audio = null
-var hit_box_node = null
-
-#PLAYER
-var player = null
-
-#PROCESS
-var stop_process = false
-
-#CONDITION
-var is_on_edge = false
-
-
-#KNOCKBACK
-@export var knockback_force := 100.0
-@export var knockback_duration := 0.1
-
-var knockback_timer := 0.0
-var is_knockback := false
-var knockback_velocity := Vector2.ZERO
-
-func _ready():
-	init_dependencies()
-	init_signals()
-	pass
-
-
-func init_dependencies():
-	if hit_box:
-		hit_box_node = add_node(hit_box)
-		hit_box_node.init({\"damage\": damage})
-	if hurt_box:
-		var hurt_node = add_node(hurt_box)
-		hurt_node.init({\"parent\": self})
-	if hit_sound:
-		var sound_node = add_sound_node(hit_sound, { \"volume_db\": -2 })
-		hit_audio = sound_node
-	if die_sound:
-		var sound_node = add_sound_node(die_sound, { \"volume_db\": -10 })
-		death_audio = sound_node
-	if hurt_sound:
-		var sound_node = add_sound_node(hurt_sound, { \"volume_db\": -2 })
-		hurt_audio = sound_node
-	if player_detector_area:
-		var player_detector = add_node(player_detector_area)
-		player_detector.init({\"parent\": self})
-	if chase_mechanic:
-		var chase_mechanic_node = add_node(chase_mechanic)
-		chase_mechanic_node.init({
-			\"parent\": self, 
-			\"chase_speed\": chase_speed,
-			\"attack_distance\": attack_distance
-		})
-	if attack_mechanic:
-		var attack_mechanic_node = add_node(attack_mechanic)
-		attack_mechanic_node.init({
-			\"parent\": self
-		})
-	if parol_mechanic:
-		var parol_mechanic_node = add_node(parol_mechanic)
-		parol_mechanic_node.init({
-			\"parent\": self,
-			\"patrol_speed\": patrol_speed
-		})
-	pass
-
-func init_signals():
-	#connect(\"take_damage\", _on_take_damage)
-	pass
-
-func _physics_process(delta):
-	handle_knockback(delta)
-
-
-func add_node(scene: PackedScene):
-	var child = scene.instantiate()
-	add_child(child)
-	return child
-
-func add_sound_node(sound_stream, sound_settings = {}):
-	var volume_db = sound_settings.volume_db
-	if !volume_db: volume_db = 0
-	
-	var new_audio_stream = AudioStreamPlayer.new()
-	new_audio_stream.stream = sound_stream
-	new_audio_stream.volume_db = volume_db
-	add_child(new_audio_stream)
-	return new_audio_stream
-	pass
-
-func take_damage(pos, amount: int) -> void:
-	apply_knockback(pos)
-	current_health -= amount
-	velocity.x = 0
-	if current_health <= 0:
-		stop_process = true
-		state_machine.start(\"die\")
-		if death_audio: 
-			death_audio.play()
-	else:
-		temporarily_disable_movement()
-		state_machine.travel(\"hurt\")
-		if hurt_audio: hurt_audio.play()
-
-func temporarily_disable_movement():
-	stop_process = true
-	await get_tree().create_timer(0.4).timeout
-	stop_process = false
-	pass
-
-func start_attack():
-	if !hit_box_node: return
-	
-	hit_box_node.monitoring = true
-	hit_box_node.monitorable = true
-	await get_tree().create_timer(0.1).timeout
-	hit_box_node.monitoring = false
-	hit_box_node.monitorable = false
-
-	pass
-
-func travel(state_name):
-	state_machine.travel(state_name)
-	pass
-
-func set_direction(dir) -> void:
-	
-	#if !dir:
-		#if player.position.x > position.x:
-			#dir = 1
-		#elif PlayerManager.player.position.x < position.x:
-			#dir = -1
-	#print(\"Direction: \", dir)
-	sprite.flip_h = dir > 0
-
-func apply_knockback(from_position: Vector2):
-	var direction = (global_position - from_position).normalized()
-	knockback_velocity = direction * knockback_force
-	knockback_timer = knockback_duration
-	is_knockback = true
-
-
-func handle_knockback(delta):
-	if is_knockback:
-		knockback_timer -= delta
-		if knockback_timer <= 0:
-			is_knockback = false
-			knockback_velocity = Vector2.ZERO
-		velocity = knockback_velocity
-		floor_stop_on_slope = false
-		move_and_slide()
-	pass
-"
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_jolt0"]
 
@@ -330,7 +128,7 @@ tracks/4/path = NodePath(".")
 tracks/4/interp = 1
 tracks/4/loop_wrap = true
 tracks/4/keys = {
-"times": PackedFloat32Array(0.4),
+"times": PackedFloat32Array(0.3),
 "transitions": PackedFloat32Array(1),
 "values": [{
 "args": [],
@@ -621,6 +419,10 @@ advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_dqkh4"]
 
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_f601c"]
+switch_mode = 2
+advance_mode = 2
+
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_f6h5w"]
 states/Start/position = Vector2(152.269, 99.1562)
 states/attack/node = SubResource("AnimationNodeAnimation_43w4t")
@@ -635,14 +437,13 @@ states/patrol/node = SubResource("AnimationNodeAnimation_63d4k")
 states/patrol/position = Vector2(590, 282.5)
 states/run/node = SubResource("AnimationNodeAnimation_navny")
 states/run/position = Vector2(595.5, 101)
-transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_hs0pq"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_ivhpx"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_m8oai"), "run", "attack", SubResource("AnimationNodeStateMachineTransition_ttf0s"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_dljl5"), "attack", "run", SubResource("AnimationNodeStateMachineTransition_0g3xs"), "attack", "idle", SubResource("AnimationNodeStateMachineTransition_e2ayu"), "run", "patrol", SubResource("AnimationNodeStateMachineTransition_ng70x"), "attack", "patrol", SubResource("AnimationNodeStateMachineTransition_lmiw4"), "idle", "patrol", SubResource("AnimationNodeStateMachineTransition_a46lt"), "patrol", "idle", SubResource("AnimationNodeStateMachineTransition_bm4sd"), "hurt", "idle", SubResource("AnimationNodeStateMachineTransition_grmrj"), "idle", "hurt", SubResource("AnimationNodeStateMachineTransition_41sy4"), "attack", "hurt", SubResource("AnimationNodeStateMachineTransition_dqkh4")]
-graph_offset = Vector2(-131.16, 62.0404)
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_hs0pq"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_ivhpx"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_m8oai"), "run", "attack", SubResource("AnimationNodeStateMachineTransition_ttf0s"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_dljl5"), "attack", "run", SubResource("AnimationNodeStateMachineTransition_0g3xs"), "attack", "idle", SubResource("AnimationNodeStateMachineTransition_e2ayu"), "run", "patrol", SubResource("AnimationNodeStateMachineTransition_ng70x"), "attack", "patrol", SubResource("AnimationNodeStateMachineTransition_lmiw4"), "idle", "patrol", SubResource("AnimationNodeStateMachineTransition_a46lt"), "patrol", "idle", SubResource("AnimationNodeStateMachineTransition_bm4sd"), "hurt", "idle", SubResource("AnimationNodeStateMachineTransition_grmrj"), "idle", "hurt", SubResource("AnimationNodeStateMachineTransition_41sy4"), "attack", "hurt", SubResource("AnimationNodeStateMachineTransition_dqkh4"), "die", "End", SubResource("AnimationNodeStateMachineTransition_f601c")]
+graph_offset = Vector2(-14.8199, 11.8279)
 
-[node name="AirEnemy" type="CharacterBody2D"]
+[node name="Bat" type="CharacterBody2D"]
 collision_layer = 512
 collision_mask = 0
-script = SubResource("GDScript_cq423")
-attack_distance = 60.0
+script = ExtResource("1_i2pfg")
 player_detector_area = ExtResource("8_le26l")
 chase_mechanic = ExtResource("2_qhnb7")
 attack_mechanic = ExtResource("3_v2hou")

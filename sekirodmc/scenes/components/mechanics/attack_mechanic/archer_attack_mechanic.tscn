@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=3 uid="uid://30uw6haf3ev8"]
+
+[ext_resource type="PackedScene" uid="uid://dlx432237ugkd" path="res://scenes/components/mechanics/attack_mechanic/attack_mechanic.tscn" id="1_1xdsy"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_gv0vv"]
+size = Vector2(1532, 182)
+
+[node name="ArcherAttackMechanic" instance=ExtResource("1_1xdsy")]
+
+[node name="CollisionShape2D" parent="." index="0"]
+shape = SubResource("RectangleShape2D_gv0vv")

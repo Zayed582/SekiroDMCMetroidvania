@@ -173,7 +173,9 @@ var unlocked_abilities = [
 	ATTACK_1,
 	ATTACK_2,
 	ATTACK_3,
-	SPRINT
+	SPRINT,
+	CAN_PARRY,
+	BLOCK
 ]
 
 #ONEWAY
@@ -206,7 +208,7 @@ func _physics_process(delta):
 	handle_block()
 	handle_dash()
 	handle_wall_mechanics()
-	handle_fall_through()
+	#handle_fall_through()
 	handle_recover()
 	set_closest_angle()
 	move_and_slide()

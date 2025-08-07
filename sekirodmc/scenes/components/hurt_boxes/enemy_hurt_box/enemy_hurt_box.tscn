@@ -1,4 +1,6 @@
-[gd_scene load_steps=2 format=3 uid="uid://bsf4hvqu4ny4a"]
+[gd_scene load_steps=3 format=3 uid="uid://bsf4hvqu4ny4a"]
+
+[ext_resource type="Script" uid="uid://cj0rljo5unfi1" path="res://scenes/components/hurt_boxes/enemy_hurt_box/enemy_hurt_box.gd" id="1_40fn3"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_rrbe6"]
 radius = 36.0139
@@ -7,6 +9,7 @@ radius = 36.0139
 collision_layer = 512
 collision_mask = 512
 monitoring = false
+script = ExtResource("1_40fn3")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_rrbe6")
