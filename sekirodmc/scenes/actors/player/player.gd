@@ -175,7 +175,7 @@ var unlocked_abilities = [
 	ATTACK_3,
 	SPRINT,
 	CAN_PARRY,
-	BLOCK
+	BLOCK,
 ]
 
 #ONEWAY
@@ -476,19 +476,22 @@ func handle_fall_through():
 
 func handle_deathblow():
 	set_physics_process(false)
+	hurt_area.monitoring = false
 	for enemy in GameManager.parriable_enemies:
 		if enemy == null: return
 		
 		state_machine.travel("deathblow")
 		var direction = sign(enemy.global_position - global_position)
 		handle_sprite_flip(direction.x)
-		var offset = Vector2(0 * direction.x, -50)
+		var offset = Vector2(5 * direction.x, -10)
 		global_position = enemy.global_position + offset
 		velocity = Vector2.ZERO
 		await get_tree().create_timer(0.2).timeout
 	
 	GameManager.parriable_enemies = []
 	set_physics_process(true)
+	
+	hurt_area.monitoring = true
 	velocity = Vector2.ZERO
 	pass
 
@@ -596,7 +599,7 @@ func handle_projectile_block(area):
 				area.reflect()
 				GameManager.emit_signal("shake_camera", 0.2, 4.0)
 				if area.sender and area.sender.has_method("handle_parry"):
-					area.sender.handle_parry()
+					area.sender.handle_parry(self)
 				reduce_stamina(stamina_parry_decrement)
 				increase_mana(10)
 				GameManager.emit_signal("hitstop", 0.2)

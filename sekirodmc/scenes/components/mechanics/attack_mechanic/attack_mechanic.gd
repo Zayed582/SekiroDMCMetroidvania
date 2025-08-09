@@ -31,7 +31,6 @@ func _on_body_exited(body):
 func attack():
 	if !player: return
 	if parent.stop_process: return
-	print("yes")
 	
 	var direction = sign(player.global_position.x - parent.global_position.x)
 	parent.set_direction(direction)

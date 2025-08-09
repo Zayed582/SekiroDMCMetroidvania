@@ -1,7 +1,7 @@
 extends Area2D
 
 @onready var sprite = $Sprite2D
-@export var speed = 600
+@export var speed = 700
 
 var damage = 1
 var direction = -1

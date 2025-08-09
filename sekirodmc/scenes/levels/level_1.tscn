@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=4 uid="uid://c6qq72gxakhyl"]
+[gd_scene load_steps=28 format=4 uid="uid://c6qq72gxakhyl"]
 
 [ext_resource type="Script" uid="uid://dqupomdb7ma4n" path="res://scenes/levels/level.gd" id="1_oc4kc"]
 [ext_resource type="Texture2D" uid="uid://b5hu45r8pny6e" path="res://assets/tilesets/middleground.png" id="1_sk5k4"]
@@ -16,7 +16,6 @@
 [ext_resource type="PackedScene" uid="uid://6t5562wtp0q7" path="res://scenes/actors/enemy/turret/turret_enemy.tscn" id="13_bahl2"]
 [ext_resource type="PackedScene" uid="uid://8n13ndx38w1l" path="res://scenes/actors/enemy/slime/slime.tscn" id="13_wtwp4"]
 [ext_resource type="PackedScene" uid="uid://t7lnw7sw7fe1" path="res://scenes/actors/enemy/archer_skeleton/archer_skeleton.tscn" id="14_np2pn"]
-[ext_resource type="PackedScene" uid="uid://nbuakiq05kix" path="res://scenes/actors/enemy/bat/bat.tscn" id="15_v6ha0"]
 [ext_resource type="PackedScene" uid="uid://c6b2tjocq15nt" path="res://scenes/components/coin_spawner/coin_spawner.tscn" id="16_iwr0g"]
 [ext_resource type="PackedScene" uid="uid://cgyrtxeg5mjs0" path="res://scenes/components/traps/ground_spike/ground_spike.tscn" id="17_bahl2"]
 
@@ -731,7 +730,10 @@ scale = Vector2(3, 1)
 [node name="Enemies" type="Node2D" parent="."]
 
 [node name="Slime" parent="Enemies" instance=ExtResource("13_wtwp4")]
-position = Vector2(2296, 784)
+position = Vector2(1648, 768)
+
+[node name="Slime2" parent="Enemies" instance=ExtResource("13_wtwp4")]
+position = Vector2(2056, 776)
 
 [node name="Slime3" parent="Enemies" instance=ExtResource("13_wtwp4")]
 position = Vector2(2776, 216)
@@ -742,15 +744,11 @@ position = Vector2(4208, 584)
 [node name="Slime6" parent="Enemies" instance=ExtResource("13_wtwp4")]
 position = Vector2(4808, 464)
 
-[node name="TurretEnemy" parent="Enemies" instance=ExtResource("13_bahl2")]
-position = Vector2(3960, -162)
-damage = 10
-
 [node name="ArcherSkeleton" parent="Enemies" instance=ExtResource("14_np2pn")]
 position = Vector2(2136, 776)
 
-[node name="Bat" parent="Enemies" instance=ExtResource("15_v6ha0")]
-position = Vector2(928, 776)
+[node name="TurretEnemy" parent="Enemies" instance=ExtResource("13_bahl2")]
+position = Vector2(272, 792)
 
 [node name="Objects" type="Node2D" parent="."]
 

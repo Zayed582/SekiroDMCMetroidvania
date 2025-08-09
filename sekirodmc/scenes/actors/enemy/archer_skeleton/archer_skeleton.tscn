@@ -1,8 +1,9 @@
-[gd_scene load_steps=36 format=3 uid="uid://t7lnw7sw7fe1"]
+[gd_scene load_steps=37 format=3 uid="uid://t7lnw7sw7fe1"]
 
 [ext_resource type="Script" uid="uid://ddsssas6exs43" path="res://scenes/actors/enemy/archer_skeleton/archer_skeleton.gd" id="1_1bau3"]
 [ext_resource type="Texture2D" uid="uid://d2cl6e78l5y2p" path="res://assets/characters/enemies/archer_skeleton/Archer Skeleton.png" id="1_geie8"]
 [ext_resource type="PackedScene" uid="uid://30uw6haf3ev8" path="res://scenes/components/mechanics/attack_mechanic/archer_attack_mechanic.tscn" id="2_s85ik"]
+[ext_resource type="PackedScene" uid="uid://cmhayca7kshmf" path="res://scenes/components/parry_meter/parry_meter.tscn" id="3_s85ik"]
 [ext_resource type="PackedScene" uid="uid://w7ejo3mfihp6" path="res://scenes/components/hurt_boxes/base/hurt_box.tscn" id="3_vdum6"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_geie8"]
@@ -268,6 +269,7 @@ graph_offset = Vector2(6.96629e-07, 57.9375)
 collision_layer = 512
 script = ExtResource("1_1bau3")
 attack_mechanic = ExtResource("2_s85ik")
+parry_meter = ExtResource("3_s85ik")
 hurt_box = ExtResource("3_vdum6")
 has_gravity = true
 
@@ -295,4 +297,4 @@ tree_root = SubResource("AnimationNodeStateMachine_vdum6")
 anim_player = NodePath("../AnimationPlayer")
 
 [node name="Marker2D" type="Marker2D" parent="Animation"]
-position = Vector2(-64, 10)
+position = Vector2(-32, 10)

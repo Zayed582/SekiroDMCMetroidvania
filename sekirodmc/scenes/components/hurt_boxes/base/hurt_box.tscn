@@ -4,7 +4,7 @@
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4rixn"]
 radius = 27.0
-height = 114.0
+height = 136.0
 
 [node name="HurtBox" type="Area2D"]
 collision_layer = 1536

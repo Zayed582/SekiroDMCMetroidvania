@@ -14,6 +14,7 @@ bg_color = Color(1, 1, 1, 1)
 
 [node name="ParryMeter" type="Node2D"]
 script = ExtResource("1_ms0td")
+max_amount = 1
 
 [node name="ProgressBar" type="ProgressBar" parent="."]
 anchors_preset = 5
@@ -30,6 +31,7 @@ theme_override_styles/fill = SubResource("StyleBoxFlat_rynlo")
 show_percentage = false
 
 [node name="CooldownTimer" type="Timer" parent="."]
+wait_time = 2.0
 one_shot = true
 
 [connection signal="timeout" from="CooldownTimer" to="." method="_on_cooldown_timer_timeout"]

@@ -1,0 +1,8 @@
+[gd_scene load_steps=2 format=3 uid="uid://bv33p5rs5jfpn"]
+
+[ext_resource type="PackedScene" uid="uid://w7ejo3mfihp6" path="res://scenes/components/hurt_boxes/base/hurt_box.tscn" id="1_1gcpn"]
+
+[node name="TurrentHurtBox" instance=ExtResource("1_1gcpn")]
+
+[node name="CollisionShape2D" parent="." index="0"]
+position = Vector2(0, -40)

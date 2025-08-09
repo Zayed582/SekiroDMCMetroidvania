@@ -73,6 +73,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id="Animation_8bu7j"]
 resource_name = "air_deathblow"
 length = 0.4
+step = 0.01
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -92,7 +93,7 @@ tracks/1/path = NodePath("Areas/HitArea:monitoring")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.366667, 0.4),
+"times": PackedFloat32Array(0, 0.39, 0.4),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [true, true, false]
@@ -403,6 +404,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id="Animation_biscu"]
 resource_name = "deathblow"
 length = 0.3
+step = 0.01
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -422,7 +424,7 @@ tracks/1/path = NodePath("Areas/HitArea:monitoring")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0, 0.266667, 0.3),
+"times": PackedFloat32Array(0, 0.29, 0.3),
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [true, true, false]
@@ -951,6 +953,7 @@ outline_size = 2
 outline_color = Color(0, 0, 0, 1)
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_l17oj"]
+radius = 18.0
 height = 142.0
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_oj104"]
@@ -958,7 +961,7 @@ radius = 31.0
 height = 144.0
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oj104"]
-size = Vector2(183, 211)
+size = Vector2(215, 211)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mpktj"]
 size = Vector2(122, 194)
@@ -1049,7 +1052,7 @@ one_shot = true
 [node name="BlockArea" type="Area2D" parent="Areas"]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/BlockArea"]
-position = Vector2(53, 3)
+position = Vector2(43, 3)
 shape = SubResource("CapsuleShape2D_l17oj")
 
 [node name="HurtArea" type="Area2D" parent="Areas" groups=["hurt_area"]]
@@ -1066,7 +1069,7 @@ collision_mask = 512
 monitoring = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/HitArea"]
-position = Vector2(90.5, 17.5)
+position = Vector2(74.5, 17.5)
 shape = SubResource("RectangleShape2D_oj104")
 
 [node name="PogoArea" type="Area2D" parent="Areas"]

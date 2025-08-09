@@ -21,6 +21,10 @@ func _ready():
 	GameManager.connect("clear_parrys", clear_parry)
 	pass
 
+func init(details):
+	sender = details.parent
+	pass
+
 func _process(delta):
 	progress_bar.value = move_toward(progress_bar.value, 0.0, decay_value)
 

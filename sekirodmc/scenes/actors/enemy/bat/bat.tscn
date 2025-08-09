@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3 uid="uid://nbuakiq05kix"]
+[gd_scene load_steps=44 format=3 uid="uid://nbuakiq05kix"]
 
 [ext_resource type="Texture2D" uid="uid://8lc5t8lbixxh" path="res://assets/characters/enemies/bat/Bat-IdleFly.png" id="1_7ixnm"]
 [ext_resource type="Script" uid="uid://cecwq7rx6l4xi" path="res://scenes/actors/enemy/base_enemy/base_enemy.gd" id="1_i2pfg"]
@@ -11,6 +11,7 @@
 [ext_resource type="Texture2D" uid="uid://bx7mg6s8qwkj5" path="res://assets/characters/enemies/bat/Bat-Die.png" id="5_crilq"]
 [ext_resource type="PackedScene" uid="uid://dhkblkcfiuekm" path="res://scenes/components/detectors/air_player_detector/air_player_detector.tscn" id="8_le26l"]
 [ext_resource type="Texture2D" uid="uid://cu0qwlil58ei3" path="res://assets/characters/enemies/bat/Bat-Attack1.png" id="10_m6d6k"]
+[ext_resource type="PackedScene" uid="uid://cmhayca7kshmf" path="res://scenes/components/parry_meter/parry_meter.tscn" id="12_g44bg"]
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_jolt0"]
 
@@ -439,7 +440,7 @@ states/patrol/position = Vector2(590, 282.5)
 states/run/node = SubResource("AnimationNodeAnimation_navny")
 states/run/position = Vector2(595.5, 101)
 transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_hs0pq"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_ivhpx"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_m8oai"), "run", "attack", SubResource("AnimationNodeStateMachineTransition_ttf0s"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_dljl5"), "attack", "run", SubResource("AnimationNodeStateMachineTransition_0g3xs"), "attack", "idle", SubResource("AnimationNodeStateMachineTransition_e2ayu"), "run", "patrol", SubResource("AnimationNodeStateMachineTransition_ng70x"), "attack", "patrol", SubResource("AnimationNodeStateMachineTransition_lmiw4"), "idle", "patrol", SubResource("AnimationNodeStateMachineTransition_a46lt"), "patrol", "idle", SubResource("AnimationNodeStateMachineTransition_bm4sd"), "hurt", "idle", SubResource("AnimationNodeStateMachineTransition_grmrj"), "idle", "hurt", SubResource("AnimationNodeStateMachineTransition_41sy4"), "attack", "hurt", SubResource("AnimationNodeStateMachineTransition_dqkh4"), "die", "End", SubResource("AnimationNodeStateMachineTransition_f601c")]
-graph_offset = Vector2(-181.02, 46.5903)
+graph_offset = Vector2(-81.3, 58.1778)
 
 [node name="Bat" type="CharacterBody2D"]
 collision_layer = 512
@@ -449,6 +450,7 @@ player_detector_area = ExtResource("8_le26l")
 chase_mechanic = ExtResource("2_qhnb7")
 attack_mechanic = ExtResource("3_v2hou")
 parol_mechanic = ExtResource("4_783dp")
+parry_meter = ExtResource("12_g44bg")
 hit_box = ExtResource("3_48sth")
 hurt_box = ExtResource("2_5otes")
 
@@ -473,3 +475,5 @@ libraries = {
 root_node = NodePath("../..")
 tree_root = SubResource("AnimationNodeStateMachine_f6h5w")
 anim_player = NodePath("../AnimationPlayer")
+
+[node name="ParryMeter" parent="." instance=ExtResource("12_g44bg")]

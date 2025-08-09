@@ -23,6 +23,7 @@ class_name BaseEnemy extends CharacterBody2D
 @export var chase_mechanic: PackedScene
 @export var attack_mechanic: PackedScene
 @export var parol_mechanic: PackedScene
+@export var parry_meter: PackedScene
 
 @export_group("Animations")
 @export_subgroup("Hit")
@@ -42,6 +43,8 @@ class_name BaseEnemy extends CharacterBody2D
 @export_subgroup("Toggles")
 @export var has_wall_detection = false
 @export var has_gravity = false
+@export_enum("Left", "Right") var look_at = "Left"
+
 
 #NODES
 @onready var animation_container = $Animation
@@ -59,6 +62,7 @@ var player = null
 var stop_process = false
 var is_on_edge = false
 var attack_mechanic_node: Area2D = null
+var parry_meter_node: Node2D = null
 
 
 #KNOCKBACK
@@ -89,8 +93,10 @@ var state = null
 #signal take_damage(damage_value)
 
 func _ready():
-	init_dependencies()
 	init_signals()
+	look_at_direction()
+	await get_tree().physics_frame
+	init_dependencies()
 	pass
 
 
@@ -134,6 +140,11 @@ func init_dependencies():
 	if edge_detector:
 		edge_detector_node = add_node(edge_detector)
 		edge_detector_node.position = Vector2(0,40)
+	if parry_meter:
+		parry_meter_node = add_node(parry_meter)
+		parry_meter_node.init({
+			"parent": self
+		})
 	pass
 
 func init_signals():
@@ -147,6 +158,16 @@ func _physics_process(delta):
 	handle_wall_detection()
 	if has_gravity: move_and_slide()
 
+
+func look_at_direction():
+	match look_at:
+		"Left": 
+			scale.x = -1
+			pass
+		"Right": 
+			scale.x = 1
+			pass
+	pass
 
 func add_node(scene: PackedScene):
 	var child = scene.instantiate()
@@ -180,14 +201,14 @@ func take_damage(pos, damage):
 		GameManager.emit_signal("spawn_coin", global_position, 2)
 	else:
 		temporarily_disable_movement()
-		state_machine.travel("hurt")
+		state_machine.start("hurt")
 		if hurt_audio: hurt_audio.play()
 		pass
 	pass
 
 func temporarily_disable_movement():
 	stop_process = true
-	await get_tree().create_timer(0.4).timeout
+	await get_tree().create_timer(0.1).timeout
 	stop_process = false
 	pass
 
@@ -212,10 +233,9 @@ func set_direction(dir) -> void:
 			#dir = 1
 		#elif PlayerManager.player.position.x < position.x:
 			#dir = -1
-	#print("Direction: ", dir)
 	direction = dir
 	animation_container.scale.x = dir
-	sprite.flip_h = dir > 0
+	sprite.flip_h = dir < 0
 
 func apply_knockback(from_position: Vector2):
 	var direction = (global_position - from_position).normalized()
@@ -235,7 +255,10 @@ func handle_knockback(delta):
 	pass
 
 func handle_parry(body):
-	apply_knockback(body.global_position)
+	#apply_knockback(body.global_position)
+	var amount = 1
+	if parry_meter_node: 
+		parry_meter_node.set_parry_details(amount, self)
 	pass
 
 func set_state(_state):
