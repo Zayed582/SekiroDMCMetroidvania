@@ -160,6 +160,9 @@ var slash_decrement_percentage = 0.6
 @onready var charged_attack_player = $Sounds/ChargeAttackPlayer
 @onready var walk_1 = $Sounds/Walk1
 @onready var death_sound = $Sounds/DeathPlayer
+@onready var parry_sound = $Sounds/ParryPlayer
+@onready var block_sound = $Sounds/BlockPlayer
+@onready var deathblow_sound = $Sounds/DeathBlowPlayer
 
 #WALK SOUND
 var step_timer := 0.0
@@ -486,6 +489,8 @@ func handle_deathblow():
 		var offset = Vector2(5 * direction.x, -10)
 		global_position = enemy.global_position + offset
 		velocity = Vector2.ZERO
+		deathblow_sound.pitch_scale = randf_range(0.8,1.2)
+		deathblow_sound.play()
 		await get_tree().create_timer(0.2).timeout
 	
 	GameManager.parriable_enemies = []
@@ -609,11 +614,15 @@ func handle_projectile_block(area):
 func handle_melee_block(area):
 	match state:
 		BLOCK:
+			block_sound.pitch_scale = randf_range(0.8,1.2)
+			block_sound.play()
 			state_machine.travel("block_hit")
 			set_state(BLOCK_HIT)
 			apply_knockback(area.global_position)
 			return true
 		CAN_PARRY:
+			parry_sound.pitch_scale = randf_range(0.8,1.2)
+			parry_sound.play()
 			state_machine.travel("parry")
 			set_state(PARRY)
 			if area.get_parent().has_method("take_damage"):
@@ -627,7 +636,8 @@ func handle_melee_block(area):
 	pass
 
 func handle_take_damage(area):
-	if handle_melee_block(area): return
+	if !area.is_in_group("projectile"):
+		if handle_melee_block(area): return
 	
 	var damage = 0
 	if area.get_parent().get("damage"):
@@ -875,7 +885,8 @@ func _on_wall_jump_cooldown_timer_timeout():
 
 
 func _on_hit_area_area_entered(area):
-	area.get_parent().take_damage(global_position, damage)
+	if area.get_parent().has_method("take_damage"):
+		area.get_parent().take_damage(global_position, damage)
 	
 	#GameManager.emit_signal("hitstop")
 	#if is_pogo_jumping and !is_on_floor():

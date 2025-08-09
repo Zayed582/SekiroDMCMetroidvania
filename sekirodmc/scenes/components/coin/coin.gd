@@ -13,7 +13,7 @@ extends RigidBody2D
 
 
 func _ready():
-	gravity_scale = 1 if has_gravity else 0
+	gravity_scale = 2 if has_gravity else 0
 	if !has_gravity: anim2.play("new_animation")
 
 #func _physics_process(delta):
