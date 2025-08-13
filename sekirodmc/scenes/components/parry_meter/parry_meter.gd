@@ -2,6 +2,7 @@ extends Node2D
 
 @export var max_amount = 2
 @onready var progress_bar = $ProgressBar
+@onready var stun_sprite = $StunSprite
 @onready var cooldown_timer =$CooldownTimer 
 
 @onready var delay_value = DEFAULT_DELAY_VALUE
@@ -29,6 +30,7 @@ func _process(delta):
 	progress_bar.value = move_toward(progress_bar.value, 0.0, decay_value)
 
 func set_parry_details(_amount, _sender):
+	show()
 	sender = _sender
 	progress_bar.value += _amount
 	decay_value = DEFAULT_DECAY_VALUE
@@ -39,7 +41,27 @@ func set_parry_details(_amount, _sender):
 			GameManager.parriable_enemies.append(sender)
 		delay_value = ACTIVE_PARRY_DELAY_VALUE
 		can_parry = true
+		stun_sender()
 	cooldown_timer.start(delay_value)
+	pass
+
+func stun_sender():
+	sender.stop_process = true
+	show_stun_sprite()
+	await get_tree().create_timer(1).timeout
+	hide_stun_sprite()
+	sender.stop_process = false
+	pass
+
+func show_stun_sprite():
+	progress_bar.hide()
+	stun_sprite.show()
+	pass
+
+func hide_stun_sprite():
+	#hide()
+	progress_bar.show()
+	stun_sprite.hide()
 	pass
 
 func clear_parry():

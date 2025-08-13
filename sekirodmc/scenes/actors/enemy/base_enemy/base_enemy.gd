@@ -50,6 +50,8 @@ class_name BaseEnemy extends CharacterBody2D
 @onready var animation_container = $Animation
 @onready var state_machine = $Animation/AnimationTree.get("parameters/playback")
 @onready var sprite = $Sprite2D
+@onready var anim = $Animation/AnimationPlayer
+@onready var animTree = $Animation/AnimationTree
 
 #VARIABLES
 var death_audio = null
@@ -145,6 +147,7 @@ func init_dependencies():
 		parry_meter_node.init({
 			"parent": self
 		})
+		parry_meter_node.global_position = get_parry_meter_spawn_pos()
 	pass
 
 func init_signals():
@@ -196,14 +199,33 @@ func take_damage(pos, damage):
 	#velocity.x = 0
 	
 	if health <= 0:
-		silence_monitoring_node()
+		queue_free_nodes()
+		silence_monitoring_node(true)
+		await get_tree().create_timer(0.2).timeout
 		state_machine.start("die")
+		
+		var die_length = anim.get_animation("die").length
+		await get_tree().create_timer(die_length).timeout
+		queue_free()
+		
 		GameManager.emit_signal("spawn_coin", global_position, 2)
+		#await get_tree().create_timer(1).timeout
+		#state_machine.start("die")
 	else:
 		temporarily_disable_movement()
 		state_machine.start("hurt")
 		if hurt_audio: hurt_audio.play()
 		pass
+	pass
+
+func get_parry_meter_spawn_pos():
+	var tex = sprite.texture
+	var spawn_pos = Vector2(0, -10)
+	
+	if tex:
+		var sprite_height = sprite.get_rect().size.y * sprite.scale.y
+		spawn_pos = sprite.global_position - Vector2(0, sprite_height / 4)
+	return spawn_pos
 	pass
 
 func temporarily_disable_movement():
@@ -272,12 +294,20 @@ func handle_gravity(delta):
 	pass
 
 func silence_monitoring_node(_bool = true):
+	stop_process = _bool
 	if hit_box_node: 
 		hit_box_node.set_deferred("monitoring", !_bool)
 		hit_box_node.set_deferred("monitorable", !_bool)
 	if hurt_box_node: 
 		hurt_box_node.set_deferred("monitoring", !_bool)
 		hurt_box_node.set_deferred("monitorable", !_bool)
+	
+	pass
+
+func queue_free_nodes():
+	if parry_meter_node:
+		parry_meter_node.queue_free()
+		parry_meter_node = null
 	pass
 
 func handle_flips():

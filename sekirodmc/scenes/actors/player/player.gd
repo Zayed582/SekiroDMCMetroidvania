@@ -496,7 +496,7 @@ func handle_deathblow():
 	hurt_area.monitoring = false
 	for enemy in GameManager.parriable_enemies:
 		if enemy == null: return
-		
+		enemy.silence_monitoring_node(false)
 		state_machine.travel("deathblow")
 		var direction = sign(enemy.global_position - global_position)
 		handle_sprite_flip(direction.x)
@@ -607,11 +607,14 @@ func handle_projectile_block(area):
 	if area.is_in_group("projectile"):
 		match state:
 			BLOCK:
+				block_sound.pitch_scale = randf_range(0.8,1.2)
+				block_sound.play()
 				state_machine.travel("block_hit")
 				set_state(BLOCK_HIT)
 				stop_process = false
 				area.queue_free()
 			CAN_PARRY:
+				play_random_parry()
 				state_machine.travel("parry")
 				set_state(PARRY)
 				stop_process = false

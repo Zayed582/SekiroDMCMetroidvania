@@ -11,7 +11,7 @@ func init(data):
 	pass
 
 func _on_body_entered(body):
-	if parent.stop_process: return
+	#if parent.stop_process: return
 	player_in_area = true
 	player = body
 	timer.start()
@@ -20,7 +20,7 @@ func _on_body_entered(body):
 
 
 func _on_body_exited(body):
-	if parent.stop_process: return
+	#if parent.stop_process: return
 	player_in_area = false
 	player = null
 	parent.set_state(parent.CHASE)
