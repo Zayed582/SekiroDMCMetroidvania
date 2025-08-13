@@ -13,6 +13,7 @@ func _physics_process(delta):
 func reflect():
 	direction = -direction
 	sprite.flip_h = direction == 1
+	speed *= 2
 	
 
 func _on_area_entered(area):

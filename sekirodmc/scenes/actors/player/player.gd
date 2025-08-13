@@ -184,8 +184,22 @@ var unlocked_abilities = [
 #ONEWAY
 var one_way_collision_layer = 4
 
+#PARRY SOUNDS
+var parry_sounds = [
+	"res://sounds/parry_sounds/Parry1.mp3",
+	"res://sounds/parry_sounds/Parry2.mp3",
+	"res://sounds/parry_sounds/Parry3.mp3",
+	"res://sounds/parry_sounds/Parry4.mp3",
+	"res://sounds/parry_sounds/Parry5.mp3",
+	"res://sounds/parry_sounds/Parry6.mp3",
+	"res://sounds/parry_sounds/Parry7.mp3",
+	"res://sounds/parry_sounds/Parry8.mp3",
+	"res://sounds/parry_sounds/Parry9.mp3"
+]
+
 func _ready():
 	init()
+	randomize()
 
 func init():
 	anim_tree.active = true
@@ -621,8 +635,7 @@ func handle_melee_block(area):
 			apply_knockback(area.global_position)
 			return true
 		CAN_PARRY:
-			parry_sound.pitch_scale = randf_range(0.8,1.2)
-			parry_sound.play()
+			play_random_parry()
 			state_machine.travel("parry")
 			set_state(PARRY)
 			if area.get_parent().has_method("take_damage"):
@@ -634,6 +647,14 @@ func handle_melee_block(area):
 			return true
 	return false
 	pass
+
+
+func play_random_parry():
+	var random_index = randi() % parry_sounds.size()
+	var sound_path = parry_sounds[random_index]
+	var sound = load(sound_path)
+	parry_sound.stream = sound
+	parry_sound.play()
 
 func handle_take_damage(area):
 	if !area.is_in_group("projectile"):

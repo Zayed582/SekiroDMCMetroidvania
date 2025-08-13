@@ -9,8 +9,8 @@
 [ext_resource type="AudioStream" uid="uid://bw5cf4qec2wky" path="res://sounds/Downed.mp3" id="8_8bj4u"]
 [ext_resource type="AudioStream" uid="uid://b660pevflhn0d" path="res://sounds/SwordSlash4.mp3" id="8_fp13k"]
 [ext_resource type="Texture2D" uid="uid://cr740vcuc3fto" path="res://assets/sfx/light2d.png" id="8_i174x"]
-[ext_resource type="AudioStream" uid="uid://c3vgiqsdylhnn" path="res://sounds/Parry1.mp3" id="9_8bj4u"]
-[ext_resource type="AudioStream" uid="uid://dhdlrirsratb8" path="res://sounds/Parry5.mp3" id="10_inh5e"]
+[ext_resource type="AudioStream" uid="uid://c3vgiqsdylhnn" path="res://sounds/parry_sounds/Parry1.mp3" id="9_8bj4u"]
+[ext_resource type="AudioStream" uid="uid://dhdlrirsratb8" path="res://sounds/parry_sounds/Parry5.mp3" id="10_inh5e"]
 [ext_resource type="AudioStream" uid="uid://cip1nmf3e5lvj" path="res://sounds/Deathblow3.mp3" id="11_inh5e"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_yg5k4"]

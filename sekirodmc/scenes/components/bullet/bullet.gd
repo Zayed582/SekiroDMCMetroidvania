@@ -15,3 +15,4 @@ func _process(delta):
 
 func reflect():
 	direction = -direction
+	speed *= 2
