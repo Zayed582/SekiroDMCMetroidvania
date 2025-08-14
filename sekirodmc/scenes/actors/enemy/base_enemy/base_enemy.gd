@@ -89,7 +89,7 @@ enum {
 	HURT,
 	DEAD
 }
-var state = null
+var state = IDLE
 
 #SIGNALS
 #signal take_damage(damage_value)

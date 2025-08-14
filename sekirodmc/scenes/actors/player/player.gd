@@ -139,6 +139,7 @@ var reset_jump_count = false
 var is_pogo_jumping = false
 var can_charge_attack = false
 var is_recovering_mana = false
+var is_attacking_enemy = false
 
 #KNOCKBACK
 @export var knockback_force := 300.0
@@ -154,9 +155,7 @@ var slash_velocity = 0
 var slash_decrement_percentage = 0.6
 
 #Sounds
-@onready var slash_1 = $Sounds/SlashPlayer1
-@onready var slash_2 = $Sounds/SlashPlayer1
-@onready var slash_3 = $Sounds/SlashPlayer3
+@onready var attack_sound = $Sounds/AttackPlayer
 @onready var charged_attack_player = $Sounds/ChargeAttackPlayer
 @onready var walk_1 = $Sounds/Walk1
 @onready var death_sound = $Sounds/DeathPlayer
@@ -184,7 +183,7 @@ var unlocked_abilities = [
 #ONEWAY
 var one_way_collision_layer = 4
 
-#PARRY SOUNDS
+# SOUNDS
 var parry_sounds = [
 	"res://sounds/parry_sounds/Parry1.mp3",
 	"res://sounds/parry_sounds/Parry2.mp3",
@@ -195,6 +194,22 @@ var parry_sounds = [
 	"res://sounds/parry_sounds/Parry7.mp3",
 	"res://sounds/parry_sounds/Parry8.mp3",
 	"res://sounds/parry_sounds/Parry9.mp3"
+]
+
+var attack_empty_sounds = [
+	"res://sounds/attack_sounds/SwordSlash1.mp3",
+]
+
+var attack_full_sounds = [
+	"res://sounds/attack_sounds/SwordSlash3.mp3"
+]
+
+var final_attack_sounds = [
+	"res://sounds/attack_sounds/SwordSlash4.mp3"
+]
+
+var final_attack_empty_sounds = [
+	"res://sounds/attack_sounds/SwordSlash2.mp3"
 ]
 
 func _ready():
@@ -494,6 +509,7 @@ func handle_fall_through():
 func handle_deathblow():
 	set_physics_process(false)
 	hurt_area.monitoring = false
+	
 	for enemy in GameManager.parriable_enemies:
 		if enemy == null: return
 		enemy.silence_monitoring_node(false)
@@ -614,7 +630,7 @@ func handle_projectile_block(area):
 				stop_process = false
 				area.queue_free()
 			CAN_PARRY:
-				play_random_parry()
+				play_random_sound(parry_sounds, parry_sound)
 				state_machine.travel("parry")
 				set_state(PARRY)
 				stop_process = false
@@ -638,7 +654,7 @@ func handle_melee_block(area):
 			apply_knockback(area.global_position)
 			return true
 		CAN_PARRY:
-			play_random_parry()
+			play_random_sound(parry_sounds, parry_sound)
 			state_machine.travel("parry")
 			set_state(PARRY)
 			if area.get_parent().has_method("take_damage"):
@@ -652,12 +668,23 @@ func handle_melee_block(area):
 	pass
 
 
-func play_random_parry():
-	var random_index = randi() % parry_sounds.size()
-	var sound_path = parry_sounds[random_index]
+func play_random_sound(sounds_arr: Array, sound_node: AudioStreamPlayer):
+	var random_index = randi() % sounds_arr.size()
+	var sound_path = sounds_arr[random_index]
 	var sound = load(sound_path)
-	parry_sound.stream = sound
-	parry_sound.play()
+	sound_node.stream = sound
+	sound_node.play()
+
+func play_attack_sound():
+	print(is_attacking_enemy, "is it attacking enemy")
+	var sounds = attack_full_sounds if is_attacking_enemy else attack_empty_sounds
+	play_random_sound(sounds, attack_sound)
+	pass
+
+func play_attack_final_attack_sound():
+	var sounds = final_attack_sounds if is_attacking_enemy else final_attack_empty_sounds
+	play_random_sound(sounds, attack_sound)
+	pass
 
 func handle_take_damage(area):
 	if !area.is_in_group("projectile"):
@@ -933,4 +960,14 @@ func _on_pogo_area_area_exited(area):
 func _on_charge_attack_timer_timeout():
 	can_charge_attack = true
 	set_state(CHARGE_ATTACK)
+	pass # Replace with function body.
+
+
+func _on_pre_hit_area_area_entered(area):
+	is_attacking_enemy = true
+	pass # Replace with function body.
+
+
+func _on_pre_hit_area_area_exited(area):
+	is_attacking_enemy = false
 	pass # Replace with function body.

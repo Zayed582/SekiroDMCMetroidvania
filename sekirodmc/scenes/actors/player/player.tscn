@@ -4,7 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://d4ltavemvqyrk" path="res://assets/images/player/Shinobi Character MASK NEW.png" id="2_oj104"]
 [ext_resource type="Script" uid="uid://d24firwlfirrp" path="res://scripts/camera_2d.gd" id="3_oj104"]
 [ext_resource type="AudioStream" uid="uid://cwx5qm6jdvdqo" path="res://sounds/SwordSlash1.mp3" id="5_yg5k4"]
-[ext_resource type="AudioStream" uid="uid://dtlidvu05ay0g" path="res://sounds/SwordSlash3.mp3" id="7_fp13k"]
 [ext_resource type="AudioStream" uid="uid://d2t85wniqir6a" path="res://sounds/GRASS - Walk short 4.wav" id="8_5bhx7"]
 [ext_resource type="AudioStream" uid="uid://bw5cf4qec2wky" path="res://sounds/Downed.mp3" id="8_8bj4u"]
 [ext_resource type="AudioStream" uid="uid://b660pevflhn0d" path="res://sounds/SwordSlash4.mp3" id="8_fp13k"]
@@ -144,17 +143,19 @@ tracks/2/keys = {
 "update": 1,
 "values": [false, true, true, false]
 }
-tracks/3/type = "value"
+tracks/3/type = "method"
 tracks/3/imported = false
 tracks/3/enabled = true
-tracks/3/path = NodePath("Sounds/SlashPlayer1:playing")
+tracks/3/path = NodePath(".")
 tracks/3/interp = 1
 tracks/3/loop_wrap = true
 tracks/3/keys = {
-"times": PackedFloat32Array(0),
+"times": PackedFloat32Array(0.1),
 "transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
+"values": [{
+"args": [],
+"method": &"play_attack_sound"
+}]
 }
 
 [sub_resource type="Animation" id="Animation_fp13k"]
@@ -180,9 +181,12 @@ tracks/1/path = NodePath(".")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.5),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0.1, 0.5),
+"transitions": PackedFloat32Array(1, 1),
 "values": [{
+"args": [],
+"method": &"play_attack_sound"
+}, {
 "args": [],
 "method": &"handle_attack_exit"
 }]
@@ -198,18 +202,6 @@ tracks/2/keys = {
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [true, true, false]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Sounds/SlashPlayer2:playing")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
 }
 
 [sub_resource type="Animation" id="Animation_5bhx7"]
@@ -235,9 +227,12 @@ tracks/1/path = NodePath(".")
 tracks/1/interp = 1
 tracks/1/loop_wrap = true
 tracks/1/keys = {
-"times": PackedFloat32Array(0.5),
-"transitions": PackedFloat32Array(1),
+"times": PackedFloat32Array(0.2, 0.5),
+"transitions": PackedFloat32Array(1, 1),
 "values": [{
+"args": [],
+"method": &"play_attack_final_attack_sound"
+}, {
 "args": [],
 "method": &"handle_attack_exit"
 }]
@@ -253,18 +248,6 @@ tracks/2/keys = {
 "transitions": PackedFloat32Array(1, 1, 1),
 "update": 1,
 "values": [false, true, false]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Sounds/SlashPlayer3:playing")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [true]
 }
 
 [sub_resource type="Animation" id="Animation_qxscg"]
@@ -966,6 +949,9 @@ height = 144.0
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_oj104"]
 size = Vector2(215, 211)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_8bj4u"]
+size = Vector2(216, 208)
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mpktj"]
 size = Vector2(122, 194)
 
@@ -1072,8 +1058,16 @@ collision_mask = 512
 monitoring = false
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/HitArea"]
-position = Vector2(74.5, 17.5)
+position = Vector2(74.5, 1.5)
 shape = SubResource("RectangleShape2D_oj104")
+
+[node name="PreHitArea" type="Area2D" parent="Areas"]
+collision_layer = 0
+collision_mask = 512
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/PreHitArea"]
+position = Vector2(74, 0)
+shape = SubResource("RectangleShape2D_8bj4u")
 
 [node name="PogoArea" type="Area2D" parent="Areas"]
 collision_layer = 0
@@ -1098,16 +1092,8 @@ script = ExtResource("3_oj104")
 
 [node name="Sounds" type="Node2D" parent="."]
 
-[node name="SlashPlayer1" type="AudioStreamPlayer" parent="Sounds"]
+[node name="AttackPlayer" type="AudioStreamPlayer" parent="Sounds"]
 stream = ExtResource("5_yg5k4")
-volume_db = -20.0
-
-[node name="SlashPlayer2" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource("5_yg5k4")
-volume_db = -20.0
-
-[node name="SlashPlayer3" type="AudioStreamPlayer" parent="Sounds"]
-stream = ExtResource("7_fp13k")
 volume_db = -20.0
 
 [node name="ChargeAttackPlayer" type="AudioStreamPlayer" parent="Sounds"]
@@ -1150,5 +1136,7 @@ texture_scale = 16.0
 [connection signal="area_entered" from="Areas/BlockArea" to="." method="_on_block_area_area_entered"]
 [connection signal="area_entered" from="Areas/HurtArea" to="." method="_on_hurt_area_area_entered"]
 [connection signal="area_entered" from="Areas/HitArea" to="." method="_on_hit_area_area_entered"]
+[connection signal="area_entered" from="Areas/PreHitArea" to="." method="_on_pre_hit_area_area_entered"]
+[connection signal="area_exited" from="Areas/PreHitArea" to="." method="_on_pre_hit_area_area_exited"]
 [connection signal="area_entered" from="Areas/PogoArea" to="." method="_on_pogo_area_area_entered"]
 [connection signal="area_exited" from="Areas/PogoArea" to="." method="_on_pogo_area_area_exited"]
