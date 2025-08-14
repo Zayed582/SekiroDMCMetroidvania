@@ -49,7 +49,7 @@ class_name BaseEnemy extends CharacterBody2D
 #NODES
 @onready var animation_container = $Animation
 @onready var state_machine = $Animation/AnimationTree.get("parameters/playback")
-@onready var sprite = $Sprite2D
+@onready var sprite: Sprite2D = $Sprite2D
 @onready var anim = $Animation/AnimationPlayer
 @onready var animTree = $Animation/AnimationTree
 
@@ -220,11 +220,13 @@ func take_damage(pos, damage):
 
 func get_parry_meter_spawn_pos():
 	var tex = sprite.texture
+	var vframe = sprite.vframes
 	var spawn_pos = Vector2(0, -10)
+	var sheight = tex.get_size().y / max(1, vframe)
 	
 	if tex:
-		var sprite_height = sprite.get_rect().size.y * sprite.scale.y
-		spawn_pos = sprite.global_position - Vector2(0, sprite_height / 4)
+		var sprite_height = sheight * sprite.scale.y
+		spawn_pos = sprite.global_position - Vector2(0, sprite_height / 2.5)
 	return spawn_pos
 	pass
 
