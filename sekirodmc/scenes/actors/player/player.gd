@@ -140,6 +140,7 @@ var is_pogo_jumping = false
 var can_charge_attack = false
 var is_recovering_mana = false
 var is_attacking_enemy = false
+var is_death_blowing = false
 
 #KNOCKBACK
 @export var knockback_force := 300.0
@@ -512,6 +513,8 @@ func handle_deathblow():
 	
 	for enemy in GameManager.parriable_enemies:
 		if enemy == null: return
+		
+		is_death_blowing = true
 		enemy.silence_monitoring_node(false)
 		state_machine.travel("deathblow")
 		var direction = sign(enemy.global_position - global_position)
@@ -522,6 +525,7 @@ func handle_deathblow():
 		deathblow_sound.pitch_scale = randf_range(0.8,1.2)
 		deathblow_sound.play()
 		await get_tree().create_timer(0.2).timeout
+		is_death_blowing = false
 	
 	GameManager.parriable_enemies = []
 	set_physics_process(true)
@@ -541,7 +545,8 @@ func has_parriable_enemies():
 	pass
 
 func set_movement_speed_on_attack():
-	velocity.x = velocity.x * 0.3
+	velocity.x = velocity.x * 0.7
+	velocity.x += last_direction * 50
 	pass
 
 func stop_movement():
@@ -676,7 +681,6 @@ func play_random_sound(sounds_arr: Array, sound_node: AudioStreamPlayer):
 	sound_node.play()
 
 func play_attack_sound():
-	print(is_attacking_enemy, "is it attacking enemy")
 	var sounds = attack_full_sounds if is_attacking_enemy else attack_empty_sounds
 	play_random_sound(sounds, attack_sound)
 	pass
@@ -937,7 +941,11 @@ func _on_wall_jump_cooldown_timer_timeout():
 
 func _on_hit_area_area_entered(area):
 	if area.get_parent().has_method("take_damage"):
-		area.get_parent().take_damage(global_position, damage)
+		if is_death_blowing:
+			if GameManager.parriable_enemies.has(area.get_parent()):
+				area.get_parent().take_damage(global_position, damage)
+		else:
+			area.get_parent().take_damage(global_position, damage)
 	
 	#GameManager.emit_signal("hitstop")
 	#if is_pogo_jumping and !is_on_floor():
