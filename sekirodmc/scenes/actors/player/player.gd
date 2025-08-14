@@ -591,11 +591,11 @@ func handle_block():
 	
 	if Input.is_action_just_pressed("block") and stamina > MAX_STAMINA * 0.2:
 		state_machine.travel("block")
-		stop_process = true
+		if is_on_floor(): stop_process = true
 		is_blocking = true
 		can_parry = true
 		anim_tree.set("parameters/conditions/blocking", !is_blocking)
-		stop_movement()
+		#stop_movement()
 		set_state(CAN_PARRY)
 		
 		parry_timer.start()
