@@ -596,7 +596,9 @@ func handle_block():
 	
 	if Input.is_action_just_pressed("block") and stamina > MAX_STAMINA * 0.2:
 		state_machine.travel("block")
-		if is_on_floor(): stop_process = true
+		stop_process = true
+		if is_on_floor(): 
+			velocity.x = 0
 		is_blocking = true
 		can_parry = true
 		anim_tree.set("parameters/conditions/blocking", !is_blocking)
@@ -641,8 +643,6 @@ func handle_projectile_block(area):
 				stop_process = false
 				area.reflect()
 				GameManager.emit_signal("shake_camera", 0.2, 4.0)
-				if area.sender and area.sender.has_method("handle_parry"):
-					area.sender.handle_parry(self)
 				reduce_stamina(stamina_parry_decrement)
 				increase_mana(10)
 				GameManager.emit_signal("hitstop", 0.2)
@@ -663,7 +663,7 @@ func handle_melee_block(area):
 			state_machine.travel("parry")
 			set_state(PARRY)
 			if area.get_parent().has_method("take_damage"):
-				area.get_parent().handle_parry(self)
+				area.get_parent().handle_parry()
 			GameManager.emit_signal("shake_camera", 0.2, 4.0)
 			GameManager.emit_signal("hitstop", 0.2)
 			increase_mana(10)

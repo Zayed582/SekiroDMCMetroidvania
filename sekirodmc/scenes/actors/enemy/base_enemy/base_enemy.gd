@@ -197,7 +197,6 @@ func take_damage(pos, damage):
 	GameManager.emit_signal("shake_camera",0.2, 4.0)
 	GameManager.emit_signal("add_hit_particle", damage, global_position)
 	#velocity.x = 0
-	
 	if health <= 0:
 		queue_free_nodes()
 		silence_monitoring_node(true)
@@ -205,12 +204,9 @@ func take_damage(pos, damage):
 		state_machine.start("die")
 		
 		var die_length = anim.get_animation("die").length
+		GameManager.emit_signal("spawn_coin", global_position, 2)
 		await get_tree().create_timer(die_length).timeout
 		queue_free()
-		
-		GameManager.emit_signal("spawn_coin", global_position, 2)
-		#await get_tree().create_timer(1).timeout
-		#state_machine.start("die")
 	else:
 		temporarily_disable_movement()
 		state_machine.start("hurt")
@@ -278,7 +274,7 @@ func handle_knockback(delta):
 		move_and_slide()
 	pass
 
-func handle_parry(body):
+func handle_parry():
 	#apply_knockback(body.global_position)
 	var amount = 1
 	if parry_meter_node: 
