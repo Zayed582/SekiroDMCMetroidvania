@@ -204,7 +204,7 @@ func take_damage(pos, damage):
 		state_machine.start("die")
 		
 		var die_length = anim.get_animation("die").length
-		GameManager.emit_signal("spawn_coin", global_position, 2)
+		GameManager.emit_signal("spawn_coin", position, 2)
 		await get_tree().create_timer(die_length).timeout
 		queue_free()
 	else:

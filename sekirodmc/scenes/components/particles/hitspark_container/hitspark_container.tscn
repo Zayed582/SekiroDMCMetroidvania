@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://6pdvu778wfh0"]
+
+[ext_resource type="Script" uid="uid://byq8u334g31dr" path="res://scenes/components/particles/hitspark_container/hitspark_container.gd" id="1_jo3se"]
+
+[node name="HitsparkContainer" type="Node2D"]
+script = ExtResource("1_jo3se")
