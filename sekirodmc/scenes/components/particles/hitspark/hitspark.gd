@@ -1,11 +1,6 @@
 extends Node2D
 
-enum {
-	ATTACK,
-	DEATHBLOW
-}
-
-var state = ATTACK
+var deathblow_active = false
 @onready var anim = $AnimationPlayer
 
 func _ready():
@@ -13,7 +8,8 @@ func _ready():
 	pass
 
 func play_hitspark():
-	match state:
-		ATTACK:
-			anim.play("attack")
+	if deathblow_active:
+		anim.play("deathblow_attack")
+	else:
+		anim.play("attack")
 	pass

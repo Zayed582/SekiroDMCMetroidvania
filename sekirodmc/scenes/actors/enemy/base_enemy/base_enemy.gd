@@ -65,6 +65,7 @@ var stop_process = false
 var is_on_edge = false
 var attack_mechanic_node: Area2D = null
 var parry_meter_node: Node2D = null
+var is_receiving_deathblow = false
 
 
 #KNOCKBACK
@@ -196,6 +197,8 @@ func take_damage(pos, damage):
 	apply_knockback(pos)
 	GameManager.emit_signal("shake_camera",0.2, 4.0)
 	GameManager.emit_signal("add_hit_particle", damage, global_position)
+	GameManager.emit_signal("add_hitspark_particle", damage, global_position, is_receiving_deathblow)
+	is_receiving_deathblow = false
 	#velocity.x = 0
 	if health <= 0:
 		queue_free_nodes()
@@ -315,4 +318,8 @@ func handle_flips():
 func handle_wall_detection():
 	if is_on_wall() and is_on_floor():
 		direction = -direction
+	pass
+
+func handle_deathblow():
+	is_receiving_deathblow = true
 	pass

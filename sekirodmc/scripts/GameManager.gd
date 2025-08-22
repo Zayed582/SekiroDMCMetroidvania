@@ -18,6 +18,7 @@ signal set_max_stamina(MAX_STAMINA)
 
 #PARTICE AND SFX
 signal add_hit_particle(text, pos)
+signal add_hitspark_particle(text, pos, deathblow_active)
 signal add_flash_particle()
 
 signal add_coin
