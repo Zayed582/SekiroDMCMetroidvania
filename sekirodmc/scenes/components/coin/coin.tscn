@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://6xaufxvn04ev"]
 
 [ext_resource type="Script" uid="uid://bjig5dtpq50xs" path="res://scenes/components/coin/coin.gd" id="1_02nfb"]
-[ext_resource type="Texture2D" uid="uid://dt47y7j3fe2wg" path="res://assets/decorations/animated_items.png" id="2_02nfb"]
+[ext_resource type="Texture2D" uid="uid://dt47y7j3fe2wg" path="res://assets/objects/animated_items.png" id="2_02nfb"]
 
 [sub_resource type="Animation" id="Animation_cislm"]
 length = 0.001

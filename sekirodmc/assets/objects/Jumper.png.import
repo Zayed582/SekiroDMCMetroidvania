@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d3aownk50k3wu"
-path="res://.godot/imported/Opening (46x56).png-1a44d08a3e91b51c419d51cd765c8e9b.ctex"
+uid="uid://bwxhykwks3wyu"
+path="res://.godot/imported/Jumper.png-2965acf7d64ad6bdbf30a21ea2b39a3d.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/decorations/Opening (46x56).png"
-dest_files=["res://.godot/imported/Opening (46x56).png-1a44d08a3e91b51c419d51cd765c8e9b.ctex"]
+source_file="res://assets/objects/Jumper.png"
+dest_files=["res://.godot/imported/Jumper.png-2965acf7d64ad6bdbf30a21ea2b39a3d.ctex"]
 
 [params]
 

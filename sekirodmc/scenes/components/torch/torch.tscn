@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://56dppt7syu8d"]
 
-[ext_resource type="Texture2D" uid="uid://c7ogkqap4573v" path="res://assets/decorations/spr_Torch_strip.png" id="1_toalf"]
+[ext_resource type="Texture2D" uid="uid://c7ogkqap4573v" path="res://assets/objects/spr_Torch_strip.png" id="1_toalf"]
 
 [sub_resource type="Animation" id="Animation_hdib3"]
 length = 0.001

@@ -979,3 +979,8 @@ func _on_pre_hit_area_area_entered(area):
 func _on_pre_hit_area_area_exited(area):
 	is_attacking_enemy = false
 	pass # Replace with function body.
+
+func activate_jump_boost(jump_boost):
+	velocity.y = jump_boost
+	set_state(JUMP)
+	pass

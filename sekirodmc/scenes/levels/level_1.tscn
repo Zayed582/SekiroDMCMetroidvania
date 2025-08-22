@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://dcsw484jo1tps" path="res://scenes/gui/player_hud/player_hud.tscn" id="5_qxy0u"]
 [ext_resource type="FontFile" uid="uid://ctjda20r0q0" path="res://fonts/Frost Scream.otf" id="6_dnkej"]
 [ext_resource type="PackedScene" uid="uid://btsdal3unww32" path="res://scenes/components/particles/flash_particle/flash_particle.tscn" id="6_excbq"]
-[ext_resource type="Texture2D" uid="uid://duq08ni8l1gec" path="res://assets/decorations/animated_items_outline.png" id="6_iav0o"]
+[ext_resource type="Texture2D" uid="uid://duq08ni8l1gec" path="res://assets/objects/animated_items_outline.png" id="6_iav0o"]
 [ext_resource type="Script" uid="uid://2o8yhes2352b" path="res://scripts/coin_label.gd" id="7_mm8aj"]
 [ext_resource type="PackedScene" uid="uid://56dppt7syu8d" path="res://scenes/components/torch/torch.tscn" id="7_oc4kc"]
 [ext_resource type="PackedScene" uid="uid://brs28as3eschd" path="res://scenes/components/death_zone/death_zone.tscn" id="8_s8va5"]
@@ -15,7 +15,7 @@
 [ext_resource type="PackedScene" uid="uid://6xaufxvn04ev" path="res://scenes/components/coin/coin.tscn" id="12_iav0o"]
 [ext_resource type="PackedScene" uid="uid://8n13ndx38w1l" path="res://scenes/actors/enemy/slime/slime.tscn" id="13_wtwp4"]
 [ext_resource type="PackedScene" uid="uid://t7lnw7sw7fe1" path="res://scenes/actors/enemy/archer_skeleton/archer_skeleton.tscn" id="14_np2pn"]
-[ext_resource type="PackedScene" uid="uid://nbuakiq05kix" path="res://scenes/actors/enemy/bat/bat.tscn" id="14_v6ha0"]
+[ext_resource type="PackedScene" uid="uid://bxl63jcytyfhq" path="res://scenes/components/jump_pad/jump_pad.tscn" id="15_v6ha0"]
 [ext_resource type="PackedScene" uid="uid://c6b2tjocq15nt" path="res://scenes/components/coin_spawner/coin_spawner.tscn" id="16_iwr0g"]
 [ext_resource type="PackedScene" uid="uid://cgyrtxeg5mjs0" path="res://scenes/components/traps/ground_spike/ground_spike.tscn" id="17_bahl2"]
 [ext_resource type="PackedScene" uid="uid://6pdvu778wfh0" path="res://scenes/components/particles/hitspark_container/hitspark_container.tscn" id="18_v6ha0"]
@@ -722,9 +722,6 @@ scale = Vector2(3, 1)
 [node name="Slime" parent="Enemies" instance=ExtResource("13_wtwp4")]
 position = Vector2(2168, 792)
 
-[node name="Slime4" parent="Enemies" instance=ExtResource("13_wtwp4")]
-position = Vector2(1320, 784)
-
 [node name="Slime2" parent="Enemies" instance=ExtResource("13_wtwp4")]
 position = Vector2(2376, 800)
 
@@ -740,16 +737,7 @@ position = Vector2(4808, 464)
 [node name="ArcherSkeleton" parent="Enemies" instance=ExtResource("14_np2pn")]
 position = Vector2(2136, 776)
 
-[node name="Bat" parent="Enemies" instance=ExtResource("14_v6ha0")]
-position = Vector2(744, 776)
-
 [node name="Objects" type="Node2D" parent="."]
-
-[node name="Coin" parent="Objects" instance=ExtResource("12_iav0o")]
-position = Vector2(640, 768)
-
-[node name="Coin2" parent="Objects" instance=ExtResource("12_iav0o")]
-position = Vector2(1120, 768)
 
 [node name="Coin6" parent="Objects" instance=ExtResource("12_iav0o")]
 position = Vector2(3544, -168)
@@ -771,6 +759,9 @@ position = Vector2(3335, 784)
 
 [node name="Coin5" parent="Objects" instance=ExtResource("12_iav0o")]
 position = Vector2(3255, 784)
+
+[node name="JumpPad" parent="Objects" instance=ExtResource("15_v6ha0")]
+position = Vector2(616, 808)
 
 [node name="Spawners" type="Node2D" parent="."]
 

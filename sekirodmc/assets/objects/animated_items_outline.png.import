@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cje8hwobl1mw5"
-path="res://.godot/imported/Pixel Gates.png-d5d9b3db748e37aa01b148e7f81742d9.ctex"
+uid="uid://duq08ni8l1gec"
+path="res://.godot/imported/animated_items_outline.png-5f9f8943045149d94389584b195b4dfa.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/decorations/Pixel Gates.png"
-dest_files=["res://.godot/imported/Pixel Gates.png-d5d9b3db748e37aa01b148e7f81742d9.ctex"]
+source_file="res://assets/objects/animated_items_outline.png"
+dest_files=["res://.godot/imported/animated_items_outline.png-5f9f8943045149d94389584b195b4dfa.ctex"]
 
 [params]
 
