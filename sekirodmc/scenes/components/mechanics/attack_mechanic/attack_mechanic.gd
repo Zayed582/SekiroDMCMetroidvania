@@ -36,6 +36,7 @@ func attack():
 	parent.set_direction(direction)
 	parent.set_state(parent.ATTACK)
 	parent.travel("attack")
+
 	parent.velocity.x = 0
 	pass
 

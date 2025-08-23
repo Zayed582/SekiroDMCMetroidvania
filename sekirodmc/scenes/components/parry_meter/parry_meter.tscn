@@ -42,7 +42,7 @@ one_shot = true
 
 [node name="StunSprite" type="Sprite2D" parent="."]
 visible = false
-scale = Vector2(0.6, 0.6)
+scale = Vector2(0.55, 0.55)
 texture = ExtResource("2_xvri1")
 
 [connection signal="timeout" from="CooldownTimer" to="." method="_on_cooldown_timer_timeout"]

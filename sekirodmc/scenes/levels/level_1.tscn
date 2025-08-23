@@ -736,6 +736,13 @@ position = Vector2(4808, 464)
 
 [node name="ArcherSkeleton" parent="Enemies" instance=ExtResource("14_np2pn")]
 position = Vector2(2136, 776)
+max_health = 30
+health = 30
+
+[node name="ArcherSkeleton2" parent="Enemies" instance=ExtResource("14_np2pn")]
+position = Vector2(1088, 768)
+max_health = 30
+health = 30
 
 [node name="Objects" type="Node2D" parent="."]
 

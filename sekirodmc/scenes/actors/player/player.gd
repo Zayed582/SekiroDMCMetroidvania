@@ -42,6 +42,12 @@ var health_increment_value = 0
 @onready var pojo_area_detector = $Areas/PogoArea
 @onready var charge_attack_timer = $Timers/ChargeAttackTimer
 @onready var fall_through_raycast = $Areas/FallthroughRayCast
+@onready var berserk_reset_timer = $Timers/BerserkResetTimer
+@onready var berserk_mode_timer = $Timers/BerserkModeTimer
+@onready var berserk_animation_timer = $Timers/BerserkAnimationTimer
+
+@onready var berserk_label_scene = preload("res://scenes/components/particles/berserk_label/berserk_label.tscn")
+@onready var berserk_sprite_scene = preload("res://scenes/components/particles/berserk_sprite/berserk_sprite.tscn")
 
 enum {
 	IDLE,
@@ -141,6 +147,8 @@ var can_charge_attack = false
 var is_recovering_mana = false
 var is_attacking_enemy = false
 var is_death_blowing = false
+var berserk_mode_activated = false
+
 
 #KNOCKBACK
 @export var knockback_force := 300.0
@@ -212,6 +220,11 @@ var final_attack_sounds = [
 var final_attack_empty_sounds = [
 	"res://sounds/attack_sounds/SwordSlash2.mp3"
 ]
+
+#BERSERK MODE
+var berserk_mode = 0
+var full_berserk_mode = 5
+var berserk_value = 1
 
 func _ready():
 	init()
@@ -373,12 +386,12 @@ func handle_attack():
 		charge_movement_speed = MIN_CHARGE_MOVEMENT_SPEED
 		
 		set_movement_speed_on_attack()
-		damage = PRIMARY_ATT_DMG
+		damage = PRIMARY_ATT_DMG * berserk_value
 		
 		#if is_pogo_jumping and !is_on_floor():
 			#return
 		if has_parriable_enemies(): 
-			damage = DEATHBLOW_DMG
+			damage = DEATHBLOW_DMG * berserk_value
 			await handle_deathblow()
 			return
 		
@@ -413,7 +426,7 @@ func handle_attack():
 			state_machine.travel("charge_attack")
 			handle_charge_attack()
 			set_state(IDLE)
-			damage = SECONDARY_ATT_DMG
+			damage = SECONDARY_ATT_DMG * berserk_value
 			
 			charge_cooldown_timer.start()
 			can_use_charge_attack = false
@@ -637,15 +650,9 @@ func handle_projectile_block(area):
 				stop_process = false
 				area.queue_free()
 			CAN_PARRY:
-				play_random_sound(parry_sounds, parry_sound)
-				state_machine.travel("parry")
-				set_state(PARRY)
+				hande_parry()
 				stop_process = false
 				area.reflect()
-				GameManager.emit_signal("shake_camera", 0.2, 4.0)
-				reduce_stamina(stamina_parry_decrement)
-				increase_mana(10)
-				GameManager.emit_signal("hitstop", 0.2)
 		pass
 	pass
 
@@ -659,17 +666,22 @@ func handle_melee_block(area):
 			apply_knockback(area.global_position)
 			return true
 		CAN_PARRY:
-			play_random_sound(parry_sounds, parry_sound)
-			state_machine.travel("parry")
-			set_state(PARRY)
+			hande_parry()
 			if area.get_parent().has_method("take_damage"):
 				area.get_parent().handle_parry()
-			GameManager.emit_signal("shake_camera", 0.2, 4.0)
-			GameManager.emit_signal("hitstop", 0.2)
-			increase_mana(10)
-			reduce_stamina(stamina_parry_decrement)
 			return true
 	return false
+	pass
+
+func hande_parry():
+	handle_berserk()
+	play_random_sound(parry_sounds, parry_sound)
+	state_machine.travel("parry")
+	set_state(PARRY)
+	GameManager.emit_signal("shake_camera", 0.2, 4.0)
+	GameManager.emit_signal("hitstop", 0.2)
+	increase_mana(10)
+	reduce_stamina(stamina_parry_decrement)
 	pass
 
 
@@ -984,3 +996,48 @@ func activate_jump_boost(jump_boost):
 	velocity.y = jump_boost
 	set_state(JUMP)
 	pass
+
+func handle_berserk():
+	if berserk_mode_activated: return
+	
+	berserk_mode = clamp(berserk_mode + 1, 0, full_berserk_mode)
+	add_berserk_label()
+	berserk_reset_timer.start()
+	
+	if berserk_mode == full_berserk_mode:
+		berserk_mode_activated = true
+		berserk_mode_timer.start()
+		berserk_reset_timer.stop()
+		berserk_animation_timer.start()
+		berserk_value = 2
+	pass
+
+func add_berserk_label():
+	var berserk_label = berserk_label_scene.instantiate()
+	berserk_label.global_position = global_position + Vector2(0, -100)
+	get_tree().current_scene.add_child(berserk_label)
+	berserk_label.animate(berserk_mode)
+	pass
+
+func _on_beserk_reset_timer_timeout():
+	berserk_mode = clamp(berserk_mode - 1, 0, full_berserk_mode)
+	if berserk_mode <= 0: berserk_reset_timer.stop()
+	
+	pass # Replace with function body.
+
+func _on_berserk_mode_timer_timeout():
+	berserk_mode_activated = false
+	berserk_animation_timer.stop()
+	berserk_mode = 0
+	berserk_value = 1
+	pass # Replace with function body.
+
+func after_image():
+	var berserk_sprite = berserk_sprite_scene.instantiate()
+	get_tree().current_scene.get_node("Decorations").add_child(berserk_sprite)
+	berserk_sprite.init(sprite)
+	pass
+
+func _on_berserk_animation_timer_timeout():
+	after_image()
+	pass # Replace with function body.

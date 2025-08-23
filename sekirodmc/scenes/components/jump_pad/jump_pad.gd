@@ -5,8 +5,9 @@ extends Area2D
 
 func activate_jump_boost(body):
 	if body.velocity.y <= 0: return
-	body.activate_jump_boost(JUMP_FORCE)
+	GameManager.emit_signal("shake_camera",0.2, 4.0)
 	anim.play("activate")
+	body.activate_jump_boost(JUMP_FORCE)
 	pass
 
 func _on_body_entered(body):

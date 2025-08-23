@@ -11,11 +11,13 @@ func _ready():
 
 func spawn_arrow():
 	if !is_in_frame: return
+	print("Arrow direction: ", direction)
 	var arrow = arrow_scene.instantiate()
 	arrow.global_position = marker.global_position + Vector2(marker_offset.x * direction, marker_offset.y)
 	arrow.direction = direction
 	arrow.sender = self
 	get_tree().current_scene.add_child(arrow)
+	arrow.flip(direction)
 	pass
 
 

@@ -13,6 +13,7 @@ func _on_area_entered(area):
 	if area.is_in_group("projectile"):
 		parent.silence_monitoring_node(false)
 		parent.take_damage(global_position, area.damage)
-		parent.handle_parry()
+		if area.is_parried:
+			parent.handle_parry()
 		area.queue_free()
 	pass # Replace with function body.

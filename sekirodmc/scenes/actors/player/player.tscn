@@ -1040,6 +1040,15 @@ one_shot = true
 wait_time = 0.25
 one_shot = true
 
+[node name="BerserkResetTimer" type="Timer" parent="Timers"]
+wait_time = 3.0
+
+[node name="BerserkModeTimer" type="Timer" parent="Timers"]
+wait_time = 20.0
+
+[node name="BerserkAnimationTimer" type="Timer" parent="Timers"]
+wait_time = 0.075
+
 [node name="Areas" type="Node2D" parent="."]
 
 [node name="BlockArea" type="Area2D" parent="Areas"]
@@ -1137,6 +1146,9 @@ texture_scale = 16.0
 [connection signal="timeout" from="Timers/DashTimer" to="." method="_on_dash_timer_timeout"]
 [connection signal="timeout" from="Timers/WallJumpCooldownTimer" to="." method="_on_wall_jump_cooldown_timer_timeout"]
 [connection signal="timeout" from="Timers/ChargeAttackTimer" to="." method="_on_charge_attack_timer_timeout"]
+[connection signal="timeout" from="Timers/BerserkResetTimer" to="." method="_on_beserk_reset_timer_timeout"]
+[connection signal="timeout" from="Timers/BerserkModeTimer" to="." method="_on_berserk_mode_timer_timeout"]
+[connection signal="timeout" from="Timers/BerserkAnimationTimer" to="." method="_on_berserk_animation_timer_timeout"]
 [connection signal="area_entered" from="Areas/BlockArea" to="." method="_on_block_area_area_entered"]
 [connection signal="area_entered" from="Areas/HurtArea" to="." method="_on_hurt_area_area_entered"]
 [connection signal="area_entered" from="Areas/HitArea" to="." method="_on_hit_area_area_entered"]

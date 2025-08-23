@@ -1,0 +1,29 @@
+[gd_scene load_steps=4 format=3 uid="uid://0fi8mtals6jc"]
+
+[ext_resource type="Script" uid="uid://bubilut2c3d27" path="res://scenes/components/particles/berserk_label/berserk_label.gd" id="1_yw05t"]
+[ext_resource type="FontFile" uid="uid://dh0p07u4qacbu" path="res://fonts/MountainKingRegular-woBYn.ttf" id="2_rrtbh"]
+
+[sub_resource type="LabelSettings" id="LabelSettings_x17uc"]
+font = ExtResource("2_rrtbh")
+font_size = 54
+outline_size = 15
+outline_color = Color(0, 0, 0, 1)
+shadow_color = Color(0.40642, 0.40642, 0.40642, 1)
+shadow_offset = Vector2(0, 5)
+
+[node name="BerserkLabel" type="Node2D"]
+script = ExtResource("1_yw05t")
+
+[node name="Body" type="Node2D" parent="."]
+
+[node name="Label" type="Label" parent="Body"]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = -126.0
+offset_top = -57.0
+offset_right = 127.0
+grow_vertical = 0
+text = "dull"
+label_settings = SubResource("LabelSettings_x17uc")
+horizontal_alignment = 1
