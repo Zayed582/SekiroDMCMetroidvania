@@ -211,7 +211,7 @@ advance_mode = 2
 states/active/node = SubResource("AnimationNodeAnimation_vd6mi")
 states/active/position = Vector2(605.371, 99.5)
 states/attack/node = SubResource("AnimationNodeAnimation_bpnds")
-states/attack/position = Vector2(410.743, 213.062)
+states/attack/position = Vector2(409.5, 227.062)
 states/die/node = SubResource("AnimationNodeAnimation_tf7fd")
 states/die/position = Vector2(772.28, 100.788)
 states/hurt/node = SubResource("AnimationNodeAnimation_o0iyu")
@@ -237,7 +237,6 @@ position = Vector2(5, -32)
 scale = Vector2(3.5, 4)
 texture = ExtResource("1_ckrq5")
 hframes = 8
-frame = 7
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 24)

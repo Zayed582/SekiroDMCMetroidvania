@@ -237,7 +237,6 @@ func temporarily_disable_movement():
 
 func start_attack():
 	if !hit_box_node: return
-	
 	hit_box_node.monitoring = true
 	hit_box_node.monitorable = true
 	await get_tree().create_timer(0.01).timeout
@@ -250,7 +249,6 @@ func travel(state_name):
 	pass
 
 func set_direction(dir) -> void:
-	
 	#if !dir:
 		#if player.position.x > position.x:
 			#dir = 1
@@ -302,7 +300,6 @@ func silence_monitoring_node(_bool = true):
 	if hurt_box_node: 
 		hurt_box_node.set_deferred("monitoring", !_bool)
 		hurt_box_node.set_deferred("monitorable", !_bool)
-	
 	pass
 
 func queue_free_nodes():
