@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://dgmy6ysiunomm"]
+[gd_scene load_steps=26 format=3 uid="uid://dgmy6ysiunomm"]
 
 [ext_resource type="Texture2D" uid="uid://fmwignau33u6" path="res://assets/images/enemies/red_360_turret/turret_body_sprite.png" id="1_cch6c"]
 [ext_resource type="Script" uid="uid://dvp0hxij30pfa" path="res://scenes/actors/enemy/turret/red_360_turret.gd" id="1_myt0y"]
@@ -46,6 +46,18 @@ tracks/2/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 0,
 "values": [Color(1, 1, 1, 1)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("../Sprite2D:position")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Vector2(0, 0)]
 }
 
 [sub_resource type="Animation" id="Animation_kjmti"]
@@ -113,25 +125,22 @@ tracks/0/keys = {
 "update": 0,
 "values": [Color(1, 1, 1, 1), Color(0.79, 0.0474, 0.0474, 1), Color(1, 1, 1, 1)]
 }
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("../Sprite2D:position")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0, 0.07, 0.13, 0.19, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 0,
+"values": [Vector2(0, 0), Vector2(32, 0), Vector2(0, 0), Vector2(-32, 0), Vector2(0, 0)]
+}
 
 [sub_resource type="Animation" id="Animation_dg6k7"]
 resource_name = "idle"
 length = 0.1
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite2D:frame")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0]
-}
-
-[sub_resource type="Animation" id="Animation_qj3wr"]
-resource_name = "rest"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
@@ -152,12 +161,8 @@ _data = {
 &"attack": SubResource("Animation_nsfig"),
 &"die": SubResource("Animation_h05ke"),
 &"hurt": SubResource("Animation_mmdqu"),
-&"idle": SubResource("Animation_dg6k7"),
-&"rest": SubResource("Animation_qj3wr")
+&"idle": SubResource("Animation_dg6k7")
 }
-
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_cch6c"]
-animation = &"active"
 
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_myt0y"]
 animation = &"attack"
@@ -171,9 +176,6 @@ animation = &"hurt"
 [sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_h05ke"]
 animation = &"idle"
 
-[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mmdqu"]
-animation = &"rest"
-
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_dg6k7"]
 advance_mode = 2
 
@@ -181,47 +183,33 @@ advance_mode = 2
 switch_mode = 2
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_cch6c"]
-
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_myt0y"]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_kjmti"]
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_nsfig"]
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_0g5kc"]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_h05ke"]
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mmdqu"]
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_rvfh4"]
-switch_mode = 1
+switch_mode = 2
 advance_mode = 2
 
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_b1er1"]
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_g2nvx"]
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_b4cf5"]
-
-[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_0g5kc"]
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mmdqu"]
+switch_mode = 2
+advance_mode = 2
 
 [sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_rvfh4"]
 states/End/position = Vector2(1007, -20)
 states/Start/position = Vector2(104, 37)
-states/active/node = SubResource("AnimationNodeAnimation_cch6c")
-states/active/position = Vector2(574, -13)
 states/attack/node = SubResource("AnimationNodeAnimation_myt0y")
-states/attack/position = Vector2(368, 146)
+states/attack/position = Vector2(195, 227)
 states/die/node = SubResource("AnimationNodeAnimation_kjmti")
 states/die/position = Vector2(856, -20)
 states/hurt/node = SubResource("AnimationNodeAnimation_nsfig")
-states/hurt/position = Vector2(528, 237)
+states/hurt/position = Vector2(547, 237)
 states/idle/node = SubResource("AnimationNodeAnimation_h05ke")
 states/idle/position = Vector2(385, -5)
-states/rest/node = SubResource("AnimationNodeAnimation_mmdqu")
-states/rest/position = Vector2(152, 232)
-transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_dg6k7"), "die", "End", SubResource("AnimationNodeStateMachineTransition_qj3wr"), "idle", "rest", SubResource("AnimationNodeStateMachineTransition_cch6c"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_myt0y"), "idle", "hurt", SubResource("AnimationNodeStateMachineTransition_kjmti"), "idle", "active", SubResource("AnimationNodeStateMachineTransition_nsfig"), "active", "rest", SubResource("AnimationNodeStateMachineTransition_h05ke"), "rest", "hurt", SubResource("AnimationNodeStateMachineTransition_mmdqu"), "hurt", "active", SubResource("AnimationNodeStateMachineTransition_rvfh4"), "attack", "rest", SubResource("AnimationNodeStateMachineTransition_b1er1"), "rest", "attack", SubResource("AnimationNodeStateMachineTransition_g2nvx"), "active", "attack", SubResource("AnimationNodeStateMachineTransition_b4cf5"), "attack", "hurt", SubResource("AnimationNodeStateMachineTransition_0g5kc")]
-graph_offset = Vector2(-28, -115)
+transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_dg6k7"), "die", "End", SubResource("AnimationNodeStateMachineTransition_qj3wr"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_myt0y"), "idle", "hurt", SubResource("AnimationNodeStateMachineTransition_kjmti"), "attack", "hurt", SubResource("AnimationNodeStateMachineTransition_0g5kc"), "hurt", "idle", SubResource("AnimationNodeStateMachineTransition_h05ke"), "attack", "idle", SubResource("AnimationNodeStateMachineTransition_mmdqu")]
+graph_offset = Vector2(-1593, -115)
 
 [node name="Red360Turret" type="CharacterBody2D"]
 collision_layer = 512

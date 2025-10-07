@@ -102,7 +102,6 @@ func _ready():
 	init_dependencies()
 	pass
 
-
 func init_dependencies():
 	if hit_box:
 		hit_box_node = add_node(hit_box)

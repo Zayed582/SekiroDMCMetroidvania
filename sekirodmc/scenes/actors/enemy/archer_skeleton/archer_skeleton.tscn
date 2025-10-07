@@ -263,7 +263,7 @@ states/patrol/position = Vector2(605.76, 246.575)
 states/run/node = SubResource("AnimationNodeAnimation_toe7x")
 states/run/position = Vector2(598.5, 96.5)
 transitions = ["Start", "idle", SubResource("AnimationNodeStateMachineTransition_gcweq"), "idle", "run", SubResource("AnimationNodeStateMachineTransition_e358d"), "run", "idle", SubResource("AnimationNodeStateMachineTransition_1q6jp"), "run", "patrol", SubResource("AnimationNodeStateMachineTransition_u31tc"), "attack", "patrol", SubResource("AnimationNodeStateMachineTransition_u7u7m"), "attack", "idle", SubResource("AnimationNodeStateMachineTransition_l723t"), "idle", "attack", SubResource("AnimationNodeStateMachineTransition_1h2j0"), "attack", "hurt", SubResource("AnimationNodeStateMachineTransition_ffj48"), "idle", "hurt", SubResource("AnimationNodeStateMachineTransition_wjktx"), "hurt", "idle", SubResource("AnimationNodeStateMachineTransition_l0x27"), "idle", "patrol", SubResource("AnimationNodeStateMachineTransition_qhd0f"), "patrol", "idle", SubResource("AnimationNodeStateMachineTransition_gb7sv"), "attack", "run", SubResource("AnimationNodeStateMachineTransition_hai4j"), "run", "attack", SubResource("AnimationNodeStateMachineTransition_amt0a"), "die", "End", SubResource("AnimationNodeStateMachineTransition_jsgpf")]
-graph_offset = Vector2(6.96629e-07, 57.9375)
+graph_offset = Vector2(-244, -24.0625)
 
 [node name="ArcherSkeleton" type="CharacterBody2D"]
 collision_layer = 512

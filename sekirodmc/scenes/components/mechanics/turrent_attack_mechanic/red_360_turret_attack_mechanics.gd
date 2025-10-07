@@ -26,8 +26,6 @@ func _physics_process(delta):
 			if timer.is_stopped():
 				timer.start()
 				timer_is_running = true
-				parent.velocity = Vector2.ZERO
-				parent.move_and_slide()
 	if parent.stop_process: return
 	look_at_player(delta)
 
@@ -83,5 +81,5 @@ func _on_body_exited(body: Node2D) -> void:
 		player = null
 		can_track = false
 		parent.set_state(parent.IDLE)
-		parent.travel("rest")
+		parent.travel("idle")
 		timer.stop()
