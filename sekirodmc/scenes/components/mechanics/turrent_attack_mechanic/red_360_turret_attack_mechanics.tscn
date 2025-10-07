@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://cri2b0oyr5kvn"]
+
+[ext_resource type="Script" uid="uid://cvod2akeo3p7t" path="res://scenes/components/mechanics/turrent_attack_mechanic/red_360_turret_attack_mechanics.gd" id="1_ahpos"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_sjwh8"]
+radius = 621.952
+
+[node name="red_360_turret_attack_mechanics" type="Area2D"]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_ahpos")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_sjwh8")
+
+[node name="Timer" type="Timer" parent="."]
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="body_exited" from="." to="." method="_on_body_exited"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

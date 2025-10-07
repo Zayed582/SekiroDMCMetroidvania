@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=4 uid="uid://c6qq72gxakhyl"]
+[gd_scene load_steps=30 format=4 uid="uid://c6qq72gxakhyl"]
 
 [ext_resource type="Script" uid="uid://dqupomdb7ma4n" path="res://scenes/levels/level.gd" id="1_oc4kc"]
 [ext_resource type="Texture2D" uid="uid://b5hu45r8pny6e" path="res://assets/tilesets/middleground.png" id="1_sk5k4"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://btfj223wsljku" path="res://scenes/components/particles/hit_particle_container/hit_particle_container.tscn" id="9_qxy0u"]
 [ext_resource type="PackedScene" uid="uid://6xaufxvn04ev" path="res://scenes/components/coin/coin.tscn" id="12_iav0o"]
 [ext_resource type="PackedScene" uid="uid://8n13ndx38w1l" path="res://scenes/actors/enemy/slime/slime.tscn" id="13_wtwp4"]
+[ext_resource type="PackedScene" uid="uid://dgmy6ysiunomm" path="res://scenes/actors/enemy/turret/red_360_turret.tscn" id="14_gmpev"]
 [ext_resource type="PackedScene" uid="uid://t7lnw7sw7fe1" path="res://scenes/actors/enemy/archer_skeleton/archer_skeleton.tscn" id="14_np2pn"]
 [ext_resource type="PackedScene" uid="uid://bxl63jcytyfhq" path="res://scenes/components/jump_pad/jump_pad.tscn" id="15_v6ha0"]
 [ext_resource type="PackedScene" uid="uid://c6b2tjocq15nt" path="res://scenes/components/coin_spawner/coin_spawner.tscn" id="16_iwr0g"]
@@ -743,6 +744,9 @@ health = 30
 position = Vector2(1088, 768)
 max_health = 30
 health = 30
+
+[node name="Red360Turret" parent="Enemies" instance=ExtResource("14_gmpev")]
+position = Vector2(2784, 727)
 
 [node name="Objects" type="Node2D" parent="."]
 

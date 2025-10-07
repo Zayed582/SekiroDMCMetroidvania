@@ -1,13 +1,13 @@
-[gd_scene load_steps=33 format=3 uid="uid://dgmy6ysiunomm"]
+[gd_scene load_steps=35 format=3 uid="uid://dgmy6ysiunomm"]
 
 [ext_resource type="Texture2D" uid="uid://fmwignau33u6" path="res://assets/images/enemies/red_360_turret/turret_body_sprite.png" id="1_cch6c"]
 [ext_resource type="Script" uid="uid://dvp0hxij30pfa" path="res://scenes/actors/enemy/turret/red_360_turret.gd" id="1_myt0y"]
+[ext_resource type="PackedScene" uid="uid://cri2b0oyr5kvn" path="res://scenes/components/mechanics/turrent_attack_mechanic/red_360_turret_attack_mechanics.tscn" id="2_h05ke"]
+[ext_resource type="PackedScene" uid="uid://cmhayca7kshmf" path="res://scenes/components/parry_meter/parry_meter.tscn" id="3_mmdqu"]
+[ext_resource type="PackedScene" uid="uid://w7ejo3mfihp6" path="res://scenes/components/hurt_boxes/base/hurt_box.tscn" id="4_dg6k7"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_myt0y"]
-radius = 31.257
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_myt0y"]
-size = Vector2(324, 209)
+radius = 62.0322
 
 [sub_resource type="Animation" id="Animation_rvfh4"]
 length = 0.001
@@ -34,6 +34,18 @@ tracks/1/keys = {
 "transitions": PackedFloat32Array(1),
 "update": 1,
 "values": [0]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("../Sprite2D:self_modulate")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_kjmti"]
@@ -87,18 +99,19 @@ tracks/0/keys = {
 
 [sub_resource type="Animation" id="Animation_mmdqu"]
 resource_name = "hurt"
-length = 0.1
+length = 0.25
+step = 0.01
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("../Sprite2D:frame")
+tracks/0/path = NodePath("../Sprite2D:self_modulate")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 1,
-"values": [0]
+"times": PackedFloat32Array(0, 0.12, 0.25),
+"transitions": PackedFloat32Array(1, 1, 1),
+"update": 0,
+"values": [Color(1, 1, 1, 1), Color(0.79, 0.0474, 0.0474, 1), Color(1, 1, 1, 1)]
 }
 
 [sub_resource type="Animation" id="Animation_dg6k7"]
@@ -213,33 +226,19 @@ graph_offset = Vector2(-28, -115)
 [node name="Red360Turret" type="CharacterBody2D"]
 collision_layer = 512
 script = ExtResource("1_myt0y")
-max_health = null
-health = null
-damage = null
-knockback_force = null
-knockback_duration = null
-chase_speed = null
-patrol_speed = null
-attack_distance = null
-has_navigation = null
-has_wall_detection = null
-has_gravity = null
-look_at = Callable()
+attack_mechanic = ExtResource("2_h05ke")
+parry_meter = ExtResource("3_mmdqu")
+hurt_box = ExtResource("4_dg6k7")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = -1.5708
+scale = Vector2(2, 2)
 texture = ExtResource("1_cch6c")
 hframes = 8
 region_rect = Rect2(0, 0, 128, 128)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_myt0y")
-
-[node name="PlayerDetectorArea2D" type="Area2D" parent="."]
-collision_layer = 512
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="PlayerDetectorArea2D"]
-position = Vector2(0, 94.5)
-shape = SubResource("RectangleShape2D_myt0y")
 
 [node name="Animation" type="Node" parent="."]
 
@@ -252,7 +251,5 @@ libraries = {
 tree_root = SubResource("AnimationNodeStateMachine_rvfh4")
 anim_player = NodePath("../AnimationPlayer")
 
-[node name="ShootDelayTimer" type="Timer" parent="."]
-
-[connection signal="body_entered" from="PlayerDetectorArea2D" to="." method="_on_player_detector_area_2d_body_entered"]
-[connection signal="body_exited" from="PlayerDetectorArea2D" to="." method="_on_player_detector_area_2d_body_exited"]
+[node name="BulletSpawnNuzzle" type="Marker2D" parent="."]
+position = Vector2(-100, 0)

@@ -43,7 +43,7 @@ class_name BaseEnemy extends CharacterBody2D
 @export_subgroup("Toggles")
 @export var has_wall_detection = false
 @export var has_gravity = false
-@export_enum("Left", "Right") var look_at = "Left"
+@export_enum("Left", "Right") var look_at_dir = "Left"
 
 
 #NODES
@@ -164,7 +164,7 @@ func _physics_process(delta):
 
 
 func look_at_direction():
-	match look_at:
+	match look_at_dir:
 		"Left": 
 			scale.x = -1
 			pass

@@ -10,7 +10,7 @@ func _ready():
 	pass # Replace with function body.
 
 func _process(delta):
-	position.x += direction * speed * delta
+	position += direction * speed * delta
 	pass
 
 
