@@ -7,7 +7,7 @@
 size = Vector2(84, 218)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_ffbdp"]
-size = Vector2(64, 201)
+size = Vector2(64, 192)
 
 [sub_resource type="Animation" id="Animation_g2icl"]
 length = 0.001
@@ -395,7 +395,7 @@ _data = {
 &"idle": SubResource("Animation_7bttf")
 }
 
-[node name="BreakableWall" type="StaticBody2D"]
+[node name="BreakableWall" type="CharacterBody2D"]
 collision_layer = 1537
 collision_mask = 1795
 script = ExtResource("1_k8ufm")
@@ -429,7 +429,6 @@ position = Vector2(0, -1)
 shape = SubResource("RectangleShape2D_k8ufm")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 0.5)
 shape = SubResource("RectangleShape2D_ffbdp")
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

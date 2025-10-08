@@ -15,3 +15,6 @@ func handle_parry():
 		parry_meter_node.global_rotation = deg_to_rad(180)
 		parry_meter_node.global_position = self.global_position + Vector2(0, -70)
 	pass
+
+func handle_deathblow():
+	pass

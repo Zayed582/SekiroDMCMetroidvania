@@ -742,12 +742,12 @@ max_health = 30
 health = 30
 
 [node name="ArcherSkeleton2" parent="Enemies" instance=ExtResource("14_np2pn")]
-position = Vector2(1088, 768)
+position = Vector2(1234, 769)
 max_health = 30
 health = 30
 
 [node name="Red360Turret" parent="Enemies" instance=ExtResource("14_gmpev")]
-position = Vector2(2784, 727)
+position = Vector2(2618, 742)
 
 [node name="Objects" type="Node2D" parent="."]
 
@@ -804,7 +804,7 @@ activate_wait_time = 0.75
 deactivate_wait_time = 0.5
 
 [node name="BreakableWall" parent="." instance=ExtResource("21_mkypq")]
-position = Vector2(221, 735)
+position = Vector2(282, 732)
 
 [node name="BreakableWall2" parent="." instance=ExtResource("21_mkypq")]
 position = Vector2(3022, 731)
