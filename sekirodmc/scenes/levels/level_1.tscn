@@ -804,7 +804,7 @@ activate_wait_time = 0.75
 deactivate_wait_time = 0.5
 
 [node name="BreakableWall" parent="." instance=ExtResource("21_mkypq")]
-position = Vector2(2347, 701)
+position = Vector2(4554, 701)
 
 [node name="BreakableWall2" parent="." instance=ExtResource("21_mkypq")]
 position = Vector2(3022, 731)
