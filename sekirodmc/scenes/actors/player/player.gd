@@ -12,7 +12,6 @@ extends CharacterBody2D
 @export var smokin_style_berserk_level: int = 11
 
 @export_subgroup("Berserk Level Durations")
-@export var dull_berserk_seconds_limit: float = 0
 @export var cool_berserk_seconds_limit: float = 10
 @export var stylish_berserk_seconds_limit: float = 10
 @export var ssick_berserk_seconds_limit: float = 15
@@ -39,6 +38,9 @@ var stamina_recovery_rate = 0.2
 
 var mana_health_charge = 30
 var health_increment_value = 0
+
+var current_berserker_level: int = 0
+var can_track_berserker_level: bool = true
 
 @onready var sprite = $Sprite2D
 @onready var anim_tree = $AnimationTree
@@ -248,6 +250,7 @@ func _ready():
 
 func init():
 	anim_tree.active = true
+	full_berserk_mode = smokin_style_berserk_level
 	await get_tree().process_frame
 	GameManager.emit_signal("set_max_health", MAX_HEALTH)
 	GameManager.emit_signal("set_max_mana", MAX_MANA)
@@ -734,6 +737,7 @@ func handle_take_damage(area):
 	reset_mana_progress()
 	
 	take_damage(damage)
+	decrease_berserk_rank()
 	apply_knockback(area.global_position)
 	GameManager.emit_signal("shake_camera",0.2,8.0)
 	GameManager.emit_signal("hitstop", 0.2)
@@ -778,7 +782,6 @@ func take_damage(damage):
 		await get_tree().create_timer(0.2).timeout
 		stop_process = false
 		pass
-	
 	pass
 
 func handle_death():
@@ -1017,22 +1020,61 @@ func handle_berserk():
 	if berserk_mode_activated: return
 	
 	berserk_mode = clamp(berserk_mode + 1, 0, full_berserk_mode)
-	add_berserk_label()
-	berserk_reset_timer.start()
-	
-	if berserk_mode == full_berserk_mode:
+	print("berserker_mode: " + str(berserk_mode) + ", dull_berserk_level: " + str(dull_berserk_level))
+	if berserk_mode == dull_berserk_level:
+		add_berserk_label(1)
+		berserk_reset_timer.wait_time = cool_berserk_seconds_limit
+		berserk_reset_timer.start()
+	elif berserk_mode == cool_berserk_level:
+		berserk_reset_timer.wait_time = stylish_berserk_seconds_limit
+		add_berserk_label(2)
+		berserk_reset_timer.start()
+	elif berserk_mode == stylish_berserk_level:
+		berserk_reset_timer.wait_time = ssick_berserk_seconds_limit
+		add_berserk_label(3)
+		berserk_reset_timer.start()
+	elif berserk_mode == ssick_berserk_level:
+		berserk_reset_timer.wait_time = smokin_berserk_seconds_limit
+		add_berserk_label(4)
+		berserk_reset_timer.start()
+	elif berserk_mode == smokin_style_berserk_level:
+		add_berserk_label(5)
 		berserk_mode_activated = true
 		berserk_mode_timer.start()
 		berserk_reset_timer.stop()
 		berserk_animation_timer.start()
 		berserk_value = 2
-	pass
 
-func add_berserk_label():
+	
+	#if berserk_mode == full_berserk_mode:
+		#berserk_mode_activated = true
+		#berserk_mode_timer.start()
+		#berserk_reset_timer.stop()
+		#berserk_animation_timer.start()
+		#berserk_value = 2
+	#pass
+
+func decrease_berserk_rank():
+	if berserk_mode == smokin_style_berserk_level:
+		berserk_mode = ssick_berserk_level
+		add_berserk_label(4)
+		berserk_mode_activated = false
+		berserk_value = 1
+	elif berserk_mode == ssick_berserk_level:
+		berserk_mode = stylish_berserk_level
+		add_berserk_label(3)
+	elif berserk_mode == stylish_berserk_level:
+		berserk_mode = cool_berserk_level
+		add_berserk_label(2)
+	elif berserk_mode == cool_berserk_level:
+		berserk_mode = dull_berserk_level
+		add_berserk_label(1)
+
+func add_berserk_label(id: int):
 	var berserk_label = berserk_label_scene.instantiate()
 	berserk_label.global_position = global_position + Vector2(0, -100)
 	get_tree().current_scene.add_child(berserk_label)
-	berserk_label.animate(berserk_mode)
+	berserk_label.animate(id)#berserk_label.animate(berserk_mode)
 	pass
 
 func _on_beserk_reset_timer_timeout():

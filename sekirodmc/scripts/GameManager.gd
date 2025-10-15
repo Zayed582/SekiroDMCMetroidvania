@@ -15,6 +15,7 @@ signal set_stamina(stamina)
 signal set_max_health(MAX_HEALTH)
 signal set_max_mana(MAX_MANA)
 signal set_max_stamina(MAX_STAMINA)
+signal set_bearserk_level(id)
 
 #PARTICE AND SFX
 signal add_hit_particle(text, pos)

@@ -5,6 +5,7 @@ extends Node2D
 
 func animate(text):
 	label.text = get_berserk_text(text)
+	GameManager.emit_signal("set_bearserk_level", text)
 	
 	var tween = create_tween()
 	var tween2 = create_tween()
