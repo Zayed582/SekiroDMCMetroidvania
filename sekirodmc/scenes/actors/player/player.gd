@@ -4,6 +4,20 @@ extends CharacterBody2D
 @export var MAX_MANA = 100
 @export var MAX_STAMINA = 50
 
+@export_subgroup("Berserk Level")
+@export var dull_berserk_level: int = 1
+@export var cool_berserk_level: int = 3
+@export var stylish_berserk_level: int = 5
+@export var ssick_berserk_level: int = 8
+@export var smokin_style_berserk_level: int = 11
+
+@export_subgroup("Berserk Level Durations")
+@export var dull_berserk_seconds_limit: float = 0
+@export var cool_berserk_seconds_limit: float = 10
+@export var stylish_berserk_seconds_limit: float = 10
+@export var ssick_berserk_seconds_limit: float = 15
+@export var smokin_berserk_seconds_limit: float = 15
+
 @onready var health = MAX_HEALTH
 @onready var mana = MAX_MANA
 @onready var stamina = MAX_STAMINA
@@ -94,6 +108,8 @@ var state_label = {
 	DIRECTIONAL_ATTACK: "DIRECTIONAL ATTACK",
 	RECOVER_HEALTH: "RECOVER_HEALTH"
 }
+
+
 
 const RUN_SPEED = 450.0
 const SPRINT_SPEED = 700.0

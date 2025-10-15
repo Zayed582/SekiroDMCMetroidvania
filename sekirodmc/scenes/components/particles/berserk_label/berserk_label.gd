@@ -25,7 +25,7 @@ func get_berserk_text(level):
 	match level:
 		1: return "Dull"
 		2: return "Cool"
-		3: return "Savage"
-		4: return "Sick skills"
+		3: return "Stylish"#"Savage"
+		4: return "SSick"#"Sick skills"
 		5: return "Smoking Style"
 	pass
