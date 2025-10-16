@@ -9,7 +9,7 @@ extends CharacterBody2D
 @export var cool_berserk_level: int = 3
 @export var stylish_berserk_level: int = 5
 @export var ssick_berserk_level: int = 8
-@export var smokin_style_berserk_level: int = 11
+@export var smokin_style_berserk_level: int = 2#11
 
 @export_subgroup("Berserk Level Durations")
 @export var cool_berserk_seconds_limit: float = 10
@@ -61,6 +61,7 @@ var can_track_berserker_level: bool = true
 @onready var berserk_reset_timer = $Timers/BerserkResetTimer
 @onready var berserk_mode_timer = $Timers/BerserkModeTimer
 @onready var berserk_animation_timer = $Timers/BerserkAnimationTimer
+@onready var ledge_climb_timer: Timer = $Timers/LedgeClimbTimer
 
 @onready var berserk_label_scene = preload("res://scenes/components/particles/berserk_label/berserk_label.tscn")
 @onready var berserk_sprite_scene = preload("res://scenes/components/particles/berserk_sprite/berserk_sprite.tscn")
@@ -166,7 +167,8 @@ var is_recovering_mana = false
 var is_attacking_enemy = false
 var is_death_blowing = false
 var berserk_mode_activated = false
-
+var is_climbing_ledge: bool = false
+var can_auto_run: bool = false
 
 #KNOCKBACK
 @export var knockback_force := 300.0
@@ -268,6 +270,7 @@ func _process(delta):
 func _physics_process(delta):
 	handle_knockback(delta)
 	handle_movement(delta)
+	handle_auto_run(delta)
 	handle_attack()
 	handle_state_animations()
 	handle_block()
@@ -343,6 +346,22 @@ func handle_jump():
 		set_state(JUMP)
 	pass
 
+func handle_auto_run(delta):
+	if can_auto_run:
+		if berserk_value == smokin_style_berserk_level:
+			if stop_process: return
+			if !can_move: return
+			if last_direction != 0:
+				velocity.x = move_toward(velocity.x, last_direction * move_speed, ACCELERATION_SPEED * 10 * delta)
+				handle_sprite_flip(last_direction)
+				step_timer -= delta
+				set_state(SPRINT)
+				move_speed = SPRINT_SPEED
+		else:
+			set_state(RUN)
+			move_speed = RUN_SPEED
+			step_timer = 0
+
 func handle_run(delta):
 	if stop_process: return
 	move_input = Input.get_axis("move_left", "move_right")
@@ -381,17 +400,17 @@ func handle_run_sound():
 	pass
 
 func handle_sprint():
-	if stop_process: return
-	if is_on_wall(): return
-
-	if is_on_floor():
-		if Input.is_action_pressed("sprint") and has_unlocked_ability(SPRINT) and stamina > MAX_STAMINA * 0.1:
-			set_state(SPRINT)
-			move_speed = SPRINT_SPEED
-			#reduce_stamina(stamina_run_decrement)
-		else:
-			set_state(RUN)
-			move_speed = RUN_SPEED
+	#if stop_process: return
+	#if is_on_wall(): return
+#
+	#if is_on_floor():
+		#if Input.is_action_pressed("sprint") and has_unlocked_ability(SPRINT) and stamina > MAX_STAMINA * 0.1:
+			#set_state(SPRINT)
+			#move_speed = SPRINT_SPEED
+			##reduce_stamina(stamina_run_decrement)
+		#else:
+			#set_state(RUN)
+			#move_speed = RUN_SPEED
 	pass
 
 func handle_attack():
@@ -488,6 +507,7 @@ func handle_wall_mechanics():
 	
 	anim_tree.set("parameters/conditions/is_on_wall", !is_on_wall_only())
 	if is_on_wall_only():
+		print("walloing")
 		velocity.x += WALL_STICK_FORCE * last_direction
 		if Input.is_action_pressed("wall_cling"):
 			velocity.y = 0
@@ -766,6 +786,7 @@ func take_damage(damage):
 	health -= damage
 	GameManager.emit_signal("set_health", health)
 	GameManager.emit_signal("add_flash_particle")
+	is_climbing_ledge = false
 	if health <= 0:
 		death_sound.play()
 		state_machine.travel("hurt")
@@ -1044,7 +1065,7 @@ func handle_berserk():
 		berserk_reset_timer.stop()
 		berserk_animation_timer.start()
 		berserk_value = 2
-
+		can_auto_run = true
 	
 	#if berserk_mode == full_berserk_mode:
 		#berserk_mode_activated = true
@@ -1055,6 +1076,8 @@ func handle_berserk():
 	#pass
 
 func decrease_berserk_rank():
+	if can_auto_run:
+		can_auto_run = false
 	if berserk_mode == smokin_style_berserk_level:
 		berserk_mode = ssick_berserk_level
 		add_berserk_label(4)
@@ -1063,12 +1086,18 @@ func decrease_berserk_rank():
 	elif berserk_mode == ssick_berserk_level:
 		berserk_mode = stylish_berserk_level
 		add_berserk_label(3)
+		berserk_mode_activated = false
 	elif berserk_mode == stylish_berserk_level:
 		berserk_mode = cool_berserk_level
 		add_berserk_label(2)
+		berserk_mode_activated = false
 	elif berserk_mode == cool_berserk_level:
 		berserk_mode = dull_berserk_level
 		add_berserk_label(1)
+		berserk_mode_activated = false
+	elif berserk_mode == dull_berserk_level:
+		add_berserk_label(1)
+		berserk_mode_activated = false
 
 func add_berserk_label(id: int):
 	var berserk_label = berserk_label_scene.instantiate()
@@ -1079,6 +1108,7 @@ func add_berserk_label(id: int):
 
 func _on_beserk_reset_timer_timeout():
 	berserk_mode = clamp(berserk_mode - 1, 0, full_berserk_mode)
+	decrease_berserk_rank()
 	if berserk_mode <= 0: berserk_reset_timer.stop()
 	
 	pass # Replace with function body.
@@ -1086,8 +1116,9 @@ func _on_beserk_reset_timer_timeout():
 func _on_berserk_mode_timer_timeout():
 	berserk_mode_activated = false
 	berserk_animation_timer.stop()
-	berserk_mode = 0
+	berserk_mode = dull_berserk_level#a0
 	berserk_value = 1
+	decrease_berserk_rank()
 	pass # Replace with function body.
 
 func after_image():
@@ -1099,3 +1130,16 @@ func after_image():
 func _on_berserk_animation_timer_timeout():
 	after_image()
 	pass # Replace with function body.
+
+func _on_ledge_climb_area_body_entered(body: Node2D) -> void:
+	ledge_climb_timer.start()
+
+func _on_ledge_climb_area_body_exited(body: Node2D) -> void:
+	is_climbing_ledge = false
+	ledge_climb_timer.stop()
+
+
+func _on_ledge_climb_timer_timeout() -> void:
+	is_climbing_ledge = true
+	##Farid is currently holding on the ledge climb task, once I get clarity from zayed I will proceed. If the task is
+	##cancelled any node or function with the name ledge in the player scene or script should be destroyed 

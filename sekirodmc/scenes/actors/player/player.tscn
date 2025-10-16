@@ -1,4 +1,4 @@
-[gd_scene load_steps=124 format=3 uid="uid://deqcnnb5n0asl"]
+[gd_scene load_steps=125 format=3 uid="uid://deqcnnb5n0asl"]
 
 [ext_resource type="Script" uid="uid://dqyy5n3uatrtc" path="res://scenes/actors/player/player.gd" id="1_l17oj"]
 [ext_resource type="Texture2D" uid="uid://d4ltavemvqyrk" path="res://assets/images/player/Shinobi Character MASK NEW.png" id="2_oj104"]
@@ -959,6 +959,9 @@ size = Vector2(216, 208)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mpktj"]
 size = Vector2(122, 194)
 
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_inh5e"]
+size = Vector2(55, 20)
+
 [node name="Player" type="CharacterBody2D"]
 collision_layer = 2
 collision_mask = 11
@@ -1049,6 +1052,10 @@ wait_time = 20.0
 [node name="BerserkAnimationTimer" type="Timer" parent="Timers"]
 wait_time = 0.075
 
+[node name="LedgeClimbTimer" type="Timer" parent="Timers"]
+wait_time = 0.3
+one_shot = true
+
 [node name="Areas" type="Node2D" parent="."]
 
 [node name="BlockArea" type="Area2D" parent="Areas"]
@@ -1089,6 +1096,13 @@ collision_mask = 512
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/PogoArea"]
 position = Vector2(0, 26)
 shape = SubResource("RectangleShape2D_mpktj")
+
+[node name="LedgeClimbArea" type="Area2D" parent="Areas"]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Areas/LedgeClimbArea"]
+position = Vector2(41.5, -64)
+shape = SubResource("RectangleShape2D_inh5e")
 
 [node name="FallthroughRayCast" type="RayCast2D" parent="Areas"]
 position = Vector2(0, 88)
@@ -1149,6 +1163,7 @@ texture_scale = 16.0
 [connection signal="timeout" from="Timers/BerserkResetTimer" to="." method="_on_beserk_reset_timer_timeout"]
 [connection signal="timeout" from="Timers/BerserkModeTimer" to="." method="_on_berserk_mode_timer_timeout"]
 [connection signal="timeout" from="Timers/BerserkAnimationTimer" to="." method="_on_berserk_animation_timer_timeout"]
+[connection signal="timeout" from="Timers/LedgeClimbTimer" to="." method="_on_ledge_climb_timer_timeout"]
 [connection signal="area_entered" from="Areas/BlockArea" to="." method="_on_block_area_area_entered"]
 [connection signal="area_entered" from="Areas/HurtArea" to="." method="_on_hurt_area_area_entered"]
 [connection signal="area_entered" from="Areas/HitArea" to="." method="_on_hit_area_area_entered"]
@@ -1156,3 +1171,5 @@ texture_scale = 16.0
 [connection signal="area_exited" from="Areas/PreHitArea" to="." method="_on_pre_hit_area_area_exited"]
 [connection signal="area_entered" from="Areas/PogoArea" to="." method="_on_pogo_area_area_entered"]
 [connection signal="area_exited" from="Areas/PogoArea" to="." method="_on_pogo_area_area_exited"]
+[connection signal="body_entered" from="Areas/LedgeClimbArea" to="." method="_on_ledge_climb_area_body_entered"]
+[connection signal="body_exited" from="Areas/LedgeClimbArea" to="." method="_on_ledge_climb_area_body_exited"]
