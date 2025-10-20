@@ -62,6 +62,9 @@ var can_track_berserker_level: bool = true
 @onready var berserk_mode_timer = $Timers/BerserkModeTimer
 @onready var berserk_animation_timer = $Timers/BerserkAnimationTimer
 @onready var ledge_climb_timer: Timer = $Timers/LedgeClimbTimer
+@onready var ledge_climb_verifier_area: Area2D = $Areas/LedgeClimbing/LedgeClimbVerifierArea
+@onready var shine_spark_timer: Timer = $Timers/ShineSparkTimer
+@onready var shine_spark_cpu_particles_2d: CPUParticles2D = $ShineSparkCPUParticles2D
 
 @onready var berserk_label_scene = preload("res://scenes/components/particles/berserk_label/berserk_label.tscn")
 @onready var berserk_sprite_scene = preload("res://scenes/components/particles/berserk_sprite/berserk_sprite.tscn")
@@ -168,7 +171,10 @@ var is_attacking_enemy = false
 var is_death_blowing = false
 var berserk_mode_activated = false
 var is_climbing_ledge: bool = false
+var can_cancel_ledge_climbing: bool = false
 var can_auto_run: bool = false
+var is_shine_spark: bool = false
+var waiting_to_shine_spark: bool = false
 
 #KNOCKBACK
 @export var knockback_force := 300.0
@@ -271,6 +277,7 @@ func _physics_process(delta):
 	handle_knockback(delta)
 	handle_movement(delta)
 	handle_auto_run(delta)
+	handle_shine_spark(delta)
 	handle_attack()
 	handle_state_animations()
 	handle_block()
@@ -302,6 +309,11 @@ func handle_state_animations():
 
 func handle_gravity(delta):
 	#handle directional attack
+	if is_climbing_ledge:
+		velocity.y = 0
+		return
+
+	
 	if is_on_floor() and slash_velocity != MAX_SLASH_VELOCITY:
 		slash_velocity = MAX_SLASH_VELOCITY
 		pass
@@ -326,7 +338,9 @@ func handle_gravity(delta):
 
 func handle_jump():
 	if stop_process: return
-	
+	if is_shine_spark or waiting_to_shine_spark: return
+	if is_climbing_ledge == true and can_cancel_ledge_climbing == false:
+		return
 	# Handle variations in jump height
 	if Input.is_action_just_released("jump") or is_on_ceiling():
 		if velocity.y < 0: velocity.y =0
@@ -342,11 +356,15 @@ func handle_jump():
 		anim_tree.set("parameters/Jump/blend_position", sign(velocity.y))
 		jump_count += 1
 		reset_jump_count = true
+		disable_ledge_climb()
 		await get_tree().process_frame
 		set_state(JUMP)
 	pass
 
 func handle_auto_run(delta):
+	if stop_process: return
+	if is_shine_spark: return
+	if is_shine_spark or waiting_to_shine_spark: return
 	if can_auto_run:
 		if berserk_value == smokin_style_berserk_level:
 			if stop_process: return
@@ -362,8 +380,37 @@ func handle_auto_run(delta):
 			move_speed = RUN_SPEED
 			step_timer = 0
 
+##currently at 6hours 50 minutes
+func handle_shine_spark(delta):
+	if stop_process: return
+	if not waiting_to_shine_spark:
+		if is_on_floor():
+			if Input.is_action_just_pressed("shinespark"):
+				waiting_to_shine_spark = true
+				shine_spark_timer.start()
+				shine_spark_cpu_particles_2d.emitting = true
+	else:
+		if Input.is_action_just_released("shinespark") and waiting_to_shine_spark:
+			if shine_spark_timer.time_left != 0:
+				shine_spark_timer.stop()
+			waiting_to_shine_spark = false
+			if shine_spark_cpu_particles_2d.emitting:
+				shine_spark_cpu_particles_2d.emitting = false
+			if is_shine_spark:
+				is_shine_spark = false
+		if is_shine_spark:
+			velocity.y -= ACCELERATION_SPEED * 2 * delta
+			if shine_spark_cpu_particles_2d.emitting:
+				shine_spark_cpu_particles_2d.emitting = false
+
 func handle_run(delta):
 	if stop_process: return
+	if is_shine_spark: return
+	if is_shine_spark or waiting_to_shine_spark: return
+	if is_climbing_ledge: 
+		velocity.x += last_direction * ACCELERATION_SPEED * 0.8 * delta
+		velocity.y -= ACCELERATION_SPEED * 10 * delta
+		return
 	move_input = Input.get_axis("move_left", "move_right")
 	direction = lerp(direction, move_input, direction_decay)
 	if !move_input and abs(direction) < 0.1: direction = 0.0
@@ -400,22 +447,24 @@ func handle_run_sound():
 	pass
 
 func handle_sprint():
-	#if stop_process: return
-	#if is_on_wall(): return
-#
-	#if is_on_floor():
-		#if Input.is_action_pressed("sprint") and has_unlocked_ability(SPRINT) and stamina > MAX_STAMINA * 0.1:
+	if stop_process: return
+	if is_on_wall(): return
+
+	if is_on_floor():
+		if Input.is_action_pressed("sprint") and has_unlocked_ability(SPRINT) and stamina > MAX_STAMINA * 0.1:
 			#set_state(SPRINT)
 			#move_speed = SPRINT_SPEED
-			##reduce_stamina(stamina_run_decrement)
-		#else:
-			#set_state(RUN)
-			#move_speed = RUN_SPEED
+			pass
+			#reduce_stamina(stamina_run_decrement)
+		else:
+			set_state(RUN)
+			move_speed = RUN_SPEED
 	pass
 
 func handle_attack():
 	if stop_process: return
 	if is_on_wall_only(): return
+	if is_shine_spark or waiting_to_shine_spark: return
 	
 	anim_tree.set("parameters/conditions/can_charge_attack", can_charge_attack and mana > mana_charge_attack_decrement)
 	
@@ -485,6 +534,7 @@ func handle_charge_hitstop():
 func handle_dash():
 	if !has_unlocked_ability(DASH): return
 	if is_on_wall(): return
+	if is_shine_spark or waiting_to_shine_spark: return
 
 	if Input.is_action_just_pressed("dash"):
 		velocity.x = DASH_SPEED * last_direction
@@ -636,6 +686,7 @@ func handle_sprite_flip(dir):
 func handle_block():
 	if !has_unlocked_ability(BLOCK): return
 	if is_on_wall_only(): return
+	if is_shine_spark or waiting_to_shine_spark: return
 	
 	if is_blocking:
 		reduce_stamina(stamina_block_decrement)
@@ -893,6 +944,12 @@ func handle_directional_attack():
 	state_machine.travel("attack_1")
 	pass
 
+func disable_ledge_climb() -> void:
+	if is_climbing_ledge:
+		is_climbing_ledge = false
+		can_cancel_ledge_climbing = false
+		ledge_climb_timer.stop()
+
 func _on_combo_timer_timeout():
 	combo_time = clamp(combo_time - 1, MIN_COMBO_TIME, MAX_COMBO_TIME)
 	if combo_time <= 0:
@@ -1041,7 +1098,6 @@ func handle_berserk():
 	if berserk_mode_activated: return
 	
 	berserk_mode = clamp(berserk_mode + 1, 0, full_berserk_mode)
-	print("berserker_mode: " + str(berserk_mode) + ", dull_berserk_level: " + str(dull_berserk_level))
 	if berserk_mode == dull_berserk_level:
 		add_berserk_label(1)
 		berserk_reset_timer.wait_time = cool_berserk_seconds_limit
@@ -1083,6 +1139,7 @@ func decrease_berserk_rank():
 		add_berserk_label(4)
 		berserk_mode_activated = false
 		berserk_value = 1
+		reset_movement()
 	elif berserk_mode == ssick_berserk_level:
 		berserk_mode = stylish_berserk_level
 		add_berserk_label(3)
@@ -1132,14 +1189,33 @@ func _on_berserk_animation_timer_timeout():
 	pass # Replace with function body.
 
 func _on_ledge_climb_area_body_entered(body: Node2D) -> void:
-	ledge_climb_timer.start()
+	var bodies = ledge_climb_verifier_area.get_overlapping_bodies()
+	if bodies.size() == 0 and can_auto_run == false and velocity.y >= 0:
+		is_climbing_ledge = true
+		can_cancel_ledge_climbing = false
+		state_machine.travel("ledge_climb")
+		ledge_climb_timer.start()
+		print("climbing")
 
 func _on_ledge_climb_area_body_exited(body: Node2D) -> void:
-	is_climbing_ledge = false
-	ledge_climb_timer.stop()
-
+	#disable_ledge_climb()
+	print("exited")
+	pass
 
 func _on_ledge_climb_timer_timeout() -> void:
-	is_climbing_ledge = true
-	##Farid is currently holding on the ledge climb task, once I get clarity from zayed I will proceed. If the task is
-	##cancelled any node or function with the name ledge in the player scene or script should be destroyed 
+	can_cancel_ledge_climbing = true
+	print("can cancel climb")
+	jump_count = 0
+	reset_jump_count = true
+
+##CONTINUE WITH THE LEDGE CLIMB ANIMATION AND ACTIVATE THE ANIMATION TREE WHEN YOU ARE DONE
+
+
+func _on_animation_tree_animation_finished(anim_name: StringName) -> void:
+	if anim_name == "ledge_climb":
+		disable_ledge_climb()
+
+
+func _on_shine_spark_timer_timeout() -> void:
+	is_shine_spark = true
+	shine_spark_cpu_particles_2d.emitting = false
