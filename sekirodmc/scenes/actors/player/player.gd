@@ -380,7 +380,6 @@ func handle_auto_run(delta):
 			move_speed = RUN_SPEED
 			step_timer = 0
 
-##currently at 6hours 50 minutes
 func handle_shine_spark(delta):
 	if stop_process: return
 	if not waiting_to_shine_spark:
